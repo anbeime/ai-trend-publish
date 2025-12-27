@@ -1,0 +1,11 @@
+name = "ai-trend-publish"
+compatibility_date = "2024-01-01"
+pages_build_output_dir = "public"
+
+[env.production.vars]
+WX_APPID = "wx8410119dfbb7f756"
+WX_SECRET = "3c93e33e087e57b906f5c341aa5223b9"
+
+[env.development.vars]
+WX_APPID = "wx8410119dfbb7f756"
+WX_SECRET = "3c93e33e087e57b906f5c341aa5223b9"

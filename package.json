@@ -1,0 +1,24 @@
+{
+  "name": "ai-trend-publish-cloudflare",
+  "version": "1.0.0",
+  "description": "AI TrendPublish - Cloudflare Pages部署版本",
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler pages dev public",
+    "build": "npm run build:client && npm run build:api",
+    "build:client": "vite build",
+    "build:api": "esbuild src/api/index.ts --bundle --format=esm --outfile=public/_worker.js --platform=neutral",
+    "deploy": "npm run build && wrangler pages deploy public",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@hono/node-server": "^1.8.0",
+    "hono": "^4.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.19.27",
+    "esbuild": "^0.20.2",
+    "vite": "^5.4.21",
+    "wrangler": "^3.114.16"
+  }
+}

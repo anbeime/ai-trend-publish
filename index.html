@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TrendPublish - 智能文章发布工具</title>
+    <meta name="description" content="AI驱动的智能文章发布工具，支持多平台发布">
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      
+      .container {
+        max-width: 800px;
+        width: 90%;
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        margin: 20px;
+      }
+      
+      .header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 40px;
+        text-align: center;
+      }
+      
+      .header h1 {
+        font-size: 2.5rem;
+        margin-bottom: 10px;
+        font-weight: 700;
+      }
+      
+      .header p {
+        font-size: 1.1rem;
+        opacity: 0.9;
+      }
+      
+      .content {
+        padding: 40px;
+      }
+      
+      .feature-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 30px;
+        margin-bottom: 40px;
+      }
+      
+      .feature-card {
+        background: #f8f9fa;
+        padding: 25px;
+        border-radius: 15px;
+        border-left: 4px solid #667eea;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+      }
+      
+      .feature-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+      }
+      
+      .feature-card h3 {
+        color: #667eea;
+        margin-bottom: 10px;
+        font-size: 1.2rem;
+      }
+      
+      .api-section {
+        background: #f8f9fa;
+        border-radius: 15px;
+        padding: 30px;
+        margin-top: 30px;
+      }
+      
+      .api-section h2 {
+        color: #333;
+        margin-bottom: 20px;
+        font-size: 1.8rem;
+      }
+      
+      .api-endpoint {
+        background: white;
+        border: 1px solid #e9ecef;
+        border-radius: 10px;
+        padding: 20px;
+        margin-bottom: 15px;
+        font-family: 'Courier New', monospace;
+      }
+      
+      .method {
+        display: inline-block;
+        padding: 4px 8px;
+        border-radius: 4px;
+        color: white;
+        font-weight: bold;
+        margin-right: 10px;
+        font-size: 0.9rem;
+      }
+      
+      .get { background: #28a745; }
+      .post { background: #007bff; }
+      
+      .status-indicator {
+        display: inline-block;
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        margin-right: 10px;
+      }
+      
+      .status-online { background: #28a745; }
+      .status-offline { background: #dc3545; }
+      
+      .wechat-config {
+        background: #fff3cd;
+        border: 1px solid #ffeaa7;
+        border-radius: 10px;
+        padding: 20px;
+        margin-top: 20px;
+      }
+      
+      .wechat-config h3 {
+        color: #856404;
+        margin-bottom: 15px;
+      }
+      
+      .config-form {
+        display: grid;
+        gap: 15px;
+      }
+      
+      .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+      }
+      
+      .form-group label {
+        font-weight: 600;
+        color: #333;
+      }
+      
+      .form-group input {
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        font-size: 1rem;
+      }
+      
+      .btn {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        padding: 12px 24px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 1rem;
+        font-weight: 600;
+        transition: transform 0.3s ease;
+      }
+      
+      .btn:hover {
+        transform: translateY(-2px);
+      }
+      
+      .response-area {
+        background: #f8f9fa;
+        border: 1px solid #dee2e6;
+        border-radius: 8px;
+        padding: 15px;
+        margin-top: 20px;
+        font-family: 'Courier New', monospace;
+        font-size: 0.9rem;
+        white-space: pre-wrap;
+        max-height: 300px;
+        overflow-y: auto;
+      }
+      
+      @media (max-width: 768px) {
+        .container {
+          width: 95%;
+          margin: 10px;
+        }
+        
+        .header {
+          padding: 30px 20px;
+        }
+        
+        .header h1 {
+          font-size: 2rem;
+        }
+        
+        .content {
+          padding: 20px;
+        }
+        
+        .feature-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <h1>TrendPublish</h1>
+        <p>AI驱动的智能文章发布工具 - Cloudflare Pages版</p>
+        <p style="margin-top: 10px;">
+          <span class="status-indicator status-online"></span>
+          服务状态: <span id="service-status">检查中...</span>
+        </p>
+      </div>
+      
+      <div class="content">
+        <div class="feature-grid">
+          <div class="feature-card">
+            <h3>🤖 AI智能处理</h3>
+            <p>集成多种大模型，实现智能摘要、趋势分析和内容优化</p>
+          </div>
+          <div class="feature-card">
+            <h3>📱 多平台发布</h3>
+            <p>支持微信公众号、Twitter等多平台一键发布</p>
+          </div>
+          <div class="feature-card">
+            <h3>🎨 精美模板</h3>
+            <p>提供多种专业模板，自动优化文章排版和样式</p>
+          </div>
+          <div class="feature-card">
+            <h3>📊 数据分析</h3>
+            <p>实时监控发布效果，提供详细的数据分析报告</p>
+          </div>
+        </div>
+        
+        <div class="api-section">
+          <h2>API接口</h2>
+          
+          <div class="api-endpoint">
+            <span class="method get">GET</span>
+            <strong>/api/health</strong>
+            <div style="margin-top: 10px; color: #666;">健康检查接口</div>
+          </div>
+          
+          <div class="api-endpoint">
+            <span class="method post">POST</span>
+            <strong>/api/wechat/publish</strong>
+            <div style="margin-top: 10px; color: #666;">发布文章到微信公众号</div>
+          </div>
+          
+          <div class="api-endpoint">
+            <span class="method post">POST</span>
+            <strong>/api/wechat/upload-image</strong>
+            <div style="margin-top: 10px; color: #666;">上传图片到微信公众号</div>
+          </div>
+        </div>
+        
+        <div class="wechat-config">
+          <h3>🔧 微信公众号配置</h3>
+          <form class="config-form" id="wechat-form">
+            <div class="form-group">
+              <label for="appid">AppID:</label>
+              <input type="text" id="appid" name="appid" placeholder="请输入微信公众号AppID" required>
+            </div>
+            <div class="form-group">
+              <label for="secret">AppSecret:</label>
+              <input type="password" id="secret" name="secret" placeholder="请输入微信公众号AppSecret" required>
+            </div>
+            <button type="submit" class="btn">保存配置</button>
+          </form>
+          
+          <div id="api-response" class="response-area" style="display: none;"></div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // 检查服务状态
+      async function checkServiceStatus() {
+        try {
+          const response = await fetch('/api/health');
+          const data = await response.json();
+          document.getElementById('service-status').textContent = '在线';
+          document.querySelector('.status-indicator').classList.add('status-online');
+        } catch (error) {
+          document.getElementById('service-status').textContent = '离线';
+          document.querySelector('.status-indicator').classList.add('status-offline');
+        }
+      }
+
+      // 处理微信配置表单提交
+      document.getElementById('wechat-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const formData = new FormData(e.target);
+        const config = {
+          appid: formData.get('appid'),
+          secret: formData.get('secret')
+        };
+
+        try {
+          const response = await fetch('/api/wechat/config', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(config)
+          });
+
+          const result = await response.json();
+          const responseArea = document.getElementById('api-response');
+          responseArea.style.display = 'block';
+          responseArea.textContent = JSON.stringify(result, null, 2);
+        } catch (error) {
+          const responseArea = document.getElementById('api-response');
+          responseArea.style.display = 'block';
+          responseArea.textContent = '请求失败: ' + error.message;
+        }
+      });
+
+      // 页面加载完成后检查服务状态
+      document.addEventListener('DOMContentLoaded', checkServiceStatus);
+      
+      // 每30秒检查一次服务状态
+      setInterval(checkServiceStatus, 30000);
+    </script>
+  </body>
+</html>

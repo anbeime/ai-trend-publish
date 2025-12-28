@@ -269,6 +269,7 @@
         
         <div class="wechat-config">
           <h3>🔧 微信公众号配置</h3>
+          <div id="test-result" style="display: none; margin-bottom: 15px; padding: 15px; border-radius: 8px; font-weight: 500;"></div>
           <form class="config-form" id="wechat-form">
             <div class="form-group">
               <label for="appid">AppID:</label>
@@ -282,7 +283,10 @@
               <label for="authkey">AuthKey (高级功能):</label>
               <input type="text" id="authkey" name="authkey" placeholder="输入 AuthKey 启用高级功能">
             </div>
-            <button type="submit" class="btn">保存配置</button>
+            <div style="display: flex; gap: 10px;">
+              <button type="submit" class="btn">保存配置</button>
+              <button type="button" onclick="testWeChatConfig()" class="btn" style="background: linear-gradient(135deg, #28a745, #20c997);">测试连接</button>
+            </div>
           </form>
           
           <div id="api-response" class="response-area" style="display: none;"></div>
@@ -647,6 +651,71 @@
           responseArea.textContent = '请求失败: ' + error.message;
         }
       });
+
+      // 测试微信配置
+      async function testWeChatConfig() {
+        const appid = document.getElementById('appid').value.trim();
+        const secret = document.getElementById('secret').value.trim();
+        
+        if (!appid || !secret) {
+          showTestResult('请先填写AppID和AppSecret！', 'warning');
+          return;
+        }
+        
+        showTestResult('正在测试微信API连接...', 'info');
+        
+        try {
+          // 测试获取access_token
+          const tokenResponse = await fetch('/api/wechat/test', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ appid, secret })
+          });
+          
+          const result = await tokenResponse.json();
+          
+          if (result.success) {
+            showTestResult('✅ 连接成功！微信API配置正常，可以正常使用发布功能。', 'success');
+          } else {
+            showTestResult(`❌ 连接失败：${result.error || '未知错误'}`, 'error');
+          }
+        } catch (error) {
+          showTestResult(`❌ 网络错误：${error.message}`, 'error');
+        }
+      }
+
+      // 显示测试结果
+      function showTestResult(message, type) {
+        const resultDiv = document.getElementById('test-result');
+        resultDiv.style.display = 'block';
+        resultDiv.textContent = message;
+        
+        // 设置样式
+        switch(type) {
+          case 'success':
+            resultDiv.style.background = '#d4edda';
+            resultDiv.style.border = '1px solid #c3e6cb';
+            resultDiv.style.color = '#155724';
+            break;
+          case 'error':
+            resultDiv.style.background = '#f8d7da';
+            resultDiv.style.border = '1px solid #f5c6cb';
+            resultDiv.style.color = '#721c24';
+            break;
+          case 'warning':
+            resultDiv.style.background = '#fff3cd';
+            resultDiv.style.border = '1px solid #ffeaa7';
+            resultDiv.style.color = '#856404';
+            break;
+          case 'info':
+            resultDiv.style.background = '#d1ecf1';
+            resultDiv.style.border = '1px solid #bee5eb';
+            resultDiv.style.color = '#0c5460';
+            break;
+        }
+      }
 
       // 页面加载完成后检查服务状态
       document.addEventListener('DOMContentLoaded', checkServiceStatus);

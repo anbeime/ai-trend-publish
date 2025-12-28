@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>微信发布工具 - 直接API版本</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+        
+        .content {
+            padding: 30px;
+        }
+        
+        .warning-box {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #333;
+        }
+        
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s ease;
+        }
+        
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #28a745;
+        }
+        
+        .form-group textarea {
+            min-height: 150px;
+            resize: vertical;
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .result {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 20px;
+            font-family: 'Courier New', monospace;
+            white-space: pre-wrap;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        .status {
+            padding: 12px 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+            font-weight: 500;
+        }
+        
+        .status-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .status-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .status-warning {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+        
+        .step-indicator {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 30px;
+            padding: 15px;
+            background: #e9ecef;
+            border-radius: 8px;
+        }
+        
+        .step {
+            flex: 1;
+            text-align: center;
+            padding: 10px;
+            border-radius: 6px;
+            margin: 0 5px;
+            font-weight: 600;
+        }
+        
+        .step.active {
+            background: #28a745;
+            color: white;
+        }
+        
+        .step.completed {
+            background: #6c757d;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📱 微信发布工具</h1>
+            <p>直接API版本 - 无需本地服务器</p>
+        </div>
+        
+        <div class="content">
+            <div class="warning-box">
+                <h3>⚠️ 重要提示</h3>
+                <p><strong>这是直接调用微信API的版本</strong>，需要：</p>
+                <ul style="margin: 10px 0 10px 20px;">
+                    <li>在微信公众平台添加你的IP到白名单</li>
+                    <li>确保网络环境允许访问微信API</li>
+                    <li>浏览器支持跨域请求（某些浏览器可能有限制）</li>
+                </ul>
+                <p><strong>获取IP地址</strong>：<button class="btn" onclick="getMyIP()">获取我的IP</button> <span id="my-ip"></span></p>
+            </div>
+            
+            <div class="step-indicator">
+                <div class="step active" id="step1">1.配置</div>
+                <div class="step" id="step2">2.获取Token</div>
+                <div class="step" id="step3">3.上传图片</div>
+                <div class="step" id="step4">4.发布文章</div>
+            </div>
+            
+            <div class="form-group">
+                <label for="appid">微信公众号AppID:</label>
+                <input type="text" id="appid" placeholder="输入你的微信公众号AppID">
+            </div>
+            
+            <div class="form-group">
+                <label for="secret">微信公众号AppSecret:</label>
+                <input type="password" id="secret" placeholder="输入你的微信公众号AppSecret">
+            </div>
+            
+            <div class="form-group">
+                <label for="title">文章标题:</label>
+                <input type="text" id="title" placeholder="输入文章标题" maxlength="64">
+            </div>
+            
+            <div class="form-group">
+                <label for="content">文章内容:</label>
+                <textarea id="content" placeholder="输入文章内容，支持HTML格式"></textarea>
+            </div>
+            
+            <div class="form-group">
+                <label for="cover-image">封面图片:</label>
+                <input type="file" id="cover-image" accept="image/*">
+            </div>
+            
+            <button class="btn" onclick="directPublish()">🚀 直接发布到微信</button>
+            <button class="btn" onclick="testConnection()">🔍 测试连接</button>
+            <button class="btn" onclick="clearAll()">🗑️ 清空所有</button>
+            
+            <div id="status-message"></div>
+            <div id="result-area" class="result" style="display: none;"></div>
+        </div>
+    </div>
+
+    <script>
+        let accessToken = '';
+        let uploadedMediaId = '';
+        
+        // 显示消息
+        function showMessage(message, type) {
+            const statusDiv = document.getElementById('status-message');
+            statusDiv.className = 'status status-' + type;
+            statusDiv.textContent = message;
+            statusDiv.style.display = 'block';
+            
+            if (type !== 'error') {
+                setTimeout(() => {
+                    statusDiv.style.display = 'none';
+                }, 5000);
+            }
+        }
+        
+        // 显示结果
+        function showResult(data) {
+            const resultArea = document.getElementById('result-area');
+            resultArea.style.display = 'block';
+            resultArea.textContent = JSON.stringify(data, null, 2);
+        }
+        
+        // 更新步骤
+        function updateStep(step) {
+            for (let i = 1; i <= 4; i++) {
+                const stepElement = document.getElementById('step' + i);
+                stepElement.className = 'step';
+                if (i < step) {
+                    stepElement.className = 'step completed';
+                } else if (i === step) {
+                    stepElement.className = 'step active';
+                }
+            }
+        }
+        
+        // 获取用户IP
+        async function getMyIP() {
+            try {
+                const response = await fetch('https://api.ipify.org?format=json');
+                const data = await response.json();
+                document.getElementById('my-ip').textContent = data.ip;
+                showMessage('你的IP是: ' + data.ip + '，请添加到微信白名单', 'success');
+            } catch (error) {
+                document.getElementById('my-ip').textContent = '获取失败';
+                showMessage('获取IP失败: ' + error.message, 'error');
+            }
+        }
+        
+        // 测试连接
+        async function testConnection() {
+            const appid = document.getElementById('appid').value.trim();
+            const secret = document.getElementById('secret').value.trim();
+            
+            if (!appid || !secret) {
+                showMessage('请填写AppID和AppSecret', 'error');
+                return;
+            }
+            
+            try {
+                showMessage('正在测试连接...', 'warning');
+                
+                const response = await fetch(`https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=${appid}&secret=${secret}`);
+                const data = await response.json();
+                
+                showResult(data);
+                
+                if (data.access_token) {
+                    accessToken = data.access_token;
+                    showMessage('✅ 连接成功！Access Token已获取', 'success');
+                    updateStep(2);
+                } else {
+                    showMessage('❌ 连接失败: ' + data.errmsg, 'error');
+                }
+            } catch (error) {
+                showResult({ error: error.message });
+                showMessage('❌ 网络错误: ' + error.message, 'error');
+            }
+        }
+        
+        // 直接发布
+        async function directPublish() {
+            const appid = document.getElementById('appid').value.trim();
+            const secret = document.getElementById('secret').value.trim();
+            const title = document.getElementById('title').value.trim();
+            const content = document.getElementById('content').value.trim();
+            
+            if (!appid || !secret) {
+                showMessage('请填写AppID和AppSecret', 'error');
+                return;
+            }
+            
+            if (!title || !content) {
+                showMessage('请填写文章标题和内容', 'error');
+                return;
+            }
+            
+            try {
+                showMessage('正在发布...', 'warning');
+                
+                // 步骤1: 获取Token
+                let token = accessToken;
+                if (!token) {
+                    const tokenResponse = await fetch(`https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=${appid}&secret=${secret}`);
+                    const tokenData = await tokenResponse.json();
+                    
+                    if (tokenData.access_token) {
+                        token = tokenData.access_token;
+                        accessToken = token;
+                        updateStep(2);
+                    } else {
+                        showMessage('获取Token失败: ' + tokenData.errmsg, 'error');
+                        return;
+                    }
+                }
+                
+                // 步骤2: 创建草稿（简化版本，暂不处理图片）
+                const draftData = {
+                    articles: [{
+                        title: title,
+                        content: content,
+                        digest: '',
+                        thumb_media_id: '',
+                        need_open_comment: 0,
+                        only_fans_can_comment: 0
+                    }]
+                };
+                
+                const draftResponse = await fetch(`https://api.weixin.qq.com/cgi-bin/draft/add?access_token=${token}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(draftData)
+                });
+                
+                const draftResult = await draftResponse.json();
+                showResult(draftResult);
+                
+                if (draftResult.errcode === 0) {
+                    showMessage('🎉 文章发布成功！媒体ID: ' + draftResult.media_id, 'success');
+                    updateStep(4);
+                    
+                    // 清空表单
+                    setTimeout(() => {
+                        document.getElementById('title').value = '';
+                        document.getElementById('content').value = '';
+                        updateStep(1);
+                    }, 3000);
+                } else {
+                    showMessage('❌ 发布失败: ' + draftResult.errmsg, 'error');
+                    updateStep(3);
+                }
+                
+            } catch (error) {
+                showResult({ error: error.message });
+                showMessage('❌ 发布失败: ' + error.message, 'error');
+            }
+        }
+        
+        // 清空所有
+        function clearAll() {
+            if (confirm('确定要清空所有内容吗？')) {
+                document.getElementById('appid').value = '';
+                document.getElementById('secret').value = '';
+                document.getElementById('title').value = '';
+                document.getElementById('content').value = '';
+                document.getElementById('cover-image').value = '';
+                accessToken = '';
+                uploadedMediaId = '';
+                updateStep(1);
+                document.getElementById('result-area').style.display = 'none';
+                showMessage('已清空所有内容', 'success');
+            }
+        }
+        
+        // 页面加载完成
+        document.addEventListener('DOMContentLoaded', function() {
+            // 自动获取用户IP
+            getMyIP();
+        });
+    </script>
+</body>
+</html>

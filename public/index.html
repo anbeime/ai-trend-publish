@@ -189,6 +189,147 @@
         max-height: 300px;
         overflow-y: auto;
       }
+
+      .wechat-publish, .draft-management {
+        background: #e8f4fd;
+        border: 1px solid #bee5eb;
+        border-radius: 10px;
+        padding: 20px;
+        margin-top: 20px;
+      }
+
+      .wechat-publish h3, .draft-management h3 {
+        color: #0c5460;
+        margin-bottom: 15px;
+      }
+
+      .publish-form textarea {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        font-size: 1rem;
+        font-family: inherit;
+        resize: vertical;
+        min-height: 120px;
+      }
+
+      .checkbox-group {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .checkbox-group input[type="checkbox"] {
+        width: auto;
+      }
+
+      .form-actions {
+        display: flex;
+        gap: 15px;
+        margin-top: 20px;
+        flex-wrap: wrap;
+      }
+
+      .btn-secondary {
+        background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
+      }
+
+      .btn-primary {
+        background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+      }
+
+      .btn-success {
+        background: linear-gradient(135deg, #28a745 0%, #1e7e34 100%);
+      }
+
+      .draft-actions {
+        margin-bottom: 20px;
+      }
+
+      .draft-list {
+        background: white;
+        border: 1px solid #dee2e6;
+        border-radius: 8px;
+        padding: 15px;
+        min-height: 100px;
+      }
+
+      .draft-item {
+        background: #f8f9fa;
+        border: 1px solid #e9ecef;
+        border-radius: 8px;
+        padding: 15px;
+        margin-bottom: 15px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+      }
+
+      .draft-item:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      }
+
+      .draft-info {
+        flex: 1;
+      }
+
+      .draft-title {
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 5px;
+      }
+
+      .draft-meta {
+        font-size: 0.9rem;
+        color: #666;
+      }
+
+      .draft-actions-btn {
+        display: flex;
+        gap: 10px;
+      }
+
+      .btn-small {
+        padding: 6px 12px;
+        font-size: 0.8rem;
+      }
+
+      .loading {
+        display: inline-block;
+        width: 20px;
+        height: 20px;
+        border: 2px solid #f3f3f3;
+        border-top: 2px solid #007bff;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        margin-right: 10px;
+      }
+
+      @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
+
+      .success {
+        background: #d4edda;
+        border: 1px solid #c3e6cb;
+        color: #155724;
+      }
+
+      .error {
+        background: #f8d7da;
+        border: 1px solid #f5c6cb;
+        color: #721c24;
+      }
+
+      .info {
+        background: #d1ecf1;
+        border: 1px solid #bee5eb;
+        color: #0c5460;
+      }
       
       @media (max-width: 768px) {
         .container {
@@ -269,7 +410,6 @@
         
         <div class="wechat-config">
           <h3>🔧 微信公众号配置</h3>
-          <div id="test-result" style="display: none; margin-bottom: 15px; padding: 15px; border-radius: 8px; font-weight: 500;"></div>
           <form class="config-form" id="wechat-form">
             <div class="form-group">
               <label for="appid">AppID:</label>
@@ -279,189 +419,71 @@
               <label for="secret">AppSecret:</label>
               <input type="password" id="secret" name="secret" placeholder="请输入微信公众号AppSecret" required>
             </div>
-            <div class="form-group">
-              <label for="authkey">AuthKey (高级功能):</label>
-              <input type="text" id="authkey" name="authkey" placeholder="输入 AuthKey 启用高级功能">
-            </div>
-            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-              <button type="submit" class="btn">保存配置</button>
-              <button type="button" onclick="testWeChatConfig()" class="btn" style="background: linear-gradient(135deg, #28a745, #20c997);">测试连接</button>
-              <button type="button" onclick="getLocalIPs()" class="btn" style="background: linear-gradient(135deg, #17a2b8, #138496);">获取本地IP</button>
-            </div>
+            <button type="submit" class="btn">保存配置</button>
           </form>
           
           <div id="api-response" class="response-area" style="display: none;"></div>
         </div>
 
-        <!-- 微信公众号配置指南 -->
-        <div class="config-guide" style="margin-top: 40px; background: #fff; border-radius: 15px; padding: 30px; border: 1px solid #e9ecef;">
-          <h3 style="color: #667eea; margin-bottom: 20px;">📋 微信公众号配置指南</h3>
+        <div class="wechat-publish">
+          <h3>📝 微信文章发布</h3>
+          <form class="publish-form" id="publish-form">
+            <div class="form-group">
+              <label for="article-title">文章标题:</label>
+              <input type="text" id="article-title" name="title" placeholder="请输入文章标题" required>
+            </div>
+            <div class="form-group">
+              <label for="article-author">作者（可选）:</label>
+              <input type="text" id="article-author" name="author" placeholder="请输入作者名称">
+            </div>
+            <div class="form-group">
+              <label for="article-content">文章内容（HTML格式）:</label>
+              <textarea id="article-content" name="content" rows="10" placeholder="请输入文章内容（支持HTML格式）" required></textarea>
+            </div>
+            <div class="form-group">
+              <label for="article-cover">封面图片:</label>
+              <input type="file" id="article-cover" name="cover" accept="image/*" required>
+              <small>支持 JPG/PNG 格式，文件大小不超过 2MB</small>
+            </div>
+            <div class="form-group">
+              <label for="article-digest">文章摘要（可选）:</label>
+              <input type="text" id="article-digest" name="digest" placeholder="请输入文章摘要">
+            </div>
+            <div class="form-group checkbox-group">
+              <input type="checkbox" id="show-cover" name="show_cover_pic" checked>
+              <label for="show-cover">显示封面图片</label>
+            </div>
+            <div class="form-group checkbox-group">
+              <input type="checkbox" id="enable-comment" name="need_open_comment">
+              <label for="enable-comment">开启评论功能</label>
+            </div>
+            <div class="form-actions">
+              <button type="button" class="btn btn-secondary" id="upload-cover-btn">上传封面</button>
+              <button type="button" class="btn btn-primary" id="save-draft-btn">保存草稿</button>
+              <button type="button" class="btn btn-success" id="publish-article-btn">发布文章</button>
+            </div>
+          </form>
           
-          <div style="display: grid; gap: 25px;">
-            <!-- 步骤1：获取AppID和AppSecret -->
-            <div style="background: #f8f9fa; padding: 20px; border-radius: 10px; border-left: 4px solid #667eea;">
-              <h4 style="color: #667eea; margin-bottom: 15px;">🔑 步骤1：获取 AppID 和 AppSecret</h4>
-              <ol style="color: #666; line-height: 1.8; margin-left: 20px;">
-                <li><strong>登录微信公众号后台</strong>：访问 <a href="https://mp.weixin.qq.com" target="_blank" style="color: #667eea;">mp.weixin.qq.com</a></li>
-                <li><strong>进入开发配置</strong>：左侧菜单 → 开发 → 基本配置</li>
-                <li><strong>获取开发者信息</strong>：
-                  <ul style="margin-top: 5px;">
-                    <li>AppID：应用ID，格式如 wxxxxxxxxxxxxxxxx</li>
-                    <li>AppSecret：应用密钥，点击"查看"后需要扫码验证</li>
-                  </ul>
-                </li>
-                <li><strong>复制信息</strong>：将获取的 AppID 和 AppSecret 复制到上方配置表单中</li>
-              </ol>
-              <div style="background: #fff3cd; border: 1px solid #ffeaa7; border-radius: 8px; padding: 15px; margin-top: 15px;">
-                <p style="color: #856404; margin: 0;">
-                  <strong>⚠️ 安全提醒</strong>：AppSecret 是敏感信息，请妥善保管，不要泄露给他人！
-                </p>
-              </div>
-              
-              <div style="background: #d4edda; border: 1px solid #c3e6cb; border-radius: 8px; padding: 15px; margin-top: 15px;">
-                <h5 style="color: #155724; margin-bottom: 10px;">📍 具体位置指引：</h5>
-                <div style="color: #155724; line-height: 1.6;">
-                  <p><strong>AppID位置</strong>：在"开发者ID(AppID)"栏位，格式为 wx开头 + 18位字符</p>
-                  <p><strong>AppSecret位置</strong>：在"开发者密钥(AppSecret)"栏位，默认显示为 "******"</p>
-                  <p><strong>操作按钮</strong>：AppSecret右侧有两个按钮 - "查看" 和 "重置"</p>
-                  <p><strong>重要提醒</strong>：不要点击"重置"按钮，否则旧AppSecret会失效！</p>
-                </div>
-              </div>
-            </div>
-
-            <!-- 步骤2：配置IP白名单 -->
-            <div style="background: #f8f9fa; padding: 20px; border-radius: 10px; border-left: 4px solid #28a745;">
-              <h4 style="color: #28a745; margin-bottom: 15px;">🌐 步骤2：配置 IP 白名单</h4>
-              
-              <!-- 什么是IP白名单 -->
-              <div style="background: #e7f3ff; border: 1px solid #b8daff; border-radius: 8px; padding: 15px; margin-bottom: 20px;">
-                <h5 style="color: #004085; margin-bottom: 10px;">🔍 什么是IP白名单？</h5>
-                <div style="color: #004085; line-height: 1.6;">
-                  <p><strong>IP白名单</strong>是微信公众号的安全机制，只允许<strong>特定的IP地址</strong>访问微信公众号API。</p>
-                  <p><strong>为什么需要？</strong>为了防止其他人盗用你的AppID和AppSecret调用微信接口。</p>
-                  <p><strong>如何工作？</strong>只有你添加到白名单的IP地址才能成功调用微信API获取access_token。</p>
-                </div>
-              </div>
-              
-              <ol style="color: #666; line-height: 1.8; margin-left: 20px;">
-                <li><strong>找到白名单设置</strong>：在基本配置页面找到"IP白名单"设置区域</li>
-                <li><strong>添加服务器IP</strong>：点击"修改"按钮，添加以下IP地址：
-                  <div style="background: white; border: 1px solid #ddd; border-radius: 5px; padding: 10px; margin: 10px 0; font-family: monospace;">
-                    64.29.17.1<br>
-                    216.198.79.1<br>
-                    76.76.19.1<br>
-                    76.76.21.1
-                  </div>
-                  <div style="background: #fff3cd; border: 1px solid #ffeaa7; border-radius: 5px; padding: 10px; margin-top: 10px; font-size: 0.9rem;">
-                    💡 <strong>或者点击上方的"获取本地IP"按钮</strong>，获取你的本地开发IP地址，用于本地测试
-                  </div>
-                </li>
-                <li><strong>保存设置</strong>：点击"确定"保存IP白名单配置</li>
-              </ol>
-              
-              <!-- IP白名单的作用 -->
-              <div style="background: #d4edda; border: 1px solid #c3e6cb; border-radius: 8px; padding: 15px; margin-top: 15px;">
-                <h5 style="color: #155724; margin-bottom: 10px;">🛡️ IP白名单的作用</h5>
-                <div style="color: #155724; line-height: 1.6;">
-                  <p>• <strong>安全保护</strong>：防止未授权的IP调用你的微信API</p>
-                  <p>• <strong>访问控制</strong>：只有白名单内的服务器能获取access_token</p>
-                  <p>• <strong>环境区分</strong>：可以为不同环境（开发、测试、生产）设置不同的IP</p>
-                </div>
-              </div>
-              
-              <div style="background: #d1ecf1; border: 1px solid #bee5eb; border-radius: 8px; padding: 15px; margin-top: 15px;">
-                <p style="color: #0c5460; margin: 0;">
-                  <strong>💡 提示</strong>：IP白名单配置后可能需要几分钟生效，请耐心等待。
-                </p>
-              </div>
-            </div>
-
-            <!-- 步骤3：验证配置 -->
-            <div style="background: #f8f9fa; padding: 20px; border-radius: 10px; border-left: 4px solid #ffc107;">
-              <h4 style="color: #ffc107; margin-bottom: 15px;">✅ 步骤3：验证配置</h4>
-              <ol style="color: #666; line-height: 1.8; margin-left: 20px;">
-                <li><strong>填写配置信息</strong>：在上方表单中填入获取的 AppID 和 AppSecret</li>
-                <li><strong>点击保存配置</strong>：系统会自动验证配置是否正确</li>
-                <li><strong>查看响应结果</strong>：配置成功后会显示相应的提示信息</li>
-                <li><strong>测试发布功能</strong>：配置成功后即可使用文章发布功能</li>
-              </ol>
-            </div>
-
-            <!-- 常见问题 -->
-            <div style="background: #f8f9fa; padding: 20px; border-radius: 10px; border-left: 4px solid #dc3545;">
-              <h4 style="color: #dc3545; margin-bottom: 15px;">❓ 常见问题</h4>
-              <div style="color: #666; line-height: 1.8;">
-                <p><strong>Q: 找不到AppSecret怎么办？</strong></p>
-                <p>A: AppSecret默认是隐藏的，需要点击"查看"按钮，然后使用管理员微信扫码验证后才能看到。</p>
-                
-                <p style="margin-top: 15px;"><strong>Q: 我是管理员但看不到AppSecret？</strong></p>
-                <p>A: 请按以下步骤操作：</p>
-                <ol style="margin-left: 20px;">
-                  <li>确认使用的是管理员微信账号登录</li>
-                  <li>在基本配置页面找到AppSecret栏位</li>
-                  <li>点击右侧的"查看"按钮（不是"重置"）</li>
-                  <li>使用微信扫描弹出的二维码</li>
-                  <li>在手机端确认"允许查看AppSecret"</li>
-                  <li>页面会显示完整的AppSecret字符串</li>
-                </ol>
-                
-                <p style="margin-top: 15px;"><strong>Q: 点击查看后提示"无权限"？</strong></p>
-                <p>A: 这说明当前登录的微信不是该公众号的管理员，需要：</p>
-                <ul style="margin-left: 20px;">
-                  <li>联系公众号所有者添加你为管理员</li>
-                  <li>或者让现有管理员帮你查看</li>
-                  <li>管理员在"人员设置"中添加权限</li>
-                </ul>
-                
-                <p style="margin-top: 15px;"><strong>Q: IP白名单配置后还是无法使用？</strong></p>
-                <p>A: IP白名单配置需要几分钟生效，请等待5-10分钟后重试。如果仍有问题，请检查IP地址是否正确添加。</p>
-                
-                <p style="margin-top: 15px;"><strong>Q: 配置保存失败是什么原因？</strong></p>
-                <p>A: 可能的原因：1) AppID或AppSecret填写错误；2) IP白名单未正确配置；3) 网络连接问题。请检查后重试。</p>
-              </div>
-            </div>
-          </div>
+          <div id="publish-response" class="response-area" style="display: none;"></div>
         </div>
 
-        <!-- Note to MP 高级功能 -->
-        <div class="advanced-features" style="margin-top: 40px; background: #f8f9fa; border-radius: 15px; padding: 30px;">
-          <h3 style="color: #667eea; margin-bottom: 20px;">🚀 Note to MP 高级功能</h3>
-          
-          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-bottom: 30px;">
-            <div style="background: white; padding: 20px; border-radius: 10px; border-left: 4px solid #667eea;">
-              <h4 style="color: #667eea; margin-bottom: 10px;">📝 文章发布</h4>
-              <p style="color: #666; font-size: 0.9rem;">直接发布文章到微信公众号草稿箱，支持富文本格式</p>
-              <button onclick="showPublishModal()" class="btn" style="margin-top: 10px; background: linear-gradient(135deg, #667eea, #764ba2);">发布文章</button>
-            </div>
-            
-            <div style="background: white; padding: 20px; border-radius: 10px; border-left: 4px solid #28a745;">
-              <h4 style="color: #28a745; margin-bottom: 10px;">🖼️ 图片上传</h4>
-              <p style="color: #666; font-size: 0.9rem;">批量上传图片到微信素材库，支持多种格式</p>
-              <input type="file" id="image-upload" multiple accept="image/*" style="margin-top: 10px;">
-              <button onclick="uploadImages()" class="btn" style="margin-top: 10px; background: linear-gradient(135deg, #28a745, #20c997);">上传图片</button>
-            </div>
-            
-            <div style="background: white; padding: 20px; border-radius: 10px; border-left: 4px solid #ffc107;">
-              <h4 style="color: #ffc107; margin-bottom: 10px;">🔐 数据加密</h4>
-              <p style="color: #666; font-size: 0.9rem;">使用专业加密服务保护敏感数据</p>
-              <button onclick="encryptData()" class="btn" style="margin-top: 10px; background: linear-gradient(135deg, #ffc107, #ff6b6b);">加密数据</button>
-            </div>
-            
-            <div style="background: white; padding: 20px; border-radius: 10px; border-left: 4px solid #17a2b8;">
-              <h4 style="color: #17a2b8; margin-bottom: 10px;">📊 数学公式</h4>
-              <p style="color: #666; font-size: 0.9rem;">支持 LaTeX 和 AsciiMath 数学公式渲染</p>
-              <button onclick="showMathWidget()" class="btn" style="margin-top: 10px; background: linear-gradient(135deg, #17a2b8, #138496);">数学工具</button>
-            </div>
+        <div class="draft-management">
+          <h3>📋 草稿管理</h3>
+          <div class="draft-actions">
+            <button type="button" class="btn" id="refresh-drafts-btn">刷新草稿列表</button>
+          </div>
+          <div id="draft-list" class="draft-list">
+            <p>暂无草稿，请先创建文章</p>
           </div>
         </div>
       </div>
     </div>
 
-    <script src="note-features.js"></script>
     <script>
-      // 初始化 Note to MP 集成
-      const noteIntegration = new NoteToMPIntegration();
-      
+      // 全局变量
+      let accessToken = null;
+      let currentCoverMediaId = null;
+
       // 检查服务状态
       async function checkServiceStatus() {
         try {
@@ -472,6 +494,31 @@
         } catch (error) {
           document.getElementById('service-status').textContent = '离线';
           document.querySelector('.status-indicator').classList.add('status-offline');
+        }
+      }
+
+      // 显示响应消息
+      function showMessage(elementId, message, type = 'info') {
+        const element = document.getElementById(elementId);
+        element.style.display = 'block';
+        element.className = `response-area ${type}`;
+        element.textContent = message;
+        
+        // 3秒后自动隐藏
+        if (type === 'success') {
+          setTimeout(() => {
+            element.style.display = 'none';
+          }, 3000);
+        }
+      }
+
+      // 显示加载状态
+      function setLoading(elementId, loading = true) {
+        const element = document.getElementById(elementId);
+        if (loading) {
+          element.innerHTML = '<span class="loading"></span>处理中...';
+        } else {
+          element.innerHTML = '';
         }
       }
 
@@ -495,295 +542,324 @@
           });
 
           const result = await response.json();
-          const responseArea = document.getElementById('api-response');
-          responseArea.style.display = 'block';
-          responseArea.textContent = JSON.stringify(result, null, 2);
+          showMessage('api-response', `配置保存成功！\n${JSON.stringify(result, null, 2)}`, 'success');
+          
+          // 尝试获取access token
+          await getAccessToken();
         } catch (error) {
-          const responseArea = document.getElementById('api-response');
-          responseArea.style.display = 'block';
-          responseArea.textContent = '请求失败: ' + error.message;
+          showMessage('api-response', `配置保存失败: ${error.message}`, 'error');
         }
       });
 
-      // 高级功能：显示发布模态框
-      function showPublishModal() {
-        const modal = document.createElement('div');
-        modal.style.cssText = `
-          position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-          background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center;
-          z-index: 1000;
-        `;
-        modal.innerHTML = `
-          <div style="background: white; padding: 30px; border-radius: 15px; max-width: 600px; width: 90%;">
-            <h3 style="margin-bottom: 20px; color: #667eea;">📝 发布文章</h3>
-            <div style="display: grid; gap: 15px;">
-              <input type="text" id="article-title" placeholder="文章标题" style="padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
-              <textarea id="article-content" placeholder="文章内容 (支持 HTML)" style="padding: 10px; border: 1px solid #ddd; border-radius: 5px; min-height: 200px; width: 100%;"></textarea>
-              <input type="text" id="article-summary" placeholder="文章摘要 (可选)" style="padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
-              <div style="display: flex; gap: 10px; margin-top: 15px;">
-                <button onclick="publishArticle()" style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer;">发布到草稿</button>
-                <button onclick="closeModal()" style="background: #6c757d; color: white; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer;">取消</button>
-              </div>
-            </div>
-          </div>
-        `;
-        document.body.appendChild(modal);
-        modal.onclick = (e) => {
-          if (e.target === modal) closeModal();
-        };
+      // 获取访问令牌
+      async function getAccessToken() {
+        try {
+          const response = await fetch('/api/wechat/token');
+          const result = await response.json();
+          
+          if (result.success && result.data.access_token) {
+            accessToken = result.data.access_token;
+            showMessage('api-response', 'Access Token 获取成功！', 'success');
+            return true;
+          } else {
+            throw new Error(result.error?.message || '获取Access Token失败');
+          }
+        } catch (error) {
+          showMessage('api-response', `获取Access Token失败: ${error.message}`, 'error');
+          return false;
+        }
       }
 
-      // 关闭模态框
-      function closeModal() {
-        const modal = document.querySelector('[style*="position: fixed"]');
-        if (modal) modal.remove();
-      }
-
-      // 发布文章
-      async function publishArticle() {
-        const title = document.getElementById('article-title').value;
-        const content = document.getElementById('article-content').value;
-        const summary = document.getElementById('article-summary').value;
-
-        if (!title || !content) {
-          alert('请填写标题和内容');
+      // 上传封面图片
+      document.getElementById('upload-cover-btn').addEventListener('click', async () => {
+        const fileInput = document.getElementById('article-cover');
+        const file = fileInput.files[0];
+        
+        if (!file) {
+          showMessage('publish-response', '请先选择封面图片', 'error');
           return;
         }
+
+        // 检查文件大小
+        if (file.size > 2 * 1024 * 1024) {
+          showMessage('publish-response', '图片文件大小不能超过2MB', 'error');
+          return;
+        }
+
+        // 检查文件类型
+        if (!['image/jpeg', 'image/png', 'image/jpg'].includes(file.type)) {
+          showMessage('publish-response', '仅支持JPG/PNG格式的图片', 'error');
+          return;
+        }
+
+        const formData = new FormData();
+        formData.append('file', file);
+
+        setLoading('publish-response', true);
+
+        try {
+          const response = await fetch('/api/wechat/upload-image', {
+            method: 'POST',
+            body: formData
+          });
+
+          const result = await response.json();
+          setLoading('publish-response', false);
+
+          if (result.success && result.data.media_id) {
+            currentCoverMediaId = result.data.media_id;
+            showMessage('publish-response', `封面上传成功！\nMedia ID: ${result.data.media_id}`, 'success');
+          } else {
+            throw new Error(result.error?.message || '上传失败');
+          }
+        } catch (error) {
+          setLoading('publish-response', false);
+          showMessage('publish-response', `封面上传失败: ${error.message}`, 'error');
+        }
+      });
+
+      // 保存草稿
+      document.getElementById('save-draft-btn').addEventListener('click', async () => {
+        if (!currentCoverMediaId) {
+          showMessage('publish-response', '请先上传封面图片', 'error');
+          return;
+        }
+
+        const formData = new FormData(document.getElementById('publish-form'));
+        const articleData = {
+          title: formData.get('title'),
+          content: formData.get('content'),
+          thumb_media_id: currentCoverMediaId,
+          author: formData.get('author') || '',
+          digest: formData.get('digest') || '',
+          need_open_comment: document.getElementById('enable-comment').checked ? 1 : 0,
+          show_cover_pic: document.getElementById('show-cover').checked ? 1 : 0,
+          is_original: 0
+        };
+
+        setLoading('publish-response', true);
 
         try {
           const response = await fetch('/api/wechat/publish', {
             method: 'POST',
             headers: {
-              'Content-Type': 'application/json'
+              'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ title, content, summary })
+            body: JSON.stringify(articleData)
           });
-          
+
           const result = await response.json();
-          showResponse(result);
+          setLoading('publish-response', false);
+
           if (result.success) {
-            closeModal();
-          }
-        } catch (error) {
-          alert('发布失败: ' + error.message);
-        }
-      }
-
-      // 上传图片
-      async function uploadImages() {
-        const fileInput = document.getElementById('image-upload');
-        const files = fileInput.files;
-        
-        if (files.length === 0) {
-          alert('请选择要上传的图片');
-          return;
-        }
-
-        for (let file of files) {
-          const formData = new FormData();
-          formData.append('media', file);
-          
-          try {
-            const response = await fetch('/api/wechat/upload-image', {
-              method: 'POST',
-              body: formData
-            });
+            showMessage('publish-response', `草稿保存成功！\nMedia ID: ${result.data.media_id}`, 'success');
             
-            const result = await response.json();
-            showResponse(result);
-          } catch (error) {
-            alert('上传失败: ' + error.message);
+            // 清空表单
+            document.getElementById('publish-form').reset();
+            currentCoverMediaId = null;
+            
+            // 刷新草稿列表
+            loadDraftList();
+          } else {
+            throw new Error(result.error?.message || '保存失败');
           }
+        } catch (error) {
+          setLoading('publish-response', false);
+          showMessage('publish-response', `草稿保存失败: ${error.message}`, 'error');
         }
-      }
+      });
 
-      // 加密数据
-      async function encryptData() {
-        const authkey = document.getElementById('authkey').value;
-        if (!authkey) {
-          alert('请先填写 AuthKey');
+      // 发布文章
+      document.getElementById('publish-article-btn').addEventListener('click', async () => {
+        if (!currentCoverMediaId) {
+          showMessage('publish-response', '请先上传封面图片并保存草稿', 'error');
           return;
         }
 
-        const data = prompt('请输入要加密的数据 (JSON 格式):', '{"test": "数据"}');
-        if (!data) return;
+        // 先保存草稿，然后发布
+        await saveAndPublish();
+      });
 
-        try {
-          const result = await noteIntegration.wxEncrypt(authkey, JSON.parse(data));
-          showResponse(result);
-        } catch (error) {
-          alert('加密失败: ' + error.message);
-        }
-      }
-
-      // 显示数学工具
-      async function showMathWidget() {
-        const authkey = document.getElementById('authkey').value;
-        if (!authkey) {
-          alert('请先填写 AuthKey');
-          return;
-        }
-
-        const params = prompt('请输入数学公式参数:', '{"formula": "E=mc^2"}');
-        if (!params) return;
-
-        try {
-          const result = await noteIntegration.wxWidget(authkey, params);
-          alert('数学公式结果: ' + result);
-        } catch (error) {
-          alert('计算失败: ' + error.message);
-        }
-      }
-
-      // 显示响应结果
-      function showResponse(result) {
-        const responseArea = document.getElementById('api-response');
-        responseArea.style.display = 'block';
-        responseArea.textContent = JSON.stringify(result, null, 2);
-        
-        // 3秒后自动隐藏成功消息
-        if (result.success) {
-          setTimeout(() => {
-            responseArea.style.display = 'none';
-          }, 3000);
-        }
-      }
-
-      // 处理微信配置表单提交
-      document.getElementById('wechat-form').addEventListener('submit', async (e) => {
-        e.preventDefault();
-        
-        const formData = new FormData(e.target);
-        const config = {
-          appid: formData.get('appid'),
-          secret: formData.get('secret'),
-          authkey: formData.get('authkey')
+      // 保存草稿并发布
+      async function saveAndPublish() {
+        const formData = new FormData(document.getElementById('publish-form'));
+        const articleData = {
+          title: formData.get('title'),
+          content: formData.get('content'),
+          thumb_media_id: currentCoverMediaId,
+          author: formData.get('author') || '',
+          digest: formData.get('digest') || '',
+          need_open_comment: document.getElementById('enable-comment').checked ? 1 : 0,
+          show_cover_pic: document.getElementById('show-cover').checked ? 1 : 0,
+          is_original: 0
         };
 
+        setLoading('publish-response', true);
+
         try {
-          const response = await fetch('/api/wechat/config', {
+          // 先保存草稿
+          const draftResponse = await fetch('/api/wechat/publish', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
             },
-            body: JSON.stringify(config)
+            body: JSON.stringify(articleData)
           });
-          
-          const result = await response.json();
-          showResponse(result);
-        } catch (error) {
-          const responseArea = document.getElementById('api-response');
-          responseArea.style.display = 'block';
-          responseArea.textContent = '请求失败: ' + error.message;
-        }
-      });
 
-      // 测试微信配置
-      async function testWeChatConfig() {
-        const appid = document.getElementById('appid').value.trim();
-        const secret = document.getElementById('secret').value.trim();
-        
-        if (!appid || !secret) {
-          showTestResult('请先填写AppID和AppSecret！', 'warning');
-          return;
-        }
-        
-        showTestResult('正在测试微信API连接...', 'info');
-        
-        try {
-          // 测试获取access_token
-          const tokenResponse = await fetch('/api/wechat/test', {
+          const draftResult = await draftResponse.json();
+
+          if (!draftResult.success) {
+            throw new Error(draftResult.error?.message || '保存草稿失败');
+          }
+
+          const mediaId = draftResult.data.media_id;
+
+          // 然后发布草稿
+          const publishResponse = await fetch('/api/wechat/publish-article', {
             method: 'POST',
             headers: {
-              'Content-Type': 'application/json'
+              'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ appid, secret })
+            body: JSON.stringify({ media_id: mediaId })
           });
-          
-          const result = await tokenResponse.json();
-          
-          if (result.success) {
-            showTestResult('✅ 连接成功！微信API配置正常，可以正常使用发布功能。', 'success');
+
+          const publishResult = await publishResponse.json();
+          setLoading('publish-response', false);
+
+          if (publishResult.success) {
+            showMessage('publish-response', `文章发布成功！\nPublish ID: ${publishResult.data.publish_id}`, 'success');
+            
+            // 清空表单
+            document.getElementById('publish-form').reset();
+            currentCoverMediaId = null;
+            
+            // 刷新草稿列表
+            loadDraftList();
           } else {
-            showTestResult(`❌ 连接失败：${result.error || '未知错误'}`, 'error');
+            throw new Error(publishResult.error?.message || '发布失败');
           }
         } catch (error) {
-          showTestResult(`❌ 网络错误：${error.message}`, 'error');
+          setLoading('publish-response', false);
+          showMessage('publish-response', `文章发布失败: ${error.message}`, 'error');
         }
       }
 
-      // 获取本地IP地址
-      async function getLocalIPs() {
-        showTestResult('正在获取本地IP地址...', 'info');
-        
+      // 加载草稿列表
+      async function loadDraftList() {
+        setLoading('draft-list', true);
+
         try {
-          const response = await fetch('/api/wechat/local-ip');
+          const response = await fetch('/api/wechat/drafts');
           const result = await response.json();
-          
-          if (result.success) {
-            let ipInfo = '🌐 IP地址信息：\n\n';
-            
-            if (result.local_ips && result.local_ips.length > 0) {
-              ipInfo += '📱 本地开发IP：\n';
-              result.local_ips.forEach(ip => {
-                ipInfo += `• ${ip.ip} (${ip.interface} - ${ip.type})\n`;
-              });
-              ipInfo += '\n';
-            }
-            
-            ipInfo += '☁️ Cloudflare Pages IP（线上环境）：\n';
-            result.cloudflare_ips.forEach(ip => {
-              ipInfo += `• ${ip.ip} (${ip.type})\n`;
-            });
-            
-            ipInfo += '\n💡 使用说明：\n';
-            ipInfo += '• 本地测试：将本地开发IP添加到微信白名单\n';
-            ipInfo += '• 线上部署：使用Cloudflare Pages IP\n';
-            ipInfo += '• 可以同时配置本地和线上IP';
-            
-            showTestResult(ipInfo, 'info');
+          setLoading('draft-list', false);
+
+          if (result.success && result.data.item && result.data.item.length > 0) {
+            displayDraftList(result.data.item);
           } else {
-            showTestResult('❌ 获取IP失败：' + result.error, 'error');
+            document.getElementById('draft-list').innerHTML = '<p>暂无草稿，请先创建文章</p>';
           }
         } catch (error) {
-          showTestResult('❌ 网络错误：' + error.message, 'error');
+          setLoading('draft-list', false);
+          document.getElementById('draft-list').innerHTML = `<p class="error">加载草稿列表失败: ${error.message}</p>`;
         }
       }
 
-      // 显示测试结果
-      function showTestResult(message, type) {
-        const resultDiv = document.getElementById('test-result');
-        resultDiv.style.display = 'block';
-        resultDiv.style.whiteSpace = 'pre-line';
-        resultDiv.textContent = message;
+      // 显示草稿列表
+      function displayDraftList(drafts) {
+        const draftListElement = document.getElementById('draft-list');
         
-        // 设置样式
-        switch(type) {
-          case 'success':
-            resultDiv.style.background = '#d4edda';
-            resultDiv.style.border = '1px solid #c3e6cb';
-            resultDiv.style.color = '#155724';
-            break;
-          case 'error':
-            resultDiv.style.background = '#f8d7da';
-            resultDiv.style.border = '1px solid #f5c6cb';
-            resultDiv.style.color = '#721c24';
-            break;
-          case 'warning':
-            resultDiv.style.background = '#fff3cd';
-            resultDiv.style.border = '1px solid #ffeaa7';
-            resultDiv.style.color = '#856404';
-            break;
-          case 'info':
-            resultDiv.style.background = '#d1ecf1';
-            resultDiv.style.border = '1px solid #bee5eb';
-            resultDiv.style.color = '#0c5460';
-            break;
+        const html = drafts.map(draft => {
+          const newsItem = draft.content.news_item[0];
+          const updateTime = new Date(draft.update_time * 1000).toLocaleString();
+          
+          return `
+            <div class="draft-item">
+              <div class="draft-info">
+                <div class="draft-title">${newsItem.title}</div>
+                <div class="draft-meta">
+                  作者: ${newsItem.author || '未知'} | 
+                  更新时间: ${updateTime}
+                </div>
+              </div>
+              <div class="draft-actions-btn">
+                <button class="btn btn-primary btn-small" onclick="publishDraft('${draft.media_id}')">
+                  发布
+                </button>
+                <button class="btn btn-secondary btn-small" onclick="deleteDraft('${draft.media_id}')">
+                  删除
+                </button>
+              </div>
+            </div>
+          `;
+        }).join('');
+
+        draftListElement.innerHTML = html;
+      }
+
+      // 发布指定草稿
+      async function publishDraft(mediaId) {
+        setLoading('draft-list', true);
+
+        try {
+          const response = await fetch('/api/wechat/publish-article', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ media_id: mediaId })
+          });
+
+          const result = await response.json();
+          setLoading('draft-list', false);
+
+          if (result.success) {
+            showMessage('publish-response', `文章发布成功！\nPublish ID: ${result.data.publish_id}`, 'success');
+            loadDraftList();
+          } else {
+            throw new Error(result.error?.message || '发布失败');
+          }
+        } catch (error) {
+          setLoading('draft-list', false);
+          showMessage('publish-response', `发布失败: ${error.message}`, 'error');
         }
       }
 
-      // 页面加载完成后检查服务状态
-      document.addEventListener('DOMContentLoaded', checkServiceStatus);
+      // 删除草稿
+      async function deleteDraft(mediaId) {
+        if (!confirm('确定要删除这个草稿吗？')) {
+          return;
+        }
+
+        setLoading('draft-list', true);
+
+        try {
+          const response = await fetch(`/api/wechat/draft/${mediaId}`, {
+            method: 'DELETE'
+          });
+
+          const result = await response.json();
+          setLoading('draft-list', false);
+
+          if (result.success) {
+            showMessage('publish-response', '草稿删除成功', 'success');
+            loadDraftList();
+          } else {
+            throw new Error(result.error?.message || '删除失败');
+          }
+        } catch (error) {
+          setLoading('draft-list', false);
+          showMessage('publish-response', `删除失败: ${error.message}`, 'error');
+        }
+      }
+
+      // 刷新草稿列表按钮
+      document.getElementById('refresh-drafts-btn').addEventListener('click', loadDraftList);
+
+      // 页面加载完成后执行
+      document.addEventListener('DOMContentLoaded', () => {
+        checkServiceStatus();
+        loadDraftList();
+      });
       
       // 每30秒检查一次服务状态
       setInterval(checkServiceStatus, 30000);

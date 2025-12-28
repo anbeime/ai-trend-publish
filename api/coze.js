@@ -250,10 +250,25 @@ app.get('/api/ip', async (c) => {
 
 // ========== Coze 插件专用接口 ==========
 
-// Coze 获取令牌接口
-app.post('/coze/token', async (c) => {
+// Coze 获取令牌接口（支持GET和POST）
+app.all('/coze/token', async (c) => {
   try {
-    const { appid, secret, grant_type = 'client_credential' } = await c.req.json();
+    let appid, secret, grant_type = 'client_credential';
+    
+    // GET请求：从query获取参数
+    if (c.req.method === 'GET') {
+      const query = c.req.query();
+      appid = query.appid;
+      secret = query.secret;
+      grant_type = query.grant_type || 'client_credential';
+    }
+    // POST请求：从body获取参数（保持兼容）
+    else {
+      const body = await c.req.json();
+      appid = body.appid;
+      secret = body.secret;
+      grant_type = body.grant_type || 'client_credential';
+    }
     
     if (!appid || !secret) {
       return c.json({

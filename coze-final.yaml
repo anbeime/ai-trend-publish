@@ -7,31 +7,37 @@ servers:
   - url: https://mp.miyucaicai.cn
 paths:
   /coze/token:
-    post:
+    get:  # 改为GET，符合微信官方规范
       operationId: getAccessToken
-      requestBody:
-        content:
-          application/json:
-            schema:
-              properties:
-                appid: {type: string}
-                grant_type: {default: client_credential, type: string}
-                secret: {type: string}
-              required: [appid, secret]
-              type: object
+      parameters:  # 改为QUERY传参
+        - name: appid
+          in: query
+          required: true
+          schema: { type: string }
+          description: 微信公众号AppID
+        - name: secret
+          in: query
+          required: true
+          schema: { type: string }
+          description: 微信公众号AppSecret
+        - name: grant_type
+          in: query
+          required: true
+          schema: { type: string, default: client_credential }
+          description: 授权类型（固定值）
       responses:
         '200':
+          description: 令牌获取成功
           content:
             application/json:
               schema:
+                type: object
                 properties:
-                  success:
-                    example: true
-                    type: boolean
+                  success: { type: boolean, example: true }
                   data:
                     properties:
-                      access_token: {description: 微信API访问令牌, type: string}
-                      expires_in: {description: 过期时间（秒）, type: integer}
+                      access_token: { description: 微信API访问令牌, type: string }
+                      expires_in: { description: 过期时间（秒）, type: integer }
                     type: object
                 type: object
       summary: 获取微信访问令牌

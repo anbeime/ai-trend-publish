@@ -288,6 +288,82 @@
           <div id="api-response" class="response-area" style="display: none;"></div>
         </div>
 
+        <!-- 微信公众号配置指南 -->
+        <div class="config-guide" style="margin-top: 40px; background: #fff; border-radius: 15px; padding: 30px; border: 1px solid #e9ecef;">
+          <h3 style="color: #667eea; margin-bottom: 20px;">📋 微信公众号配置指南</h3>
+          
+          <div style="display: grid; gap: 25px;">
+            <!-- 步骤1：获取AppID和AppSecret -->
+            <div style="background: #f8f9fa; padding: 20px; border-radius: 10px; border-left: 4px solid #667eea;">
+              <h4 style="color: #667eea; margin-bottom: 15px;">🔑 步骤1：获取 AppID 和 AppSecret</h4>
+              <ol style="color: #666; line-height: 1.8; margin-left: 20px;">
+                <li><strong>登录微信公众号后台</strong>：访问 <a href="https://mp.weixin.qq.com" target="_blank" style="color: #667eea;">mp.weixin.qq.com</a></li>
+                <li><strong>进入开发配置</strong>：左侧菜单 → 开发 → 基本配置</li>
+                <li><strong>获取开发者信息</strong>：
+                  <ul style="margin-top: 5px;">
+                    <li>AppID：应用ID，格式如 wxxxxxxxxxxxxxxxx</li>
+                    <li>AppSecret：应用密钥，点击"查看"后需要扫码验证</li>
+                  </ul>
+                </li>
+                <li><strong>复制信息</strong>：将获取的 AppID 和 AppSecret 复制到上方配置表单中</li>
+              </ol>
+              <div style="background: #fff3cd; border: 1px solid #ffeaa7; border-radius: 8px; padding: 15px; margin-top: 15px;">
+                <p style="color: #856404; margin: 0;">
+                  <strong>⚠️ 安全提醒</strong>：AppSecret 是敏感信息，请妥善保管，不要泄露给他人！
+                </p>
+              </div>
+            </div>
+
+            <!-- 步骤2：配置IP白名单 -->
+            <div style="background: #f8f9fa; padding: 20px; border-radius: 10px; border-left: 4px solid #28a745;">
+              <h4 style="color: #28a745; margin-bottom: 15px;">🌐 步骤2：配置 IP 白名单</h4>
+              <ol style="color: #666; line-height: 1.8; margin-left: 20px;">
+                <li><strong>找到白名单设置</strong>：在基本配置页面找到"IP白名单"设置区域</li>
+                <li><strong>添加服务器IP</strong>：点击"修改"按钮，添加以下IP地址：
+                  <div style="background: white; border: 1px solid #ddd; border-radius: 5px; padding: 10px; margin: 10px 0; font-family: monospace;">
+                    64.29.17.1<br>
+                    216.198.79.1<br>
+                    76.76.19.1<br>
+                    76.76.21.1
+                  </div>
+                </li>
+                <li><strong>保存设置</strong>：点击"确定"保存IP白名单配置</li>
+              </ol>
+              <div style="background: #d1ecf1; border: 1px solid #bee5eb; border-radius: 8px; padding: 15px; margin-top: 15px;">
+                <p style="color: #0c5460; margin: 0;">
+                  <strong>💡 提示</strong>：IP白名单配置后可能需要几分钟生效，请耐心等待。
+                </p>
+              </div>
+            </div>
+
+            <!-- 步骤3：验证配置 -->
+            <div style="background: #f8f9fa; padding: 20px; border-radius: 10px; border-left: 4px solid #ffc107;">
+              <h4 style="color: #ffc107; margin-bottom: 15px;">✅ 步骤3：验证配置</h4>
+              <ol style="color: #666; line-height: 1.8; margin-left: 20px;">
+                <li><strong>填写配置信息</strong>：在上方表单中填入获取的 AppID 和 AppSecret</li>
+                <li><strong>点击保存配置</strong>：系统会自动验证配置是否正确</li>
+                <li><strong>查看响应结果</strong>：配置成功后会显示相应的提示信息</li>
+                <li><strong>测试发布功能</strong>：配置成功后即可使用文章发布功能</li>
+              </ol>
+            </div>
+
+            <!-- 常见问题 -->
+            <div style="background: #f8f9fa; padding: 20px; border-radius: 10px; border-left: 4px solid #dc3545;">
+              <h4 style="color: #dc3545; margin-bottom: 15px;">❓ 常见问题</h4>
+              <div style="color: #666; line-height: 1.8;">
+                <p><strong>Q: 找不到AppSecret怎么办？</strong></p>
+                <p>A: AppSecret默认是隐藏的，需要点击"查看"按钮，然后使用管理员微信扫码验证后才能看到。</p>
+                
+                <p style="margin-top: 15px;"><strong>Q: IP白名单配置后还是无法使用？</strong></p>
+                <p>A: IP白名单配置需要几分钟生效，请等待5-10分钟后重试。如果仍有问题，请检查IP地址是否正确添加。</p>
+                
+                <p style="margin-top: 15px;"><strong>Q: 配置保存失败是什么原因？</strong></p>
+                <p>A: 可能的原因：1) AppID或AppSecret填写错误；2) IP白名单未正确配置；3) 网络连接问题。请检查后重试。</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <!-- Note to MP 高级功能 -->
         <div class="advanced-features" style="margin-top: 40px; background: #f8f9fa; border-radius: 15px; padding: 30px;">
           <h3 style="color: #667eea; margin-bottom: 20px;">🚀 Note to MP 高级功能</h3>

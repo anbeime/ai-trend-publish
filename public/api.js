@@ -14,8 +14,8 @@ app.use('*', cors({
 
 // 微信配置存储（在实际部署中应该使用环境变量或数据库）
 let wechatConfig = {
-  appid: '',
-  secret: ''
+  appid: 'wx8410119dfbb7f756',
+  secret: '3c93e33e087e57b906f5c341aa5223b9'
 };
 
 // 健康检查
@@ -113,8 +113,8 @@ app.post('/api/wechat/publish', async (c) => {
     }
 
     // 先获取访问令牌
-    const tokenResponse = await c.req.env?.fetch?.(`https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=${wechatConfig.appid}&secret=${wechatConfig.secret}`);
-    const tokenData = await tokenResponse?.json();
+    const tokenResponse = await fetch(`https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=${wechatConfig.appid}&secret=${wechatConfig.secret}`);
+    const tokenData = await tokenResponse.json();
 
     if (!tokenData?.access_token) {
       return c.json({
@@ -181,8 +181,8 @@ app.post('/api/wechat/upload-image', async (c) => {
     }
 
     // 先获取访问令牌
-    const tokenResponse = await c.req.env?.fetch?.(`https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=${wechatConfig.appid}&secret=${wechatConfig.secret}`);
-    const tokenData = await tokenResponse?.json();
+    const tokenResponse = await fetch(`https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=${wechatConfig.appid}&secret=${wechatConfig.secret}`);
+    const tokenData = await tokenResponse.json();
 
     if (!tokenData?.access_token) {
       return c.json({
@@ -228,16 +228,16 @@ app.post('/api/wechat/upload-image', async (c) => {
 // 获取服务器IP地址（用于微信白名单）
 app.get('/api/ip', async (c) => {
   try {
-    // 在Cloudflare Pages中，可以使用cf对象获取客户端信息
-    const clientIP = c.req.header('cf-connecting-ip') || 
-                   c.req.header('x-forwarded-for')?.split(',')[0] || 
+    // 在Vercel中，获取客户端IP
+    const clientIP = c.req.header('x-forwarded-for')?.split(',')[0] || 
+                   c.req.header('x-real-ip') || 
                    '未知';
     
-    // 获取Cloudflare的IP范围（这里返回的是当前请求的IP）
+    // 返回IP信息
     return c.json({
       client_ip: clientIP,
       server_info: {
-        platform: 'Cloudflare Pages',
+        platform: 'Vercel',
         timestamp: new Date().toISOString()
       }
     });

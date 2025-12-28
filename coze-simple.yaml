@@ -1,0 +1,145 @@
+openapi: 3.0.0
+info:
+  title: 微信文章发布 Coze 插件
+  version: 1.0.0
+servers:
+  - url: https://mp.miyucaicai.cn
+paths:
+  /coze/token:
+    post:
+      summary: 获取微信访问令牌
+      parameters:
+        - name: appid
+          in: query
+          required: true
+          schema: { type: string }
+        - name: secret
+          in: query
+          required: true
+          schema: { type: string }
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [appid, secret]
+              properties:
+                appid: { type: string }
+                secret: { type: string }
+                grant_type: { type: string, default: client_credential }
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean }
+                  data:
+                    type: object
+                    properties:
+                      access_token: { type: string }
+                      expires_in: { type: integer }
+
+  /coze/upload:
+    post:
+      summary: 上传图片素材
+      parameters:
+        - name: access_token
+          in: query
+          required: true
+          schema: { type: string }
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [access_token, media]
+              properties:
+                access_token: { type: string }
+                media: { type: string, format: binary }
+                type: { type: string, default: thumb }
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean }
+                  data:
+                    type: object
+                    properties:
+                      media_id: { type: string }
+                      url: { type: string }
+
+  /coze/draft:
+    post:
+      summary: 创建文章草稿
+      parameters:
+        - name: access_token
+          in: query
+          required: true
+          schema: { type: string }
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [access_token, articles]
+              properties:
+                access_token: { type: string }
+                articles:
+                  type: array
+                  items:
+                    type: object
+                    required: [title, content, thumb_media_id]
+                    properties:
+                      title: { type: string }
+                      content: { type: string }
+                      thumb_media_id: { type: string }
+                      author: { type: string }
+                      digest: { type: string }
+                      show_cover_pic: { type: integer, default: 1 }
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean }
+                  data:
+                    type: object
+                    properties:
+                      media_id: { type: string }
+
+  /coze/publish:
+    post:
+      summary: 发布文章到公众号
+      parameters:
+        - name: access_token
+          in: query
+          required: true
+          schema: { type: string }
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [access_token, media_id]
+              properties:
+                access_token: { type: string }
+                media_id: { type: string }
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean }
+                  data:
+                    type: object
+                    properties:
+                      publish_id: { type: string }

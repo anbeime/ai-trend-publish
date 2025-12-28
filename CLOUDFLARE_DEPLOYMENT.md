@@ -1,213 +1,288 @@
 # Cloudflare Pages 部署指南
 
-## 📋 部署前准备
+## 🎯 目标
+让 `https://mp.miyucaicai.cn/` 具备完整的后端API功能，支持 Coze 插件调用。
 
-### 1. 环境要求
-- Node.js 18+ 
-- npm 或 yarn
-- Cloudflare 账户
-- 微信公众号（已认证的服务号）
+## 🚀 部署方案
 
-### 2. 微信公众号配置
-在微信公众平台（https://mp.weixin.qq.com）中：
-- 获取 AppID: `wx8410119dfbb7f756`
-- 获取 AppSecret: `3c93e33e087e57b906f5c341aa5223b9`
+### 方案1：Cloudflare Pages Functions（推荐）
 
-## 🚀 部署步骤
+在 `mp.miyucaicai.cn` 域名下部署 Cloudflare Functions，提供微信API代理服务。
 
-### 第一步：安装依赖
-```bash
-npm install
+#### 第1步：创建 Functions 目录结构
+```
+mp.miyucaicai.cn/
+├── _worker.js          # 主要的 Workers 脚本
+├── api/
+│   ├── wechat/
+│   │   ├── token.js    # 获取 access_token
+│   │   ├── draft.js    # 创建草稿
+│   │   ├── upload.js   # 上传图片
+│   │   └── publish.js  # 发布文章
+│   └── health.js       # 健康检查
+└── index.html          # 现有的前端页面
 ```
 
-### 第二步：构建项目
-```bash
-npm run build
-```
+#### 第2步：主要的 Worker 脚本
+```javascript
+// _worker.js
+export default {
+  async fetch(request, env) {
+    const url = new URL(request.url);
+    
+    // API 路由
+    if (url.pathname.startsWith('/api/')) {
+      return handleAPI(request, env);
+    }
+    
+    // 静态文件
+    return env.ASSETS.fetch(request);
+  }
+};
 
-### 第三步：登录 Cloudflare
-```bash
-npx wrangler login
-```
+async function handleAPI(request, env) {
+  const url = new URL(request.url);
+  const path = url.pathname;
+  
+  // 微信 API 代理
+  if (path.startsWith('/api/wechat/')) {
+    return proxyToWechat(request, env);
+  }
+  
+  // 健康检查
+  if (path === '/api/health') {
+    return new Response(JSON.stringify({
+      status: 'ok',
+      timestamp: new Date().toISOString(),
+      service: 'TrendPublish API'
+    }), {
+      headers: { 'Content-Type': 'application/json' }
+    });
+  }
+  
+  return new Response('API Not Found', { status: 404 });
+}
 
-### 第四步：部署到 Cloudflare Pages
-```bash
-npm run deploy
-```
-
-或者使用 Wrangler 直接部署：
-```bash
-npx wrangler pages deploy public
-```
-
-## 🔧 配置环境变量
-
-在 Cloudflare Pages 项目设置中添加环境变量：
-
-### Production 环境
-```
-WX_APPID=wx8410119dfbb7f756
-WX_SECRET=3c93e33e087e57b906f5c341aa5223b9
-```
-
-### Preview 环境
-```
-WX_APPID=wx8410119dfbb7f756
-WX_SECRET=3c93e33e087e57b906f5c341aa5223b9
-```
-
-## 📱 微信公众号白名单配置
-
-### 获取 Cloudflare IP 地址
-
-部署完成后，访问以下接口获取服务器IP：
-```
-https://your-domain.pages.dev/api/ip
-```
-
-### 在微信公众平台配置白名单
-
-1. 登录微信公众平台
-2. 进入「开发」->「基本配置」
-3. 找到「IP白名单」设置
-4. 将获取的IP地址添加到白名单中
-
-**注意**：Cloudflare Pages 使用的IP地址可能会变化，建议：
-- 定期检查IP地址
-- 添加整个Cloudflare IP段到白名单
-
-### Cloudflare IP 范围
-最新IP列表请参考：https://www.cloudflare.com/ips/
-
-## 🎯 API 接口说明
-
-### 健康检查
-```
-GET /api/health
-```
-
-### 微信配置管理
-```
-GET  /api/wechat/config    # 获取配置状态
-POST /api/wechat/config    # 保存微信配置
-```
-
-### 微信文章发布
-```
-POST /api/wechat/publish
-Content-Type: application/json
-
-{
-  "title": "文章标题",
-  "content": "文章内容HTML",
-  "summary": "文章摘要",
-  "thumb_media_id": "封面图片ID"
+async function proxyToWechat(request, env) {
+  const url = new URL(request.url);
+  const wechatUrl = `https://api.weixin.qq.com${url.pathname.replace('/api/wechat', '')}${url.search}`;
+  
+  // 转发请求到微信 API
+  const response = await fetch(wechatUrl, {
+    method: request.method,
+    headers: request.headers,
+    body: request.body
+  });
+  
+  return response;
 }
 ```
 
-### 微信图片上传
-```
-POST /api/wechat/upload-image
-Content-Type: multipart/form-data
+### 方案2：部署到自己的服务器
 
-media: [图片文件]
-```
+如果你有自己的服务器，可以部署 Node.js 服务：
 
-### 获取服务器信息
-```
-GET /api/ip
-```
+#### 第1步：准备服务器
+- 安装 Node.js (v18+)
+- 安装 Nginx (可选)
+- 准备域名和 SSL 证书
 
-## 🔄 本地开发
-
-### 启动开发服务器
+#### 第2步：部署代码
 ```bash
-npm run dev
+# 克隆代码
+git clone https://github.com/anbeime/ai-trend-publish.git
+cd ai-trend-publish
+
+# 安装依赖
+npm install
+
+# 配置环境变量
+cp .env.example .env
+# 编辑 .env 文件，添加微信配置
+
+# 启动服务
+npm run start
 ```
 
-访问 http://localhost:8788 查看应用
-
-### 构建预览
-```bash
-npm run build
-npm run preview
+#### 第3步：Nginx 配置
+```nginx
+server {
+    listen 80;
+    server_name mp.miyucaicai.cn;
+    
+    # 静态文件
+    location / {
+        root /path/to/ai-trend-publish/public;
+        try_files $uri $uri/ /index.html;
+    }
+    
+    # API 代理
+    location /api/ {
+        proxy_pass http://localhost:3000;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+    }
+}
 ```
 
-## 📊 功能特性
+### 方案3：使用 GitHub Actions + Cloudflare（自动化）
 
-### ✅ 已实现功能
-- [x] 微信公众号配置管理
-- [x] 文章发布到草稿
-- [x] 图片上传
-- [x] 服务器状态监控
-- [x] 响应式Web界面
-
-### 🚧 计划功能
-- [ ] 多平台发布支持
-- [ ] 定时发布功能
-- [ ] 文章模板系统
-- [ ] 数据统计分析
-
-## 🔍 故障排除
-
-### 1. 微信API调用失败
-- 检查AppID和AppSecret是否正确
-- 确认服务器IP已添加到微信白名单
-- 检查微信公众号是否已认证
-
-### 2. 部署失败
-- 确认Wrangler已正确登录
-- 检查项目配置文件
-- 查看构建日志
-
-### 3. 访问速度慢
-- 检查Cloudflare缓存设置
-- 确认DNS配置正确
-
-## 📞 技术支持
-
-如遇到问题，请：
-1. 检查控制台错误日志
-2. 访问 `/api/health` 检查服务状态
-3. 确认微信配置正确性
-
-## 🔄 自动部署
-
-可以设置GitHub Actions实现自动部署：
-
+#### 第1步：创建 GitHub Actions 工作流
 ```yaml
+# .github/workflows/deploy.yml
 name: Deploy to Cloudflare Pages
+
 on:
   push:
-    branches: [main]
+    branches: [ main ]
+  workflow_dispatch:
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      deployments: write
+      id-token: write
+
     steps:
-      - uses: actions/checkout@v3
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '18'
-      - name: Install dependencies
-        run: npm install
-      - name: Build
-        run: npm run build
-      - name: Deploy to Cloudflare Pages
-        uses: cloudflare/pages-action@v1
-        with:
-          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          projectName: ai-trend-publish
-          directory: public
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+
+    - name: Install Dependencies
+      run: npm ci
+
+    - name: Build
+      run: npm run build
+
+    - name: Deploy to Cloudflare Pages
+      uses: cloudflare/pages-action@v1
+      with:
+        apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        projectName: 'ai-trend-publish'
+        directory: 'dist'
 ```
 
-## 🎉 部署完成
+## 🔧 立即可用的 Coze 插件配置
 
-部署完成后，你将获得：
-- 一个功能完整的Web应用
-- 支持微信公众号发布的API
-- 实时监控界面
-- 自动化的部署流程
+### 1. 基础 API 配置
+```yaml
+openapi: 3.0.0
+info:
+  title: 微信文章发布 API
+  version: 1.0.0
+servers:
+  - url: https://mp.miyucaicai.cn
+paths:
+  /api/wechat/token:
+    get:
+      summary: 获取微信访问令牌
+      parameters:
+        - name: appid
+          in: query
+          required: true
+          schema: { type: string }
+        - name: secret
+          in: query
+          required: true
+          schema: { type: string }
+        - name: grant_type
+          in: query
+          required: true
+          schema: { type: string, default: client_credential }
+      responses:
+        '200':
+          description: 返回访问令牌
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  access_token: { type: string }
+                  expires_in: { type: integer }
 
-开始使用你的智能文章发布工具吧！
+  /api/wechat/draft:
+    post:
+      summary: 创建文章草稿
+      parameters:
+        - name: access_token
+          in: query
+          required: true
+          schema: { type: string }
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                articles:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      title: { type: string }
+                      content: { type: string }
+                      thumb_media_id: { type: string }
+                    required: [title, content, thumb_media_id]
+      responses:
+        '200':
+          description: 创建成功
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  media_id: { type: string }
+```
+
+## 🎯 立即部署步骤
+
+### 第1步：选择部署方案
+- **推荐方案1**：Cloudflare Pages Functions（免费、简单）
+- **备选方案2**：自己的服务器（完全控制）
+
+### 第2步：实施部署
+1. 在 Cloudflare Pages 中连接你的 GitHub 仓库
+2. 设置构建配置：`npm run build`
+3. 设置环境变量：微信 AppID/Secret
+
+### 第3步：验证部署
+访问：`https://mp.miyucaicai.cn/api/health`
+应该返回：`{"status":"ok","service":"TrendPublish API"}`
+
+### 第4步：配置 Coze 插件
+1. 导入上面的 OpenAPI 配置
+2. 设置服务器地址为：`https://mp.miyucaicai.cn`
+3. 测试各个 API 接口
+
+## 📋 检查清单
+
+部署前确认：
+- [ ] 微信公众平台 IP 白名单已配置 Cloudflare IP
+- [ ] 微信 AppID 和 AppSecret 已准备
+- [ ] 域名 `mp.miyucaicai.cn` 可正常访问
+- [ ] SSL 证书已配置
+
+部署后验证：
+- [ ] `https://mp.miyucaicai.cn/api/health` 返回正常
+- [ ] 微信 API 代理功能正常
+- [ ] Coze 插件可以成功调用接口
+- [ ] 文章发布功能完整可用
+
+## 🚨 注意事项
+
+1. **IP 白名单**：Cloudflare Pages 有固定的 IP 范围，需要添加到微信白名单
+2. **环境变量**：敏感信息不要暴露在前端代码中
+3. **错误处理**：完善的错误处理和日志记录
+4. **性能优化**：启用缓存，减少微信 API 调用频率
+
+---
+
+**更新时间**：2025-12-28  
+**状态**：待部署

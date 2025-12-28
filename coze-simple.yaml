@@ -4,9 +4,8 @@ info:
   description: 适配Vercel部署的微信公众号文章发布插件，支持令牌获取、图片上传、草稿创建、文章发布
   version: 1.0.0
 servers:
-  - url: https://mp.miyucaicai.cn  # 你的Vercel域名
+  - url: https://mp.miyucaicai.cn
 paths:
-  # 1. 获取微信访问令牌（修复query和body重复，仅保留body传参）
   /coze/token:
     post:
       summary: 获取微信访问令牌
@@ -19,13 +18,13 @@ paths:
               type: object
               required: [appid, secret]
               properties:
-                appid: 
+                appid:
                   type: string
                   description: 微信公众号AppID
-                secret: 
+                secret:
                   type: string
                   description: 微信公众号AppSecret
-                grant_type: 
+                grant_type:
                   type: string
                   default: client_credential
                   description: 授权类型（固定值）
@@ -38,13 +37,17 @@ paths:
                 type: object
                 properties:
                   success: { type: boolean, example: true }
-                  data:
-                    type: object
-                    properties:
-                      access_token: { type: string, description: 微信API访问令牌 }
-                      expires_in: { type: integer, description: 过期时间（秒） }
+                  data: { type: object, properties: { access_token: { type: string }, expires_in: { type: integer } } }
+        default:
+          description: 通用响应
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean, example: false }
+                  msg: { type: string }
 
-  # 2. 上传图片素材（query传access_token，body传文件，格式统一）
   /coze/upload:
     post:
       summary: 上传图片素材
@@ -53,7 +56,8 @@ paths:
         - name: access_token
           in: query
           required: true
-          schema: { type: string }
+          schema:
+            type: string
           description: 微信API访问令牌
       requestBody:
         required: true
@@ -61,16 +65,16 @@ paths:
           multipart/form-data:
             schema:
               type: object
-              required: [media]
               properties:
-                media: 
+                media:
                   type: string
                   format: binary
                   description: 封面图片文件（≤2MB，JPG/PNG）
-                type: 
+                type:
                   type: string
                   default: thumb
                   description: 素材类型（固定为thumb）
+              required: [media]
       responses:
         '200':
           description: 图片上传成功
@@ -80,13 +84,17 @@ paths:
                 type: object
                 properties:
                   success: { type: boolean, example: true }
-                  data:
-                    type: object
-                    properties:
-                      media_id: { type: string, description: 图片素材ID }
-                      url: { type: string, description: 图片在线链接 }
+                  data: { type: object, properties: { media_id: { type: string }, url: { type: string } } }
+        default:
+          description: 通用响应
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean, example: false }
+                  msg: { type: string }
 
-  # 3. 创建文章草稿（补充更多可选参数，更实用）
   /coze/draft:
     post:
       summary: 创建文章草稿
@@ -95,7 +103,8 @@ paths:
         - name: access_token
           in: query
           required: true
-          schema: { type: string }
+          schema:
+            type: string
           description: 微信API访问令牌
       requestBody:
         required: true
@@ -126,12 +135,17 @@ paths:
                 type: object
                 properties:
                   success: { type: boolean, example: true }
-                  data:
-                    type: object
-                    properties:
-                      media_id: { type: string, description: 草稿ID（用于发布） }
+                  data: { type: object, properties: { media_id: { type: string } } }
+        default:
+          description: 通用响应
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean, example: false }
+                  msg: { type: string }
 
-  # 4. 发布文章到公众号（精简参数，适配Coze调用）
   /coze/publish:
     post:
       summary: 发布文章到公众号
@@ -140,7 +154,8 @@ paths:
         - name: access_token
           in: query
           required: true
-          schema: { type: string }
+          schema:
+            type: string
           description: 微信API访问令牌
       requestBody:
         required: true
@@ -160,8 +175,13 @@ paths:
                 type: object
                 properties:
                   success: { type: boolean, example: true }
-                  data:
-                    type: object
-                    properties:
-                      publish_id: { type: string, description: 发布ID }
-                      msg_id: { type: integer, description: 公众号消息ID（可选） }
+                  data: { type: object, properties: { publish_id: { type: string }, msg_id: { type: integer } } }
+        default:
+          description: 通用响应
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean, example: false }
+                  msg: { type: string }

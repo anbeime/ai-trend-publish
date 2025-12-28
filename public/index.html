@@ -278,15 +278,55 @@
               <label for="secret">AppSecret:</label>
               <input type="password" id="secret" name="secret" placeholder="请输入微信公众号AppSecret" required>
             </div>
+            <div class="form-group">
+              <label for="authkey">AuthKey (高级功能):</label>
+              <input type="text" id="authkey" name="authkey" placeholder="输入 AuthKey 启用高级功能">
+            </div>
             <button type="submit" class="btn">保存配置</button>
           </form>
           
           <div id="api-response" class="response-area" style="display: none;"></div>
         </div>
+
+        <!-- Note to MP 高级功能 -->
+        <div class="advanced-features" style="margin-top: 40px; background: #f8f9fa; border-radius: 15px; padding: 30px;">
+          <h3 style="color: #667eea; margin-bottom: 20px;">🚀 Note to MP 高级功能</h3>
+          
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-bottom: 30px;">
+            <div style="background: white; padding: 20px; border-radius: 10px; border-left: 4px solid #667eea;">
+              <h4 style="color: #667eea; margin-bottom: 10px;">📝 文章发布</h4>
+              <p style="color: #666; font-size: 0.9rem;">直接发布文章到微信公众号草稿箱，支持富文本格式</p>
+              <button onclick="showPublishModal()" class="btn" style="margin-top: 10px; background: linear-gradient(135deg, #667eea, #764ba2);">发布文章</button>
+            </div>
+            
+            <div style="background: white; padding: 20px; border-radius: 10px; border-left: 4px solid #28a745;">
+              <h4 style="color: #28a745; margin-bottom: 10px;">🖼️ 图片上传</h4>
+              <p style="color: #666; font-size: 0.9rem;">批量上传图片到微信素材库，支持多种格式</p>
+              <input type="file" id="image-upload" multiple accept="image/*" style="margin-top: 10px;">
+              <button onclick="uploadImages()" class="btn" style="margin-top: 10px; background: linear-gradient(135deg, #28a745, #20c997);">上传图片</button>
+            </div>
+            
+            <div style="background: white; padding: 20px; border-radius: 10px; border-left: 4px solid #ffc107;">
+              <h4 style="color: #ffc107; margin-bottom: 10px;">🔐 数据加密</h4>
+              <p style="color: #666; font-size: 0.9rem;">使用专业加密服务保护敏感数据</p>
+              <button onclick="encryptData()" class="btn" style="margin-top: 10px; background: linear-gradient(135deg, #ffc107, #ff6b6b);">加密数据</button>
+            </div>
+            
+            <div style="background: white; padding: 20px; border-radius: 10px; border-left: 4px solid #17a2b8;">
+              <h4 style="color: #17a2b8; margin-bottom: 10px;">📊 数学公式</h4>
+              <p style="color: #666; font-size: 0.9rem;">支持 LaTeX 和 AsciiMath 数学公式渲染</p>
+              <button onclick="showMathWidget()" class="btn" style="margin-top: 10px; background: linear-gradient(135deg, #17a2b8, #138496);">数学工具</button>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
 
+    <script src="note-features.js"></script>
     <script>
+      // 初始化 Note to MP 集成
+      const noteIntegration = new NoteToMPIntegration();
+      
       // 检查服务状态
       async function checkServiceStatus() {
         try {
@@ -323,6 +363,179 @@
           const responseArea = document.getElementById('api-response');
           responseArea.style.display = 'block';
           responseArea.textContent = JSON.stringify(result, null, 2);
+        } catch (error) {
+          const responseArea = document.getElementById('api-response');
+          responseArea.style.display = 'block';
+          responseArea.textContent = '请求失败: ' + error.message;
+        }
+      });
+
+      // 高级功能：显示发布模态框
+      function showPublishModal() {
+        const modal = document.createElement('div');
+        modal.style.cssText = `
+          position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+          background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center;
+          z-index: 1000;
+        `;
+        modal.innerHTML = `
+          <div style="background: white; padding: 30px; border-radius: 15px; max-width: 600px; width: 90%;">
+            <h3 style="margin-bottom: 20px; color: #667eea;">📝 发布文章</h3>
+            <div style="display: grid; gap: 15px;">
+              <input type="text" id="article-title" placeholder="文章标题" style="padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
+              <textarea id="article-content" placeholder="文章内容 (支持 HTML)" style="padding: 10px; border: 1px solid #ddd; border-radius: 5px; min-height: 200px; width: 100%;"></textarea>
+              <input type="text" id="article-summary" placeholder="文章摘要 (可选)" style="padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
+              <div style="display: flex; gap: 10px; margin-top: 15px;">
+                <button onclick="publishArticle()" style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer;">发布到草稿</button>
+                <button onclick="closeModal()" style="background: #6c757d; color: white; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer;">取消</button>
+              </div>
+            </div>
+          </div>
+        `;
+        document.body.appendChild(modal);
+        modal.onclick = (e) => {
+          if (e.target === modal) closeModal();
+        };
+      }
+
+      // 关闭模态框
+      function closeModal() {
+        const modal = document.querySelector('[style*="position: fixed"]');
+        if (modal) modal.remove();
+      }
+
+      // 发布文章
+      async function publishArticle() {
+        const title = document.getElementById('article-title').value;
+        const content = document.getElementById('article-content').value;
+        const summary = document.getElementById('article-summary').value;
+
+        if (!title || !content) {
+          alert('请填写标题和内容');
+          return;
+        }
+
+        try {
+          const response = await fetch('/api/wechat/publish', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ title, content, summary })
+          });
+          
+          const result = await response.json();
+          showResponse(result);
+          if (result.success) {
+            closeModal();
+          }
+        } catch (error) {
+          alert('发布失败: ' + error.message);
+        }
+      }
+
+      // 上传图片
+      async function uploadImages() {
+        const fileInput = document.getElementById('image-upload');
+        const files = fileInput.files;
+        
+        if (files.length === 0) {
+          alert('请选择要上传的图片');
+          return;
+        }
+
+        for (let file of files) {
+          const formData = new FormData();
+          formData.append('media', file);
+          
+          try {
+            const response = await fetch('/api/wechat/upload-image', {
+              method: 'POST',
+              body: formData
+            });
+            
+            const result = await response.json();
+            showResponse(result);
+          } catch (error) {
+            alert('上传失败: ' + error.message);
+          }
+        }
+      }
+
+      // 加密数据
+      async function encryptData() {
+        const authkey = document.getElementById('authkey').value;
+        if (!authkey) {
+          alert('请先填写 AuthKey');
+          return;
+        }
+
+        const data = prompt('请输入要加密的数据 (JSON 格式):', '{"test": "数据"}');
+        if (!data) return;
+
+        try {
+          const result = await noteIntegration.wxEncrypt(authkey, JSON.parse(data));
+          showResponse(result);
+        } catch (error) {
+          alert('加密失败: ' + error.message);
+        }
+      }
+
+      // 显示数学工具
+      async function showMathWidget() {
+        const authkey = document.getElementById('authkey').value;
+        if (!authkey) {
+          alert('请先填写 AuthKey');
+          return;
+        }
+
+        const params = prompt('请输入数学公式参数:', '{"formula": "E=mc^2"}');
+        if (!params) return;
+
+        try {
+          const result = await noteIntegration.wxWidget(authkey, params);
+          alert('数学公式结果: ' + result);
+        } catch (error) {
+          alert('计算失败: ' + error.message);
+        }
+      }
+
+      // 显示响应结果
+      function showResponse(result) {
+        const responseArea = document.getElementById('api-response');
+        responseArea.style.display = 'block';
+        responseArea.textContent = JSON.stringify(result, null, 2);
+        
+        // 3秒后自动隐藏成功消息
+        if (result.success) {
+          setTimeout(() => {
+            responseArea.style.display = 'none';
+          }, 3000);
+        }
+      }
+
+      // 处理微信配置表单提交
+      document.getElementById('wechat-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const formData = new FormData(e.target);
+        const config = {
+          appid: formData.get('appid'),
+          secret: formData.get('secret'),
+          authkey: formData.get('authkey')
+        };
+
+        try {
+          const response = await fetch('/api/wechat/config', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(config)
+          });
+          
+          const result = await response.json();
+          showResponse(result);
         } catch (error) {
           const responseArea = document.getElementById('api-response');
           responseArea.style.display = 'block';

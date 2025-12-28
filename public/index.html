@@ -283,9 +283,10 @@
               <label for="authkey">AuthKey (高级功能):</label>
               <input type="text" id="authkey" name="authkey" placeholder="输入 AuthKey 启用高级功能">
             </div>
-            <div style="display: flex; gap: 10px;">
+            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
               <button type="submit" class="btn">保存配置</button>
               <button type="button" onclick="testWeChatConfig()" class="btn" style="background: linear-gradient(135deg, #28a745, #20c997);">测试连接</button>
+              <button type="button" onclick="getLocalIPs()" class="btn" style="background: linear-gradient(135deg, #17a2b8, #138496);">获取本地IP</button>
             </div>
           </form>
           
@@ -686,10 +687,49 @@
         }
       }
 
+      // 获取本地IP地址
+      async function getLocalIPs() {
+        showTestResult('正在获取本地IP地址...', 'info');
+        
+        try {
+          const response = await fetch('/api/wechat/local-ip');
+          const result = await response.json();
+          
+          if (result.success) {
+            let ipInfo = '🌐 IP地址信息：\n\n';
+            
+            if (result.local_ips && result.local_ips.length > 0) {
+              ipInfo += '📱 本地开发IP：\n';
+              result.local_ips.forEach(ip => {
+                ipInfo += `• ${ip.ip} (${ip.interface} - ${ip.type})\n`;
+              });
+              ipInfo += '\n';
+            }
+            
+            ipInfo += '☁️ Cloudflare Pages IP（线上环境）：\n';
+            result.cloudflare_ips.forEach(ip => {
+              ipInfo += `• ${ip.ip} (${ip.type})\n`;
+            });
+            
+            ipInfo += '\n💡 使用说明：\n';
+            ipInfo += '• 本地测试：将本地开发IP添加到微信白名单\n';
+            ipInfo += '• 线上部署：使用Cloudflare Pages IP\n';
+            ipInfo += '• 可以同时配置本地和线上IP';
+            
+            showTestResult(ipInfo, 'info');
+          } else {
+            showTestResult('❌ 获取IP失败：' + result.error, 'error');
+          }
+        } catch (error) {
+          showTestResult('❌ 网络错误：' + error.message, 'error');
+        }
+      }
+
       // 显示测试结果
       function showTestResult(message, type) {
         const resultDiv = document.getElementById('test-result');
         resultDiv.style.display = 'block';
+        resultDiv.style.whiteSpace = 'pre-line';
         resultDiv.textContent = message;
         
         // 设置样式

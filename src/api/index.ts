@@ -171,7 +171,7 @@ app.post('/api/wechat/publish', async (c) => {
 app.post('/api/wechat/upload-image', async (c) => {
   try {
     const formData = await c.req.formData();
-    const file = formData.get('media') as File;
+    const file = formData.get('media') as unknown as File;
 
     if (!file) {
       return c.json({
@@ -245,6 +245,206 @@ app.get('/api/ip', async (c) => {
     return c.json({
       error: '获取IP失败: ' + error.message
     }, 500);
+  }
+});
+
+// 测试微信API连接
+app.post('/api/wechat/test', async (c) => {
+  try {
+    const { appid, secret } = await c.req.json();
+
+    if (!appid || !secret) {
+      return c.json({
+        success: false,
+        error: '缺少AppID或AppSecret'
+      });
+    }
+
+    // 验证AppID格式
+    if (!appid.startsWith('wx') || appid.length !== 18) {
+      return c.json({
+        success: false,
+        error: 'AppID格式错误，应该是wx开头的18位字符',
+        details: {
+          received: appid,
+          expected: 'wx开头的18位字符，如：wx1234567890abcdef'
+        }
+      });
+    }
+
+    // 验证AppSecret格式
+    if (secret.length !== 32) {
+      return c.json({
+        success: false,
+        error: 'AppSecret格式错误，应该是32位字符',
+        details: {
+          received_length: secret.length,
+          expected_length: 32
+        }
+      });
+    }
+
+    // 尝试获取access_token
+    const tokenUrl = `https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=${appid}&secret=${secret}`;
+    const response = await fetch(tokenUrl);
+    const data = await response.json();
+
+    if (data.access_token) {
+      return c.json({
+        success: true,
+        message: '微信API连接成功！配置正确且IP白名单已生效。',
+        access_token: data.access_token.substring(0, 10) + '...',
+        expires_in: data.expires_in
+      });
+    } else {
+      return c.json({
+        success: false,
+        error: data.errmsg || '获取access_token失败',
+        error_code: data.errcode,
+        suggestions: getErrorSuggestion(data.errcode)
+      });
+    }
+  } catch (error) {
+    return c.json({
+      success: false,
+      error: '网络错误: ' + error.message,
+      suggestions: [
+        '检查网络连接',
+        '确认IP白名单已正确配置',
+        '验证AppID和AppSecret是否正确'
+      ]
+    });
+  }
+});
+
+
+
+// 测试微信API连接
+app.post('/api/wechat/test', async (c) => {
+  try {
+    const { appid, secret } = await c.req.json();
+
+    if (!appid || !secret) {
+      return c.json({
+        success: false,
+        error: '缺少AppID或AppSecret'
+      });
+    }
+
+    // 验证AppID格式
+    if (!appid.startsWith('wx') || appid.length !== 18) {
+      return c.json({
+        success: false,
+        error: 'AppID格式错误，应该是wx开头的18位字符',
+        details: {
+          received: appid,
+          expected: 'wx开头的18位字符，如：wx1234567890abcdef'
+        }
+      });
+    }
+
+    // 验证AppSecret格式
+    if (secret.length !== 32) {
+      return c.json({
+        success: false,
+        error: 'AppSecret格式错误，应该是32位字符',
+        details: {
+          received_length: secret.length,
+          expected_length: 32
+        }
+      });
+    }
+
+    // 尝试获取access_token
+    const tokenUrl = `https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=${appid}&secret=${secret}`;
+    const response = await fetch(tokenUrl);
+    const data = await response.json();
+
+    if (data.access_token) {
+      return c.json({
+        success: true,
+        message: '微信API连接成功！配置正确且IP白名单已生效。',
+        access_token: data.access_token.substring(0, 10) + '...',
+        expires_in: data.expires_in
+      });
+    } else {
+      return c.json({
+        success: false,
+        error: data.errmsg || '获取access_token失败',
+        error_code: data.errcode,
+        suggestions: getErrorSuggestion(data.errcode)
+      });
+    }
+  } catch (error) {
+    return c.json({
+      success: false,
+      error: '网络错误: ' + error.message,
+      suggestions: [
+        '检查网络连接',
+        '确认IP白名单已正确配置',
+        '验证AppID和AppSecret是否正确'
+      ]
+    });
+  }
+});
+
+
+
+// 获取本地IP地址（用于白名单配置）
+app.get('/api/wechat/local-ip', async (c) => {
+  try {
+    // 获取本机IP地址
+    const networkInterfaces = require('os').networkInterfaces();
+    const ips = [];
+    
+    for (const interfaceName in networkInterfaces) {
+      const interfaces = networkInterfaces[interfaceName];
+      for (const iface of interfaces) {
+        // 排除内网地址和IPv6
+        if (!iface.internal && iface.family === 'IPv4') {
+          ips.push({
+            interface: interfaceName,
+            ip: iface.address,
+            type: '本地开发IP'
+          });
+        }
+      }
+    }
+    
+    // 如果没有找到外网IP，添加一些常用的本地IP
+    if (ips.length === 0) {
+      ips.push(
+        { interface: 'localhost', ip: '127.0.0.1', type: '本地回环' },
+        { interface: 'lan', ip: '192.168.1.100', type: '局域网示例' }
+      );
+    }
+    
+    // 添加Cloudflare Pages的IP（线上环境）
+    const cfIps = [
+      { ip: '64.29.17.1', type: 'Cloudflare Pages IP' },
+      { ip: '216.198.79.1', type: 'Cloudflare Pages IP' },
+      { ip: '76.76.19.1', type: 'Cloudflare Pages IP' },
+      { ip: '76.76.21.1', type: 'Cloudflare Pages IP' }
+    ];
+    
+    return c.json({
+      success: true,
+      local_ips: ips,
+      cloudflare_ips: cfIps,
+      usage: {
+        local: '本地开发时使用这些IP',
+        cloudflare: '线上部署时使用这些IP'
+      }
+    });
+  } catch (error) {
+    return c.json({
+      success: false,
+      error: '获取IP失败: ' + error.message,
+      fallback_ips: [
+        { ip: '64.29.17.1', type: 'Cloudflare Pages IP' },
+        { ip: '216.198.79.1', type: 'Cloudflare Pages IP' }
+      ]
+    });
   }
 });
 

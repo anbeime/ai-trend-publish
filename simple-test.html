@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>微信发布 - 简单测试版本</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .form-group input, .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        .btn {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+        .btn:hover {
+            background: #0056b3;
+        }
+        .result {
+            background: #f8f9fa;
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin-top: 15px;
+            border-radius: 5px;
+            font-family: monospace;
+            white-space: pre-wrap;
+        }
+        .status {
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        .status-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .status-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .status-warning {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+        .server-info {
+            background: #e7f3ff;
+            border: 1px solid #b3d9ff;
+            padding: 20px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 服务状态检查</h1>
+        
+        <div class="server-info">
+            <h3>📡 服务器检查</h3>
+            <p><strong>当前地址：</strong><span id="current-url"></span></p>
+            <p><strong>需要地址：</strong>http://localhost:3000</p>
+            <p><strong>状态：</strong><span id="server-status">检查中...</span></p>
+        </div>
+        
+        <h2>🧪 微信API直接测试</h2>
+        <p class="status-warning">⚠️ 注意：这个页面直接调用微信API，需要在微信后台添加你的IP到白名单</p>
+        
+        <div class="form-group">
+            <label>微信公众号AppID:</label>
+            <input type="text" id="appid" placeholder="输入你的AppID">
+        </div>
+        
+        <div class="form-group">
+            <label>微信公众号AppSecret:</label>
+            <input type="password" id="secret" placeholder="输入你的AppSecret">
+        </div>
+        
+        <button class="btn" onclick="testDirectWechatAPI()">直接测试微信API</button>
+        <button class="btn" onclick="testLocalServer()">测试本地服务器</button>
+        
+        <div id="result-area"></div>
+        
+        <h2>🚀 启动服务器指南</h2>
+        <div class="server-info">
+            <h3>方法1：使用启动脚本</h3>
+            <p>在项目根目录下执行：</p>
+            <pre>Windows: start-wechat-publisher.bat
+Mac/Linux: ./start-wechat-publisher.sh</pre>
+            
+            <h3>方法2：手动启动</h3>
+            <pre>cd ai-trend-publish
+npm install
+npm run dev</pre>
+            
+            <h3>方法3：简单HTTP服务器</h3>
+            <pre>npx http-server -p 3000</pre>
+        </div>
+    </div>
+
+    <script>
+        // 显示当前URL
+        document.getElementById('current-url').textContent = window.location.origin;
+        
+        // 检查服务器状态
+        async function checkServerStatus() {
+            const statusElement = document.getElementById('server-status');
+            try {
+                const response = await fetch('http://localhost:3000/api/health');
+                if (response.ok) {
+                    statusElement.innerHTML = '<span class="status-success">✅ 服务器运行正常</span>';
+                    statusElement.className = 'status-success';
+                } else {
+                    statusElement.innerHTML = '<span class="status-error">❌ 服务器响应异常</span>';
+                    statusElement.className = 'status-error';
+                }
+            } catch (error) {
+                statusElement.innerHTML = '<span class="status-error">❌ 服务器未运行</span>';
+                statusElement.className = 'status-error';
+            }
+        }
+        
+        // 显示结果
+        function showResult(message, type = 'info') {
+            const resultArea = document.getElementById('result-area');
+            resultArea.innerHTML = `<div class="status status-${type}">${message}</div>`;
+        }
+        
+        // 直接测试微信API
+        async function testDirectWechatAPI() {
+            const appid = document.getElementById('appid').value.trim();
+            const secret = document.getElementById('secret').value.trim();
+            
+            if (!appid || !secret) {
+                showResult('请填写AppID和AppSecret', 'error');
+                return;
+            }
+            
+            showResult('正在测试微信API...', 'warning');
+            
+            try {
+                const url = `https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=${appid}&secret=${secret}`;
+                const response = await fetch(url);
+                const data = await response.json();
+                
+                if (data.access_token) {
+                    showResult(`✅ 微信API调用成功！\n\nAccess Token: ${data.access_token.substring(0, 20)}...\n\n这说明你的配置是正确的，IP白名单也设置正确。`, 'success');
+                } else {
+                    showResult(`❌ 微信API调用失败：\n\n错误码：${data.errcode}\n错误信息：${data.errmsg}\n\n常见解决方法：\n1. 检查AppID和AppSecret是否正确\n2. 确认IP已添加到白名单\n3. 检查网络连接`, 'error');
+                }
+            } catch (error) {
+                showResult(`❌ 网络错误：${error.message}\n\n可能原因：\n1. 网络连接问题\n2. 被防火墙阻止\n3. HTTPS证书问题`, 'error');
+            }
+        }
+        
+        // 测试本地服务器
+        async function testLocalServer() {
+            showResult('正在检查本地服务器...', 'warning');
+            
+            try {
+                const response = await fetch('http://localhost:3000/api/health');
+                const data = await response.json();
+                
+                showResult(`✅ 本地服务器正常！\n\n服务器信息：\n- 状态：${data.status}\n- 服务：${data.service}\n- 版本：${data.version}\n\n现在可以访问：\nhttp://localhost:3000/wechat-publisher.html\nhttp://localhost:3000/test-wechat-publish.html`, 'success');
+                
+            } catch (error) {
+                showResult(`❌ 本地服务器未运行！\n\n错误信息：${error.message}\n\n解决方法：\n1. 检查是否启动了start-wechat-publisher.bat\n2. 确认端口3000未被占用\n3. 检查Node.js是否安装\n4. 查看控制台错误信息`, 'error');
+            }
+        }
+        
+        // 页面加载时检查服务器状态
+        window.addEventListener('load', () => {
+            checkServerStatus();
+            // 每5秒检查一次
+            setInterval(checkServerStatus, 5000);
+        });
+    </script>
+</body>
+</html>

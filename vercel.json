@@ -6,18 +6,18 @@
       "use": "@vercel/static"
     },
     {
-      "src": "api/coze.js",
+      "src": "api/index.js",
       "use": "@vercel/node"
     }
   ],
   "routes": [
     {
       "src": "/api/(.*)",
-      "dest": "/api/coze.js"
+      "dest": "/api/index.js"
     },
     {
       "src": "/coze/(.*)",
-      "dest": "/api/coze.js"
+      "dest": "/api/index.js"
     },
     {
       "src": "/(.*)",

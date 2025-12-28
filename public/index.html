@@ -312,6 +312,16 @@
                   <strong>⚠️ 安全提醒</strong>：AppSecret 是敏感信息，请妥善保管，不要泄露给他人！
                 </p>
               </div>
+              
+              <div style="background: #d4edda; border: 1px solid #c3e6cb; border-radius: 8px; padding: 15px; margin-top: 15px;">
+                <h5 style="color: #155724; margin-bottom: 10px;">📍 具体位置指引：</h5>
+                <div style="color: #155724; line-height: 1.6;">
+                  <p><strong>AppID位置</strong>：在"开发者ID(AppID)"栏位，格式为 wx开头 + 18位字符</p>
+                  <p><strong>AppSecret位置</strong>：在"开发者密钥(AppSecret)"栏位，默认显示为 "******"</p>
+                  <p><strong>操作按钮</strong>：AppSecret右侧有两个按钮 - "查看" 和 "重置"</p>
+                  <p><strong>重要提醒</strong>：不要点击"重置"按钮，否则旧AppSecret会失效！</p>
+                </div>
+              </div>
             </div>
 
             <!-- 步骤2：配置IP白名单 -->
@@ -353,6 +363,25 @@
               <div style="color: #666; line-height: 1.8;">
                 <p><strong>Q: 找不到AppSecret怎么办？</strong></p>
                 <p>A: AppSecret默认是隐藏的，需要点击"查看"按钮，然后使用管理员微信扫码验证后才能看到。</p>
+                
+                <p style="margin-top: 15px;"><strong>Q: 我是管理员但看不到AppSecret？</strong></p>
+                <p>A: 请按以下步骤操作：</p>
+                <ol style="margin-left: 20px;">
+                  <li>确认使用的是管理员微信账号登录</li>
+                  <li>在基本配置页面找到AppSecret栏位</li>
+                  <li>点击右侧的"查看"按钮（不是"重置"）</li>
+                  <li>使用微信扫描弹出的二维码</li>
+                  <li>在手机端确认"允许查看AppSecret"</li>
+                  <li>页面会显示完整的AppSecret字符串</li>
+                </ol>
+                
+                <p style="margin-top: 15px;"><strong>Q: 点击查看后提示"无权限"？</strong></p>
+                <p>A: 这说明当前登录的微信不是该公众号的管理员，需要：</p>
+                <ul style="margin-left: 20px;">
+                  <li>联系公众号所有者添加你为管理员</li>
+                  <li>或者让现有管理员帮你查看</li>
+                  <li>管理员在"人员设置"中添加权限</li>
+                </ul>
                 
                 <p style="margin-top: 15px;"><strong>Q: IP白名单配置后还是无法使用？</strong></p>
                 <p>A: IP白名单配置需要几分钟生效，请等待5-10分钟后重试。如果仍有问题，请检查IP地址是否正确添加。</p>

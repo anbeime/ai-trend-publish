@@ -13,7 +13,7 @@ app.use('*', cors({
 }));
 
 // 健康检查
-app.get('/health', (c) => {
+app.get('/api/health', (c) => {
   return c.json({
     status: 'ok',
     timestamp: new Date().toISOString(),
@@ -29,7 +29,7 @@ let wechatConfig = {
 };
 
 // 获取微信配置
-app.get('/wechat/config', (c) => {
+app.get('/api/wechat/config', (c) => {
   return c.json({
     appid: wechatConfig.appid ? '***' + wechatConfig.appid.slice(-4) : '',
     configured: !!wechatConfig.appid && !!wechatConfig.secret
@@ -37,7 +37,7 @@ app.get('/wechat/config', (c) => {
 });
 
 // 保存微信配置
-app.post('/wechat/config', async (c) => {
+app.post('/api/wechat/config', async (c) => {
   try {
     const { appid, secret } = await c.req.json();
     
@@ -65,7 +65,7 @@ app.post('/wechat/config', async (c) => {
 });
 
 // 获取微信访问令牌
-app.post('/wechat/token', async (c) => {
+app.post('/api/wechat/token', async (c) => {
   try {
     if (!wechatConfig.appid || !wechatConfig.secret) {
       return c.json({
@@ -101,7 +101,7 @@ app.post('/wechat/token', async (c) => {
 });
 
 // 发布文章到微信草稿
-app.post('/wechat/publish', async (c) => {
+app.post('/api/wechat/publish', async (c) => {
   try {
     const { title, content, summary, thumb_media_id } = await c.req.json();
 
@@ -168,7 +168,7 @@ app.post('/wechat/publish', async (c) => {
 });
 
 // 上传图片到微信
-app.post('/wechat/upload-image', async (c) => {
+app.post('/api/wechat/upload-image', async (c) => {
   try {
     const formData = await c.req.formData();
     const file = formData.get('media') as File;
@@ -226,7 +226,7 @@ app.post('/wechat/upload-image', async (c) => {
 });
 
 // 获取服务器IP地址（用于微信白名单）
-app.get('/ip', async (c) => {
+app.get('/api/ip', async (c) => {
   try {
     // 在Vercel中，获取客户端IP
     const clientIP = c.req.header('x-forwarded-for')?.split(',')[0] || 
@@ -251,9 +251,9 @@ app.get('/ip', async (c) => {
 // ========== Coze 插件专用接口 ==========
 
 // Coze 获取令牌接口
-app.get('/coze/token', async (c) => {
+app.post('/coze/token', async (c) => {
   try {
-    const { appid, secret, grant_type = 'client_credential' } = c.req.query();
+    const { appid, secret, grant_type = 'client_credential' } = await c.req.json();
     
     if (!appid || !secret) {
       return c.json({
@@ -287,8 +287,8 @@ app.get('/coze/token', async (c) => {
 // Coze 上传图片接口
 app.post('/coze/upload', async (c) => {
   try {
-    const { access_token } = c.req.query();
     const formData = await c.req.formData();
+    const access_token = formData.get('access_token');
     const media = formData.get('media');
     const type = formData.get('type') || 'thumb';
 
@@ -327,8 +327,7 @@ app.post('/coze/upload', async (c) => {
 // Coze 创建草稿接口
 app.post('/coze/draft', async (c) => {
   try {
-    const { access_token } = c.req.query();
-    const { articles } = await c.req.json();
+    const { access_token, articles } = await c.req.json();
     
     if (!access_token || !articles) {
       return c.json({
@@ -368,8 +367,7 @@ app.post('/coze/draft', async (c) => {
 // Coze 发布文章接口
 app.post('/coze/publish', async (c) => {
   try {
-    const { access_token } = c.req.query();
-    const { media_id } = await c.req.json();
+    const { access_token, media_id } = await c.req.json();
     
     if (!access_token || !media_id) {
       return c.json({

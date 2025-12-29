@@ -3,338 +3,911 @@
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TrendPublish - 智能文章发布工具</title>
-    <meta name="description" content="AI驱动的智能文章发布工具，支持多平台发布">
+    <title>TrendPublish - 智能文章发布工具 | 让内容创作更简单高效</title>
+    <meta
+      name="description"
+      content="TrendPublish是一款智能文章发布工具，支持多平台发布、AI智能处理、多样化模板等功能，助力创作者提升内容创作效率。"
+    >
+    <meta
+      name="keywords"
+      content="AI内容发布,多平台发布,微信公众号,Twitter,DeepseekAI,FireCrawl,智能排版"
+    >
+    <meta name="author" content="TrendPublish Team">
+    <meta property="og:title" content="TrendPublish - 智能文章发布工具">
+    <meta
+      property="og:description"
+      content="一站式智能文章发布工具，支持多平台发布，让内容创作更简单、更高效"
+    >
+    <meta
+      property="og:image"
+      content="https://your-domain.com/images/og-image.png"
+    >
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
     <style>
-      * {
+      @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
+
+      :root {
+        --primary-color: #3498db;
+        --secondary-color: #2ecc71;
+        --text-color: #2c3e50;
+        --light-gray: #f8f9fa;
+        --dark-gray: #343a40;
+        --gradient-1: linear-gradient(135deg, #3498db, #2ecc71);
+        --gradient-2: linear-gradient(135deg, #00c6fb, #005bea);
+        --gradient-3: linear-gradient(135deg, #f6d365, #fda085);
+      }
+
+      body {
+        font-family: "Inter", "PingFang SC", "Microsoft YaHei", sans-serif;
+        line-height: 1.6;
+        color: var(--text-color);
         margin: 0;
         padding: 0;
-        box-sizing: border-box;
+        overflow-x: hidden;
+        scroll-behavior: smooth;
       }
-      
-      body {
-        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        min-height: 100vh;
+
+      .hero {
+        background: var(--gradient-1);
+        color: white;
+        padding: 120px 20px;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .hero::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background:
+          radial-gradient(
+            circle at 20% 30%,
+            rgba(52, 152, 219, 0.4) 0%,
+            transparent 50%
+          ),
+          radial-gradient(
+          circle at 80% 70%,
+          rgba(46, 204, 113, 0.4) 0%,
+          transparent 50%
+        );
+        animation: gradientShift 15s ease infinite;
+      }
+
+      @keyframes gradientShift {
+        0% {
+          transform: scale(1);
+        }
+
+        50% {
+          transform: scale(1.2);
+        }
+
+        100% {
+          transform: scale(1);
+        }
+      }
+
+      .hero h1 {
+        font-size: 4em;
+        margin-bottom: 20px;
+        position: relative;
+        text-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        animation: slideUp 1s ease;
+      }
+
+      .hero p {
+        font-size: 1.4em;
+        max-width: 800px;
+        margin: 0 auto 40px;
+        position: relative;
+        animation: slideUp 1s ease 0.2s backwards;
+      }
+
+      .hero-buttons {
+        animation: slideUp 1s ease 0.4s backwards;
+      }
+
+      @keyframes slideUp {
+        from {
+          opacity: 0;
+          transform: translateY(30px);
+        }
+
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .features {
+        padding: 100px 20px;
+        max-width: 1200px;
+        margin: 0 auto;
+        position: relative;
+      }
+
+      .section-title {
+        text-align: center;
+        margin-bottom: 60px;
+        position: relative;
+        font-size: 2.5em;
+        opacity: 0;
+        transform: translateY(30px);
+        transition: all 0.8s ease;
+      }
+
+      .section-title.visible {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      .section-title::after {
+        content: "";
+        display: block;
+        width: 60px;
+        height: 3px;
+        background: var(--gradient-1);
+        margin: 20px auto;
+        border-radius: 3px;
+      }
+
+      .features-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 30px;
+        margin-top: 40px;
+        opacity: 0;
+        transform: translateY(30px);
+        transition: all 0.8s ease;
+      }
+
+      .features-grid.visible {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      .feature-card {
+        background: white;
+        padding: 40px 30px;
+        border-radius: 16px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        text-align: center;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .feature-card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: var(--gradient-1);
+        transform: scaleX(0);
+        transition: transform 0.4s ease;
+      }
+
+      .feature-card:hover {
+        transform: translateY(-15px);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+      }
+
+      .feature-card:hover::before {
+        transform: scaleX(1);
+      }
+
+      .feature-card h3 {
+        color: var(--primary-color);
+        margin-bottom: 15px;
+        font-size: 1.5em;
+      }
+
+      .cta-button {
+        display: inline-block;
+        background: var(--gradient-1);
+        color: white;
+        padding: 16px 35px;
+        border-radius: 30px;
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        margin: 0 10px;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .cta-button::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+          120deg,
+          transparent,
+          rgba(255, 255, 255, 0.3),
+          transparent
+        );
+        transform: translateX(-100%);
+      }
+
+      .cta-button:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 20px rgba(52, 152, 219, 0.3);
+      }
+
+      .cta-button:hover::before {
+        animation: shine 1.5s ease-in-out;
+      }
+
+      @keyframes shine {
+        100% {
+          transform: translateX(100%);
+        }
+      }
+
+      .secondary-button {
+        background: transparent;
+        border: 2px solid white;
+        box-shadow: none;
+      }
+
+      .secondary-button:hover {
+        background: white;
+        color: var(--primary-color);
+      }
+
+      .templates-section {
+        background: var(--light-gray);
+        padding: 80px 20px;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .templates-section::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background:
+          radial-gradient(
+            circle at 10% 10%,
+            rgba(52, 152, 219, 0.05) 0%,
+            transparent 50%
+          ),
+          radial-gradient(
+          circle at 90% 90%,
+          rgba(46, 204, 113, 0.05) 0%,
+          transparent 50%
+        );
+      }
+
+      .templates-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 40px;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 40px 20px;
+        position: relative;
+        z-index: 1;
+      }
+
+      .template-preview {
+        background: white;
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        opacity: 0;
+        transform: translateY(30px);
+        position: relative;
+        cursor: pointer;
+      }
+
+      .template-preview.visible {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      .template-preview:hover {
+        transform: translateY(-10px) scale(1.02);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+      }
+
+      .template-preview img {
+        width: 100%;
+        height: 240px;
+        object-fit: cover;
+        transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+
+      .template-preview:hover img {
+        transform: scale(1.05);
+      }
+
+      .template-info {
+        padding: 25px;
+        background: white;
+        position: relative;
+      }
+
+      .template-info h3 {
+        color: var(--text-color);
+        font-size: 1.4em;
+        margin-bottom: 12px;
+        font-weight: 600;
+      }
+
+      .template-info p {
+        color: #666;
+        font-size: 1em;
+        line-height: 1.6;
+        margin: 0;
+      }
+
+      .template-badge {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        background: var(--gradient-1);
+        color: white;
+        padding: 8px 16px;
+        border-radius: 20px;
+        font-size: 0.9em;
+        font-weight: 500;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      }
+
+      .stats-section {
+        background: var(--dark-gray);
+        color: white;
+        padding: 80px 20px;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .stats-section::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background:
+          radial-gradient(
+            circle at 10% 90%,
+            rgba(52, 152, 219, 0.1) 0%,
+            transparent 50%
+          ),
+          radial-gradient(
+          circle at 90% 10%,
+          rgba(46, 204, 113, 0.1) 0%,
+          transparent 50%
+        );
+      }
+
+      .stat-item {
+        opacity: 0;
+        transform: translateY(30px);
+        transition: all 0.8s ease;
+      }
+
+      .stat-item.visible {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      .stat-item h3 {
+        font-size: 3em;
+        margin-bottom: 10px;
+        background: var(--gradient-1);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        display: inline-block;
+      }
+
+      .testimonials {
+        padding: 80px 20px;
+        background: white;
+      }
+
+      .testimonial-card {
+        background: var(--light-gray);
+        padding: 30px;
+        border-radius: 12px;
+        margin: 20px;
+        text-align: left;
+        opacity: 0;
+        transform: translateY(30px);
+        transition: all 0.8s ease;
+        cursor: pointer;
+      }
+
+      .testimonial-card.visible {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      .testimonial-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+      }
+
+      .testimonial-author {
         display: flex;
         align-items: center;
-        justify-content: center;
+        margin-top: 20px;
       }
-      
-      .container {
-        max-width: 800px;
-        width: 90%;
-        background: white;
-        border-radius: 20px;
-        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-        overflow: hidden;
-        margin: 20px;
+
+      .author-avatar {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        margin-right: 15px;
       }
-      
-      .header {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
-        padding: 40px;
+
+      .quick-actions {
+        background: var(--light-gray);
+        padding: 60px 20px;
         text-align: center;
       }
-      
-      .header h1 {
-        font-size: 2.5rem;
-        margin-bottom: 10px;
-        font-weight: 700;
-      }
-      
-      .header p {
-        font-size: 1.1rem;
-        opacity: 0.9;
-      }
-      
-      .content {
-        padding: 40px;
-      }
-      
-      .feature-grid {
+
+      .quick-actions-grid {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
         gap: 30px;
-        margin-bottom: 40px;
+        max-width: 800px;
+        margin: 0 auto;
       }
-      
-      .feature-card {
-        background: #f8f9fa;
-        padding: 25px;
-        border-radius: 15px;
-        border-left: 4px solid #667eea;
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-      }
-      
-      .feature-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-      }
-      
-      .feature-card h3 {
-        color: #667eea;
-        margin-bottom: 10px;
-        font-size: 1.2rem;
-      }
-      
-      .api-section {
-        background: #f8f9fa;
-        border-radius: 15px;
-        padding: 30px;
-        margin-top: 30px;
-      }
-      
-      .api-section h2 {
-        color: #333;
-        margin-bottom: 20px;
-        font-size: 1.8rem;
-      }
-      
-      .api-endpoint {
+
+      .action-card {
         background: white;
-        border: 1px solid #e9ecef;
-        border-radius: 10px;
-        padding: 20px;
-        margin-bottom: 15px;
-        font-family: 'Courier New', monospace;
+        padding: 30px;
+        border-radius: 12px;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+        text-decoration: none;
+        color: inherit;
+        display: block;
       }
-      
-      .method {
-        display: inline-block;
-        padding: 4px 8px;
-        border-radius: 4px;
-        color: white;
-        font-weight: bold;
-        margin-right: 10px;
-        font-size: 0.9rem;
+
+      .action-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
       }
-      
-      .get { background: #28a745; }
-      .post { background: #007bff; }
-      
-      .status-indicator {
-        display: inline-block;
-        width: 10px;
-        height: 10px;
-        border-radius: 50%;
-        margin-right: 10px;
+
+      .action-card h4 {
+        color: var(--primary-color);
+        margin-bottom: 10px;
+        font-size: 1.2em;
       }
-      
-      .status-online { background: #28a745; }
-      .status-offline { background: #dc3545; }
-      
-      .wechat-config {
-        background: #fff3cd;
-        border: 1px solid #ffeaa7;
-        border-radius: 10px;
-        padding: 20px;
-        margin-top: 20px;
+
+      .action-card p {
+        color: #666;
+        margin: 0;
+        font-size: 0.9em;
       }
-      
-      .wechat-config h3 {
-        color: #856404;
-        margin-bottom: 15px;
+
+      footer {
+        background: linear-gradient(135deg, #2c3e50, #3498db);
+        position: relative;
+        overflow: hidden;
       }
-      
-      .config-form {
+
+      footer::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background:
+          radial-gradient(
+            circle at 0% 0%,
+            rgba(52, 152, 219, 0.1) 0%,
+            transparent 50%
+          ),
+          radial-gradient(
+          circle at 100% 100%,
+          rgba(46, 204, 113, 0.1) 0%,
+          transparent 50%
+        );
+      }
+
+      .footer-content {
+        max-width: 1200px;
+        margin: 0 auto;
         display: grid;
-        gap: 15px;
-      }
-      
-      .form-group {
-        display: flex;
-        flex-direction: column;
-        gap: 5px;
-      }
-      
-      .form-group label {
-        font-weight: 600;
-        color: #333;
-      }
-      
-      .form-group input {
-        padding: 10px;
-        border: 1px solid #ddd;
-        border-radius: 5px;
-        font-size: 1rem;
-      }
-      
-      .btn {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 40px;
+        padding: 50px 20px;
+        position: relative;
+        z-index: 1;
         color: white;
-        border: none;
-        padding: 12px 24px;
-        border-radius: 8px;
-        cursor: pointer;
-        font-size: 1rem;
-        font-weight: 600;
-        transition: transform 0.3s ease;
       }
-      
-      .btn:hover {
-        transform: translateY(-2px);
+
+      .footer-section h4 {
+        color: var(--secondary-color);
+        margin-bottom: 20px;
       }
-      
-      .response-area {
-        background: #f8f9fa;
-        border: 1px solid #dee2e6;
-        border-radius: 8px;
-        padding: 15px;
+
+      .footer-section ul {
+        list-style: none;
+        padding: 0;
+      }
+
+      .footer-section ul li {
+        margin-bottom: 10px;
+      }
+
+      .footer-section ul li a {
+        color: white;
+        text-decoration: none;
+        transition: color 0.3s ease;
+      }
+
+      .footer-section ul li a:hover {
+        color: var(--secondary-color);
+      }
+
+      .social-icons {
         margin-top: 20px;
-        font-family: 'Courier New', monospace;
-        font-size: 0.9rem;
-        white-space: pre-wrap;
-        max-height: 300px;
-        overflow-y: auto;
       }
-      
+
+      .social-icons a {
+        color: white;
+        margin: 0 10px;
+        font-size: 1.5em;
+        transition: color 0.3s ease;
+      }
+
+      .social-icons a:hover {
+        color: var(--secondary-color);
+      }
+
+      .copyright {
+        text-align: center;
+        margin-top: 40px;
+        padding-top: 20px;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      .scroll-to-top {
+        position: fixed;
+        bottom: 30px;
+        right: 30px;
+        width: 50px;
+        height: 50px;
+        background: var(--gradient-1);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        text-decoration: none;
+        opacity: 0;
+        transform: translateY(100px);
+        transition: all 0.4s ease;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        z-index: 1000;
+      }
+
+      .scroll-to-top.visible {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      .scroll-to-top:hover {
+        transform: translateY(-5px);
+      }
+
+      .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 30px;
+        max-width: 1000px;
+        margin: 0 auto;
+        text-align: center;
+        position: relative;
+        z-index: 1;
+      }
+
       @media (max-width: 768px) {
-        .container {
-          width: 95%;
-          margin: 10px;
+        .hero h1 {
+          font-size: 2.5em;
         }
         
-        .header {
-          padding: 30px 20px;
+        .hero p {
+          font-size: 1.2em;
         }
         
-        .header h1 {
-          font-size: 2rem;
-        }
-        
-        .content {
-          padding: 20px;
-        }
-        
-        .feature-grid {
+        .features-grid {
           grid-template-columns: 1fr;
+        }
+        
+        .stats-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+        
+        .footer-content {
+          grid-template-columns: 1fr;
+          text-align: center;
         }
       }
     </style>
   </head>
+
   <body>
-    <div class="container">
-      <div class="header">
-        <h1>TrendPublish</h1>
-        <p>AI驱动的智能文章发布工具 - Cloudflare Pages版</p>
-        <p style="margin-top: 10px;">
-          <span class="status-indicator status-online"></span>
-          服务状态: <span id="service-status">检查中...</span>
-        </p>
+    <section class="hero">
+      <h1>TrendPublish</h1>
+      <p>一站式智能文章发布工具，支持多平台发布，让内容创作更简单、更高效</p>
+      <div class="hero-buttons">
+        <a href="#quick-actions" class="cta-button">立即开始</a>
+        <a href="#features" class="cta-button secondary-button">了解更多</a>
       </div>
-      
-      <div class="content">
-        <div class="feature-grid">
-          <div class="feature-card">
-            <h3>🤖 AI智能处理</h3>
-            <p>集成多种大模型，实现智能摘要、趋势分析和内容优化</p>
-          </div>
-          <div class="feature-card">
-            <h3>📱 多平台发布</h3>
-            <p>支持微信公众号、Twitter等多平台一键发布</p>
-          </div>
-          <div class="feature-card">
-            <h3>🎨 精美模板</h3>
-            <p>提供多种专业模板，自动优化文章排版和样式</p>
-          </div>
-          <div class="feature-card">
-            <h3>📊 数据分析</h3>
-            <p>实时监控发布效果，提供详细的数据分析报告</p>
-          </div>
+    </section>
+
+    <section id="features" class="features">
+      <h2 class="section-title">核心特性</h2>
+      <div class="features-grid">
+        <div class="feature-card">
+          <h3>多平台发布</h3>
+          <p>支持微信公众号、Twitter/X等多平台一键发布，统一管理内容分发</p>
         </div>
-        
-        <div class="api-section">
-          <h2>API接口</h2>
-          
-          <div class="api-endpoint">
-            <span class="method get">GET</span>
-            <strong>/api/health</strong>
-            <div style="margin-top: 10px; color: #666;">健康检查接口</div>
-          </div>
-          
-          <div class="api-endpoint">
-            <span class="method post">POST</span>
-            <strong>/api/wechat/publish</strong>
-            <div style="margin-top: 10px; color: #666;">发布文章到微信公众号</div>
-          </div>
-          
-          <div class="api-endpoint">
-            <span class="method post">POST</span>
-            <strong>/api/wechat/upload-image</strong>
-            <div style="margin-top: 10px; color: #666;">上传图片到微信公众号</div>
-          </div>
+        <div class="feature-card">
+          <h3>AI智能处理</h3>
+          <p>集成Deepseek/千问/讯飞等大模型，实现智能摘要与趋势分析</p>
         </div>
-        
-        <div class="wechat-config">
-          <h3>🔧 微信公众号配置</h3>
-          <form class="config-form" id="wechat-form">
-            <div class="form-group">
-              <label for="appid">AppID:</label>
-              <input type="text" id="appid" name="appid" placeholder="请输入微信公众号AppID" required>
-            </div>
-            <div class="form-group">
-              <label for="secret">AppSecret:</label>
-              <input type="password" id="secret" name="secret" placeholder="请输入微信公众号AppSecret" required>
-            </div>
-            <button type="submit" class="btn">保存配置</button>
-          </form>
-          
-          <div id="api-response" class="response-area" style="display: none;"></div>
+        <div class="feature-card">
+          <h3>多源数据采集</h3>
+          <p>支持Twitter/X内容抓取、FireCrawl网页解析及自定义数据源配置</p>
+        </div>
+        <div class="feature-card">
+          <h3>智能通知</h3>
+          <p>任务状态实时推送，集成Bark移动端通知服务</p>
+        </div>
+        <div class="feature-card">
+          <h3>精美模板</h3>
+          <p>提供多种专业模板，自动优化文章排版和样式</p>
+        </div>
+        <div class="feature-card">
+          <h3>数据分析</h3>
+          <p>实时监控发布效果，提供详细的数据分析报告</p>
         </div>
       </div>
-    </div>
+    </section>
+
+    <section class="quick-actions" id="quick-actions">
+      <h2 class="section-title">快速开始</h2>
+      <div class="quick-actions-grid">
+        <a href="test-wechat-publish.html" class="action-card">
+          <h4>📱 微信公众号测试</h4>
+          <p>测试微信公众号发布功能，包括草稿创建、发布等功能</p>
+        </a>
+        <a href="docs/templates.html" class="action-card">
+          <h4>🎨 模板展示</h4>
+          <p>查看所有可用的文章模板，选择最适合的排版样式</p>
+        </a>
+        <a href="docs/help.html" class="action-card">
+          <h4>📖 使用文档</h4>
+          <p>详细的使用指南和API文档，快速上手各项功能</p>
+        </a>
+        <a href="https://github.com/OpenAISpace/ai-trend-publish" class="action-card" target="_blank">
+          <h4>💻 GitHub项目</h4>
+          <p>查看源代码，提交Issue，参与项目开发</p>
+        </a>
+      </div>
+    </section>
+
+    <section class="stats-section">
+      <div class="stats-grid">
+        <div class="stat-item">
+          <h3>10+</h3>
+          <p>精美模板</p>
+        </div>
+        <div class="stat-item">
+          <h3>5+</h3>
+          <p>发布平台</p>
+        </div>
+        <div class="stat-item">
+          <h3>1000+</h3>
+          <p>文章发布量</p>
+        </div>
+        <div class="stat-item">
+          <h3>N+</h3>
+          <p>AI模型支持</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="templates-section">
+      <h2 class="section-title">精选模板展示</h2>
+      <div class="templates-grid">
+        <div class="template-preview">
+          <span class="template-badge">最受欢迎</span>
+          <img
+            src="https://oss.liuyaowen.cn/images/202503051143589.png"
+            alt="基础模板预览"
+          >
+          <div class="template-info">
+            <h3>基础模板</h3>
+            <p>
+              简洁大方的设计风格，适合各类文章内容。完美支持图文混排，自动优化排版效果。
+            </p>
+          </div>
+        </div>
+        <div class="template-preview">
+          <span class="template-badge">新品</span>
+          <img
+            src="https://oss.liuyaowen.cn/images/202503051144321.png"
+            alt="现代风格模板预览"
+          >
+          <div class="template-info">
+            <h3>现代风格</h3>
+            <p>
+              时尚现代的设计，适合科技类文章。内置多种布局组件，灵活组合展现形式。
+            </p>
+          </div>
+        </div>
+        <div class="template-preview">
+          <span class="template-badge">专业版</span>
+          <img
+            src="https://oss.liuyaowen.cn/images/202503051144824.png"
+            alt="技术专栏模板预览"
+          >
+          <div class="template-info">
+            <h3>技术专栏</h3>
+            <p>
+              专为技术文章定制的排版样式，支持代码高亮、图表展示等专业特性。
+            </p>
+          </div>
+        </div>
+      </div>
+      <p
+        style="text-align: center; margin-top: 60px; position: relative; z-index: 1"
+      >
+        <a href="docs/templates.html" class="cta-button">查看所有模板</a>
+      </p>
+    </section>
+
+    <section class="testimonials">
+      <h2 class="section-title">用户评价</h2>
+      <div class="features-grid">
+        <div class="testimonial-card">
+          <p>"TrendPublish 让我的文章发布效率提升了好几倍，多平台发布功能太实用了！"</p>
+          <div class="testimonial-author">
+            <img
+              src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix"
+              alt="用户头像"
+              class="author-avatar"
+            >
+            <div>
+              <strong>张三</strong>
+              <p>技术博主</p>
+            </div>
+          </div>
+        </div>
+        <div class="testimonial-card">
+          <p>"AI 辅助功能特别实用，帮我优化了很多文章的表达方式，模板质量也很高。"</p>
+          <div class="testimonial-author">
+            <img
+              src="https://api.dicebear.com/7.x/avataaars/svg?seed=Lucy"
+              alt="用户头像"
+              class="author-avatar"
+            >
+            <div>
+              <strong>李四</strong>
+              <p>内容创作者</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      <div class="footer-content">
+        <div class="footer-section">
+          <h4>关于我们</h4>
+          <p>
+            TrendPublish
+            致力于为创作者提供最优质的内容发布工具，让创作更简单，传播更高效。
+          </p>
+        </div>
+        <div class="footer-section">
+          <h4>快速链接</h4>
+          <ul>
+            <li><a href="#features">核心功能</a></li>
+            <li><a href="docs/templates.html">模板展示</a></li>
+            <li><a href="test-wechat-publish.html">微信测试</a></li>
+            <li>
+              <a href="https://github.com/OpenAISpace/ai-trend-publish"
+              >GitHub</a>
+            </li>
+            <li>
+              <a href="docs/help.html"
+              >帮助文档</a>
+            </li>
+          </ul>
+        </div>
+        <div class="footer-section">
+          <h4>技术支持</h4>
+          <ul>
+            <li><a href="mailto:liuyaowen_smile@126.com">Email联系</a></li>
+            <li><a href="https://github.com/OpenAISpace/ai-trend-publish/issues">问题反馈</a></li>
+            <li><a href="COMPLETE_WECHAT_GUIDE.md">微信API文档</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="copyright">
+        <p>Copyright © 2025 TrendPublish. All rights reserved.</p>
+      </div>
+    </footer>
+
+    <a href="#" class="scroll-to-top" id="scrollTop">↑</a>
 
     <script>
-      // 检查服务状态
-      async function checkServiceStatus() {
-        try {
-          const response = await fetch('/api/health');
-          const data = await response.json();
-          document.getElementById('service-status').textContent = '在线';
-          document.querySelector('.status-indicator').classList.add('status-online');
-        } catch (error) {
-          document.getElementById('service-status').textContent = '离线';
-          document.querySelector('.status-indicator').classList.add('status-offline');
+      // 监听滚动事件，显示动画效果
+      function handleScroll() {
+        const elements = document.querySelectorAll(
+          ".section-title, .features-grid, .stat-item, .template-preview, .testimonial-card",
+        );
+        const scrollTop = window.scrollY;
+        const windowHeight = window.innerHeight;
+
+        elements.forEach((element) => {
+          const elementTop = element.offsetTop;
+          if (scrollTop > elementTop - windowHeight + 100) {
+            element.classList.add("visible");
+          }
+        });
+
+        // 显示/隐藏回到顶部按钮
+        const scrollButton = document.getElementById("scrollTop");
+        if (scrollTop > 500) {
+          scrollButton.classList.add("visible");
+        } else {
+          scrollButton.classList.remove("visible");
         }
       }
 
-      // 处理微信配置表单提交
-      document.getElementById('wechat-form').addEventListener('submit', async (e) => {
-        e.preventDefault();
-        
-        const formData = new FormData(e.target);
-        const config = {
-          appid: formData.get('appid'),
-          secret: formData.get('secret')
-        };
-
-        try {
-          const response = await fetch('/api/wechat/config', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(config)
+      // 平滑滚动到顶部
+      document.getElementById("scrollTop").addEventListener(
+        "click",
+        function (e) {
+          e.preventDefault();
+          window.scrollTo({
+            top: 0,
+            behavior: "smooth",
           });
+        },
+      );
 
-          const result = await response.json();
-          const responseArea = document.getElementById('api-response');
-          responseArea.style.display = 'block';
-          responseArea.textContent = JSON.stringify(result, null, 2);
-        } catch (error) {
-          const responseArea = document.getElementById('api-response');
-          responseArea.style.display = 'block';
-          responseArea.textContent = '请求失败: ' + error.message;
-        }
+      // 平滑滚动到锚点
+      document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+          e.preventDefault();
+          const target = document.querySelector(this.getAttribute('href'));
+          if (target) {
+            target.scrollIntoView({
+              behavior: 'smooth',
+              block: 'start'
+            });
+          }
+        });
       });
 
-      // 页面加载完成后检查服务状态
-      document.addEventListener('DOMContentLoaded', checkServiceStatus);
-      
-      // 每30秒检查一次服务状态
-      setInterval(checkServiceStatus, 30000);
+      window.addEventListener("scroll", handleScroll);
+      window.addEventListener("load", handleScroll);
     </script>
   </body>
 </html>

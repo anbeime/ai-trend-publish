@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>公众号发布</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        background: #f5f5f5;
+        padding: 15px;
+      }
+      .card {
+        background: #fff;
+        border-radius: 12px;
+        padding: 20px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      }
+      h1 {
+        font-size: 18px;
+        text-align: center;
+        margin-bottom: 20px;
+        color: #333;
+      }
+      label {
+        display: block;
+        font-size: 14px;
+        color: #666;
+        margin-bottom: 5px;
+      }
+      input,
+      textarea {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        font-size: 16px;
+        margin-bottom: 15px;
+      }
+      input:focus,
+      textarea:focus {
+        outline: none;
+        border-color: #07c160;
+      }
+      textarea {
+        height: 200px;
+        resize: vertical;
+      }
+      button {
+        width: 100%;
+        padding: 14px;
+        background: #07c160;
+        color: #fff;
+        border: none;
+        border-radius: 8px;
+        font-size: 16px;
+        font-weight: 500;
+        margin-bottom: 10px;
+      }
+      button:active {
+        opacity: 0.8;
+      }
+      .status {
+        padding: 12px;
+        border-radius: 8px;
+        font-size: 14px;
+        display: none;
+        margin-top: 15px;
+      }
+      .status.show {
+        display: block;
+      }
+      .status.success {
+        background: #d4edda;
+        color: #155724;
+      }
+      .status.error {
+        background: #f8d7da;
+        color: #721c24;
+      }
+      .status.loading {
+        background: #fff3cd;
+        color: #856404;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="card">
+      <h1>📱 公众号发布</h1>
+
+      <label>标题 *</label>
+      <input type="text" id="title" placeholder="输入标题" maxlength="64" />
+
+      <label>内容 *</label>
+      <textarea id="content" placeholder="粘贴HTML内容"></textarea>
+
+      <label>摘要（可选）</label>
+      <input type="text" id="summary" placeholder="留空自动提取" />
+
+      <button onclick="publish()" id="pubBtn">🚀 发布</button>
+      <button onclick="copyHtml()" style="background: #1890ff">
+        📋 复制HTML
+      </button>
+
+      <div id="status" class="status"></div>
+    </div>
+
+    <script>
+      const API = "https://mp.miyucaicai.cn/coze/publish-complete";
+      const APPID = "wx8410119dfbb7f756";
+      const SECRET = "3c93e33e087e57b906f5c341aa5223b9";
+
+      function show(msg, type) {
+        const el = document.getElementById("status");
+        el.className = "status show " + type;
+        el.textContent = msg;
+      }
+
+      async function publish() {
+        const title = document.getElementById("title").value.trim();
+        const content = document.getElementById("content").value.trim();
+        const summary =
+          document.getElementById("summary").value.trim() ||
+          content.slice(0, 100).replace(/<[^>]+>/g, "");
+
+        if (!title) {
+          show("请输入标题", "error");
+          return;
+        }
+        if (!content) {
+          show("请输入内容", "error");
+          return;
+        }
+
+        document.getElementById("pubBtn").disabled = true;
+        show("发布中...", "loading");
+
+        try {
+          const res = await fetch(API, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              appid: APPID,
+              secret: SECRET,
+              title,
+              content,
+              summary,
+            }),
+          });
+          const data = await res.json();
+
+          if (data.success) {
+            show(
+              "✅ 发布成功！media_id: " + (data.data?.media_id || ""),
+              "success",
+            );
+            setTimeout(() => {
+              document.getElementById("title").value = "";
+              document.getElementById("content").value = "";
+            }, 2000);
+          } else {
+            show("❌ 失败: " + (data.error || data.message || "未知"), "error");
+          }
+        } catch (e) {
+          show("❌ 网络错误: " + e.message, "error");
+        }
+        document.getElementById("pubBtn").disabled = false;
+      }
+
+      function copyHtml() {
+        const content = document.getElementById("content").value.trim();
+        if (!content) {
+          show("没有内容", "error");
+          return;
+        }
+        const html =
+          '<div style="padding:20px;font-family:Microsoft YaHei,sans-serif;font-size:16px;line-height:1.8;color:#333">' +
+          content +
+          "</div>";
+        navigator.clipboard
+          .writeText(html)
+          .then(() => {
+            show("✅ 已复制！粘贴到公众号", "success");
+          })
+          .catch(() => {
+            show("❌ 复制失败", "error");
+          });
+      }
+    </script>
+  </body>
+</html>

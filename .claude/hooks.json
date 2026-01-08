@@ -1,0 +1,11 @@
+{
+  "hooks": {
+    "session-start": {
+      "description": "Claude Code 启动时自动启动 AI API 服务",
+      "command": "bash .claude/hooks/auto-start-api.sh",
+      "windows_command": ".claude\\hooks\\auto-start-api.bat",
+      "enabled": true,
+      "async": true
+    }
+  }
+}

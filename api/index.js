@@ -171,7 +171,7 @@ app.post('/api/wechat/publish', async (c) => {
 app.post('/api/wechat/upload-image', async (c) => {
   try {
     const formData = await c.req.formData();
-    const file = formData.get('media') as File;
+    const file = formData.get('media');
 
     if (!file) {
       return c.json({

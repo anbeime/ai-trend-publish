@@ -1,8 +1,7 @@
 import { ConfigManager } from "@src/utils/config/config-manager.ts";
-import db from "@src/db/db.ts";
 import { dataSources } from "@src/db/schema.ts";
 import { Logger } from "@zilla/logger";
-export type NewsPlatform = "firecrawl" | "twitter";
+export type NewsPlatform = "firecrawl" | "twitter" | "hotnews";
 
 const logger = new Logger("getDataSources");
 
@@ -18,7 +17,11 @@ export const sourceConfigs: SourceConfig = {
     { identifier: "https://news.ycombinator.com/" },
   ],
   twitter: [
-    { identifier: "https://x.com/OpenAIDevs" },
+    // Twitter 已禁用 - 缺少 X_API_BEARER_TOKEN
+    // { identifier: "https://x.com/OpenAIDevs" },
+  ],
+  hotnews: [
+    { identifier: "http://top.miyucaicai.cn" },
   ],
 } as const;
 
@@ -37,6 +40,9 @@ export const getDataSources = async (): Promise<SourceConfig> => {
 
     if (dbEnabled) {
       logger.info("开始从数据库获取数据源");
+      // 动态导入 db，避免在模块加载时连接数据库
+      const { default: db } = await import("@src/db/db.ts");
+
       const dbResults = await db.select({
         identifier: dataSources.identifier,
         platform: dataSources.platform,

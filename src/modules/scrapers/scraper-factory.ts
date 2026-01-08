@@ -8,6 +8,7 @@ import { FireCrawlScraper } from "./fireCrawl.scraper.ts";
 import { RsshubScraper } from "./rsshub.scraper.ts";
 import { HellogithubScraper } from "./hellogithub.scraper.ts";
 import { TwitterScraper } from "./twitter.scraper.ts";
+import { HotNewsScraper } from "./hot-news.scraper.ts";
 
 /**
  * Scraper Provider Type Enum
@@ -20,6 +21,7 @@ export enum ScraperType {
   RSSHUB = "RSSHUB",
   HELLOGITHUB = "HELLOGITHUB",
   TWITTER = "TWITTER",
+  HOT_NEWS = "HOT_NEWS", // 热点新闻采集器
   // Add other scraper types here
 }
 
@@ -34,6 +36,7 @@ export interface ScraperTypeMap {
   [ScraperType.RSSHUB]: RsshubScraper;
   [ScraperType.HELLOGITHUB]: HellogithubScraper;
   [ScraperType.TWITTER]: TwitterScraper;
+  [ScraperType.HOT_NEWS]: HotNewsScraper;
 }
 
 /**
@@ -125,7 +128,10 @@ export class ScraperFactory {
         // TwitterScraper might take arguments if it needs API keys/tokens passed directly
         // For now, assuming it reads from env like others or has a default config.
         // If it needs params: new TwitterScraper(this.configManager.get('TWITTER_API_KEY'));
-        return new TwitterScraper(); 
+        return new TwitterScraper();
+      case ScraperType.HOT_NEWS:
+        // HotNewsScraper 用于采集热点新闻网站
+        return new HotNewsScraper("http://top.miyucaicai.cn");
       default:
         // This should ideally be caught by parseConfig, but as a safeguard:
         const exhaustiveCheck: never = config.scraperType;

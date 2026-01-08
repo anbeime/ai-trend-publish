@@ -11,6 +11,7 @@ import { WeixinPublisher } from "@src/modules/publishers/weixin.publisher.ts";
 import { WeixinTemplate } from "../modules/render/weixin/interfaces/article.type.ts";
 import { FireCrawlScraper } from "@src/modules/scrapers/fireCrawl.scraper.ts";
 import { TwitterScraper } from "@src/modules/scrapers/twitter.scraper.ts";
+import { HotNewsScraper } from "@src/modules/scrapers/hot-news.scraper.ts";
 import { AISummarizer } from "@src/modules/summarizer/ai.summarizer.ts";
 import { ImageGeneratorFactory } from "@src/providers/image-gen/image-generator-factory.ts";
 import { WeixinArticleTemplateRenderer } from "../modules/render/weixin/article.renderer.ts";
@@ -25,7 +26,7 @@ import { WorkflowTerminateError } from "@src/works/workflow-error.ts";
 import { Logger } from "@zilla/logger";
 import ProgressBar from "jsr:@deno-library/progress";
 import { ImageGeneratorType } from "@src/providers/interfaces/image-gen.interface.ts";
-import { VectorService } from "@src/services/vector-service.ts";
+// import { VectorService } from "@src/services/vector-service.ts"; // 暂时禁用
 import { EmbeddingProvider } from "@src/providers/interfaces/embedding.interface.ts";
 import { EmbeddingFactory } from "@src/providers/embedding/embedding-factory.ts";
 import { EmbeddingProviderType } from "@src/providers/interfaces/embedding.interface.ts";
@@ -38,7 +39,7 @@ interface WeixinWorkflowEnv {
 
 // 工作流参数类型定义
 interface WeixinWorkflowParams {
-  sourceType?: "all" | "firecrawl" | "twitter";
+  sourceType?: "all" | "firecrawl" | "twitter" | "hotnews";
   maxArticles?: number;
   forcePublish?: boolean;
 }
@@ -51,7 +52,7 @@ export class WeixinArticleWorkflow
   private notifier: BarkNotifier;
   private renderer: WeixinArticleTemplateRenderer;
   private contentRanker: ContentRanker;
-  private vectorService: VectorService;
+  // private vectorService: VectorService; // 暂时禁用
   private embeddingModel!: EmbeddingProvider;
   private existingVectors: { vector: number[]; content: string | null }[] = [];
   private stats = {
@@ -66,12 +67,13 @@ export class WeixinArticleWorkflow
     this.scraper = new Map<string, ContentScraper>();
     this.scraper.set("fireCrawl", new FireCrawlScraper());
     this.scraper.set("twitter", new TwitterScraper());
+    this.scraper.set("hotnews", new HotNewsScraper("http://top.miyucaicai.cn"));
     this.summarizer = new AISummarizer();
     this.publisher = new WeixinPublisher();
     this.notifier = new BarkNotifier();
     this.renderer = new WeixinArticleTemplateRenderer();
     this.contentRanker = new ContentRanker();
-    this.vectorService = new VectorService();
+    // this.vectorService = new VectorService(); // 暂时禁用
   }
 
   public getWorkflowStats(eventId: string) {
@@ -109,17 +111,20 @@ export class WeixinArticleWorkflow
       // 获取数据源
       const sourceConfigs = await step.do("fetch-sources", async () => {
         const configs = await getDataSources();
-        if (!configs.firecrawl) {
-          throw new WorkflowTerminateError("未找到firecrawl数据源配置");
-        }
-        if (!configs.twitter) {
-          throw new WorkflowTerminateError("未找到twitter数据源配置");
+        // 至少需要一个数据源平台
+        const hasAnySources = (configs.firecrawl && configs.firecrawl.length > 0) ||
+          (configs.twitter && configs.twitter.length > 0) ||
+          (configs.hotnews && configs.hotnews.length > 0);
+
+        if (!hasAnySources) {
+          throw new WorkflowTerminateError("未配置任何数据源");
         }
         return configs;
       });
 
-      const totalSources = sourceConfigs.firecrawl.length +
-        sourceConfigs.twitter.length;
+      const totalSources = (sourceConfigs.firecrawl?.length || 0) +
+        (sourceConfigs.twitter?.length || 0) +
+        (sourceConfigs.hotnews?.length || 0);
 
       if (totalSources === 0) {
         throw new WorkflowTerminateError("未配置任何数据源");
@@ -146,42 +151,56 @@ export class WeixinArticleWorkflow
 
         // FireCrawl sources
         const fireCrawlScraper = this.scraper.get("fireCrawl");
-        if (!fireCrawlScraper) {
-          throw new WorkflowTerminateError("FireCrawlScraper not found");
-        }
-
-        for (const source of sourceConfigs.firecrawl) {
-          const sourceContents = await this.scrapeSource(
-            "FireCrawl",
-            source,
-            fireCrawlScraper,
-          );
-          contents.push(...sourceContents);
-          totalArticles += sourceContents.length;
-          await scrapeProgress.render(++scrapeCompleted, {
-            title:
-              `抓取 FireCrawl: ${source.identifier}  | 已获取文章: ${totalArticles}篇`,
-          });
+        if (fireCrawlScraper && sourceConfigs.firecrawl) {
+          for (const source of sourceConfigs.firecrawl) {
+            const sourceContents = await this.scrapeSource(
+              "FireCrawl",
+              source,
+              fireCrawlScraper,
+            );
+            contents.push(...sourceContents);
+            totalArticles += sourceContents.length;
+            await scrapeProgress.render(++scrapeCompleted, {
+              title:
+                `抓取 FireCrawl: ${source.identifier}  | 已获取文章: ${totalArticles}篇`,
+            });
+          }
         }
 
         // Twitter sources
         const twitterScraper = this.scraper.get("twitter");
-        if (!twitterScraper) {
-          throw new WorkflowTerminateError("TwitterScraper not found");
+        if (twitterScraper && sourceConfigs.twitter) {
+          for (const source of sourceConfigs.twitter) {
+            const sourceContents = await this.scrapeSource(
+              "Twitter",
+              source,
+              twitterScraper,
+            );
+            contents.push(...sourceContents);
+            totalArticles += sourceContents.length;
+            await scrapeProgress.render(++scrapeCompleted, {
+              title:
+                `抓取 Twitter: ${source.identifier} | 已获取文章: ${totalArticles}篇`,
+            });
+          }
         }
 
-        for (const source of sourceConfigs.twitter) {
-          const sourceContents = await this.scrapeSource(
-            "Twitter",
-            source,
-            twitterScraper,
-          );
-          contents.push(...sourceContents);
-          totalArticles += sourceContents.length;
-          await scrapeProgress.render(++scrapeCompleted, {
-            title:
-              `抓取 Twitter: ${source.identifier} | 已获取文章: ${totalArticles}篇`,
-          });
+        // HotNews sources
+        const hotNewsScraper = this.scraper.get("hotnews");
+        if (hotNewsScraper && sourceConfigs.hotnews) {
+          for (const source of sourceConfigs.hotnews) {
+            const sourceContents = await this.scrapeSource(
+              "HotNews",
+              source,
+              hotNewsScraper,
+            );
+            contents.push(...sourceContents);
+            totalArticles += sourceContents.length;
+            await scrapeProgress.render(++scrapeCompleted, {
+              title:
+                `抓取 HotNews: ${source.identifier} | 已获取文章: ${totalArticles}篇`,
+            });
+          }
         }
 
         this.stats.contents = contents.length;

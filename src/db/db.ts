@@ -21,9 +21,11 @@ const poolConnection = mysql.createPool({
   user: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
   database: process.env.DB_DATABASE,
-  waitForConnections: true,
+  waitForConnections: false, // 不等待连接，立即失败
   connectionLimit: 10,
   queueLimit: 0,
+  connectTimeout: 1000, // 1秒连接超时
+  acquireTimeout: 1000, // 1秒获取连接超时
   enableKeepAlive: true,
   keepAliveInitialDelay: 0,
 });

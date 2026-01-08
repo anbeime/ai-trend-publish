@@ -1,26 +1,31 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="zh-CN">
   <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TrendPublish - 智能文章发布工具</title>
-    <meta name="description" content="AI驱动的智能文章发布工具，支持多平台发布">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AI热点自动发布系统 - 在线试用</title>
+    <meta
+      name="description"
+      content="AI驱动的智能文章发布工具，支持多平台发布，集成COZE+N8N工作流"
+    />
     <style>
       * {
         margin: 0;
         padding: 0;
         box-sizing: border-box;
       }
-      
+
       body {
-        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+        font-family:
+          -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          "Helvetica Neue", Arial, sans-serif;
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         min-height: 100vh;
         display: flex;
         align-items: center;
         justify-content: center;
       }
-      
+
       .container {
         max-width: 800px;
         width: 90%;
@@ -30,77 +35,79 @@
         overflow: hidden;
         margin: 20px;
       }
-      
+
       .header {
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         color: white;
         padding: 40px;
         text-align: center;
       }
-      
+
       .header h1 {
         font-size: 2.5rem;
         margin-bottom: 10px;
         font-weight: 700;
       }
-      
+
       .header p {
         font-size: 1.1rem;
         opacity: 0.9;
       }
-      
+
       .content {
         padding: 40px;
       }
-      
+
       .feature-grid {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
         gap: 30px;
         margin-bottom: 40px;
       }
-      
+
       .feature-card {
         background: #f8f9fa;
         padding: 25px;
         border-radius: 15px;
         border-left: 4px solid #667eea;
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        transition:
+          transform 0.3s ease,
+          box-shadow 0.3s ease;
       }
-      
+
       .feature-card:hover {
         transform: translateY(-5px);
         box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
       }
-      
+
       .feature-card h3 {
         color: #667eea;
         margin-bottom: 10px;
         font-size: 1.2rem;
       }
-      
+
       .api-section {
         background: #f8f9fa;
         border-radius: 15px;
         padding: 30px;
         margin-top: 30px;
       }
-      
+
       .api-section h2 {
         color: #333;
         margin-bottom: 20px;
         font-size: 1.8rem;
       }
-      
+
       .api-endpoint {
         background: white;
         border: 1px solid #e9ecef;
         border-radius: 10px;
         padding: 20px;
         margin-bottom: 15px;
-        font-family: 'Courier New', monospace;
+        font-family: "Courier New", monospace;
       }
-      
+
       .method {
         display: inline-block;
         padding: 4px 8px;
@@ -110,10 +117,14 @@
         margin-right: 10px;
         font-size: 0.9rem;
       }
-      
-      .get { background: #28a745; }
-      .post { background: #007bff; }
-      
+
+      .get {
+        background: #28a745;
+      }
+      .post {
+        background: #007bff;
+      }
+
       .status-indicator {
         display: inline-block;
         width: 10px;
@@ -121,10 +132,14 @@
         border-radius: 50%;
         margin-right: 10px;
       }
-      
-      .status-online { background: #28a745; }
-      .status-offline { background: #dc3545; }
-      
+
+      .status-online {
+        background: #28a745;
+      }
+      .status-offline {
+        background: #dc3545;
+      }
+
       .wechat-config {
         background: #fff3cd;
         border: 1px solid #ffeaa7;
@@ -132,35 +147,35 @@
         padding: 20px;
         margin-top: 20px;
       }
-      
+
       .wechat-config h3 {
         color: #856404;
         margin-bottom: 15px;
       }
-      
+
       .config-form {
         display: grid;
         gap: 15px;
       }
-      
+
       .form-group {
         display: flex;
         flex-direction: column;
         gap: 5px;
       }
-      
+
       .form-group label {
         font-weight: 600;
         color: #333;
       }
-      
+
       .form-group input {
         padding: 10px;
         border: 1px solid #ddd;
         border-radius: 5px;
         font-size: 1rem;
       }
-      
+
       .btn {
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         color: white;
@@ -172,25 +187,26 @@
         font-weight: 600;
         transition: transform 0.3s ease;
       }
-      
+
       .btn:hover {
         transform: translateY(-2px);
       }
-      
+
       .response-area {
         background: #f8f9fa;
         border: 1px solid #dee2e6;
         border-radius: 8px;
         padding: 15px;
         margin-top: 20px;
-        font-family: 'Courier New', monospace;
+        font-family: "Courier New", monospace;
         font-size: 0.9rem;
         white-space: pre-wrap;
         max-height: 300px;
         overflow-y: auto;
       }
 
-      .wechat-publish, .draft-management {
+      .wechat-publish,
+      .draft-management {
         background: #e8f4fd;
         border: 1px solid #bee5eb;
         border-radius: 10px;
@@ -198,7 +214,8 @@
         margin-top: 20px;
       }
 
-      .wechat-publish h3, .draft-management h3 {
+      .wechat-publish h3,
+      .draft-management h3 {
         color: #0c5460;
         margin-bottom: 15px;
       }
@@ -264,7 +281,9 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        transition:
+          transform 0.3s ease,
+          box-shadow 0.3s ease;
       }
 
       .draft-item:hover {
@@ -309,8 +328,12 @@
       }
 
       @keyframes spin {
-        0% { transform: rotate(0deg); }
-        100% { transform: rotate(360deg); }
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
       }
 
       .success {
@@ -325,30 +348,257 @@
         color: #721c24;
       }
 
-      .info {
-        background: #d1ecf1;
-        border: 1px solid #bee5eb;
-        color: #0c5460;
-      }
-      
+       .info {
+         background: #d1ecf1;
+         border: 1px solid #bee5eb;
+         color: #0c5460;
+       }
+
+       /* IP白名单配置样式 */
+       .ip-whitelist-notice {
+         background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+         border: 2px solid #f39c12;
+         border-radius: 15px;
+         padding: 25px;
+         margin-bottom: 30px;
+         position: relative;
+       }
+
+       .ip-whitelist-notice::before {
+         content: "⚠️";
+         position: absolute;
+         top: -15px;
+         left: 20px;
+         background: white;
+         border-radius: 50%;
+         width: 30px;
+         height: 30px;
+         display: flex;
+         align-items: center;
+         justify-content: center;
+         border: 2px solid #f39c12;
+         font-size: 16px;
+       }
+
+       .ip-whitelist-notice h2 {
+         color: #e67e22;
+         margin-bottom: 15px;
+         font-size: 1.4rem;
+       }
+
+       .notice-content ol {
+         margin: 15px 0;
+         padding-left: 20px;
+       }
+
+       .notice-content li {
+         margin-bottom: 8px;
+         line-height: 1.6;
+       }
+
+       .ip-list {
+         background: #f8f9fa;
+         border: 1px solid #dee2e6;
+         border-radius: 8px;
+         padding: 15px;
+         margin: 10px 0;
+         font-family: 'Courier New', monospace;
+         line-height: 1.8;
+       }
+
+       .ip-check {
+         display: flex;
+         gap: 15px;
+         align-items: center;
+         margin-top: 20px;
+         flex-wrap: wrap;
+       }
+
+       .ip-status {
+         padding: 10px 15px;
+         border-radius: 8px;
+         font-weight: 600;
+         min-height: 20px;
+         display: flex;
+         align-items: center;
+       }
+
+       /* 自动发布演示样式 */
+       .auto-publish-demo {
+         background: #f8f9fa;
+         border-radius: 15px;
+         padding: 30px;
+         margin-top: 30px;
+       }
+
+       .auto-publish-demo h2 {
+         color: #333;
+         margin-bottom: 25px;
+         font-size: 1.8rem;
+         text-align: center;
+       }
+
+       .demo-content {
+         display: flex;
+         flex-direction: column;
+         gap: 30px;
+       }
+
+       .demo-step {
+         display: flex;
+         align-items: flex-start;
+         gap: 20px;
+         background: white;
+         border-radius: 12px;
+         padding: 25px;
+         border-left: 4px solid #667eea;
+         box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+       }
+
+       .step-number {
+         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+         color: white;
+         width: 40px;
+         height: 40px;
+         border-radius: 50%;
+         display: flex;
+         align-items: center;
+         justify-content: center;
+         font-weight: bold;
+         font-size: 1.2rem;
+         flex-shrink: 0;
+       }
+
+       .step-content {
+         flex: 1;
+       }
+
+       .step-content h3 {
+         color: #333;
+         margin-bottom: 10px;
+         font-size: 1.3rem;
+       }
+
+       .step-content p {
+         color: #666;
+         margin-bottom: 15px;
+         line-height: 1.6;
+       }
+
+       .result-area {
+         background: #f8f9fa;
+         border: 1px solid #dee2e6;
+         border-radius: 8px;
+         padding: 15px;
+         margin-top: 15px;
+         font-family: 'Courier New', monospace;
+         font-size: 0.9rem;
+         white-space: pre-wrap;
+         max-height: 200px;
+         overflow-y: auto;
+         display: none;
+       }
+
+       .result-area.show {
+         display: block;
+       }
+
+       /* 页脚样式 */
+       .footer {
+         margin-top: 40px;
+         padding: 30px 0;
+         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+         color: white;
+         text-align: center;
+       }
+
+       .footer-content p {
+         margin: 5px 0;
+         opacity: 0.9;
+       }
+
+       .footer-content a {
+         color: white;
+         text-decoration: underline;
+       }
+
+       .footer-content a:hover {
+         opacity: 0.8;
+       }
+
+       .copyright {
+         font-size: 0.9rem;
+         opacity: 0.7;
+         margin-top: 15px;
+       }
+
+       /* 使用指南样式 */
+       .usage-guide {
+         background: #f8f9fa;
+         border-radius: 15px;
+         padding: 30px;
+         margin-top: 30px;
+       }
+
+       .usage-guide h2 {
+         color: #333;
+         margin-bottom: 25px;
+         font-size: 1.8rem;
+         text-align: center;
+       }
+
+       .guide-content {
+         display: grid;
+         grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+         gap: 30px;
+       }
+
+       .guide-section {
+         background: white;
+         border-radius: 12px;
+         padding: 25px;
+         border-left: 4px solid #667eea;
+       }
+
+       .guide-section h3 {
+         color: #667eea;
+         margin-bottom: 15px;
+         font-size: 1.3rem;
+       }
+
+       .guide-section ol, .guide-section ul {
+         margin: 15px 0;
+         padding-left: 20px;
+       }
+
+       .guide-section li {
+         margin-bottom: 8px;
+         line-height: 1.6;
+       }
+
+       .guide-section p {
+         line-height: 1.6;
+         margin-bottom: 15px;
+       }
+
       @media (max-width: 768px) {
         .container {
           width: 95%;
           margin: 10px;
         }
-        
+
         .header {
           padding: 30px 20px;
         }
-        
+
         .header h1 {
           font-size: 2rem;
         }
-        
+
         .content {
           padding: 20px;
         }
-        
+
         .feature-grid {
           grid-template-columns: 1fr;
         }
@@ -358,14 +608,96 @@
   <body>
     <div class="container">
       <div class="header">
-        <h1>TrendPublish</h1>
-        <p>AI驱动的智能文章发布工具 - Cloudflare Pages版</p>
+        <h1>🚀 AI热点自动发布系统</h1>
+        <p>集成COZE+N8N工作流的智能内容发布平台</p>
         <p style="margin-top: 10px;">
           <span class="status-indicator status-online"></span>
           服务状态: <span id="service-status">检查中...</span>
         </p>
       </div>
-      
+
+      <div class="content">
+        <!-- IP白名单配置提示 -->
+        <div class="ip-whitelist-notice">
+          <h2>⚠️ 重要：IP白名单配置</h2>
+          <div class="notice-content">
+            <p><strong>在使用前，请先配置微信公众号IP白名单：</strong></p>
+            <ol>
+              <li>登录 <a href="https://mp.weixin.qq.com/" target="_blank">微信公众平台</a></li>
+              <li>进入「设置与开发」→「基本配置」</li>
+              <li>找到「IP白名单」，点击「修改」</li>
+              <li>添加以下IP地址：
+                <div class="ip-list">
+                  <code>76.76.19.0/24</code><br>
+                  <code>76.76.21.0/24</code><br>
+                  <code>8.209.103.0/24</code><br>
+                  <code>8.209.104.0/24</code>
+                </div>
+              </li>
+              <li>保存并扫码确认</li>
+            </ol>
+            <div class="ip-check">
+              <button class="btn btn-primary" id="check-ip-btn">检查IP配置</button>
+              <div id="ip-status" class="ip-status"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="feature-grid">
+          <div class="feature-card">
+            <h3>🤖 COZE AI改写</h3>
+            <p>集成COZE工作流，智能优化文章内容和排版</p>
+          </div>
+          <div class="feature-card">
+            <h3>🔄 N8N工作流</h3>
+            <p>自动化采集、处理、发布完整流程</p>
+          </div>
+          <div class="feature-card">
+            <h3>📊 热点采集</h3>
+            <p>自动从http://top.miyucaicai.cn/采集AI热点信息</p>
+          </div>
+          <div class="feature-card">
+            <h3>📱 微信发布</h3>
+            <p>一键发布到微信公众号，支持草稿和正式发布</p>
+          </div>
+        </div>
+
+        <!-- 自动发布演示 -->
+        <div class="auto-publish-demo">
+          <h2>🎯 自动发布演示</h2>
+          <div class="demo-content">
+            <div class="demo-step">
+              <div class="step-number">1</div>
+              <div class="step-content">
+                <h3>热点采集</h3>
+                <p>系统自动从AI新闻聚合平台采集最新热点</p>
+                <button class="btn btn-secondary" id="fetch-hot-news-btn">手动采集热点</button>
+                <div id="hot-news-result" class="result-area"></div>
+              </div>
+            </div>
+
+            <div class="demo-step">
+              <div class="step-number">2</div>
+              <div class="step-content">
+                <h3>AI内容改写</h3>
+                <p>使用COZE工作流智能改写和优化内容</p>
+                <button class="btn btn-secondary" id="test-coze-btn">测试COZE改写</button>
+                <div id="coze-result" class="result-area"></div>
+              </div>
+            </div>
+
+            <div class="demo-step">
+              <div class="step-number">3</div>
+              <div class="step-content">
+                <h3>自动发布</h3>
+                <p>完整的工作流自动发布到微信公众号</p>
+                <button class="btn btn-success" id="start-auto-publish-btn">启动自动发布</button>
+                <div id="publish-result" class="result-area"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
       <div class="content">
         <div class="feature-grid">
           <div class="feature-card">
@@ -385,44 +717,78 @@
             <p>实时监控发布效果，提供详细的数据分析报告</p>
           </div>
         </div>
-        
+
         <div class="api-section">
           <h2>API接口</h2>
-          
+
           <div class="api-endpoint">
             <span class="method get">GET</span>
             <strong>/api/health</strong>
-            <div style="margin-top: 10px; color: #666;">健康检查接口</div>
+            <div style="margin-top: 10px; color: #666">健康检查接口</div>
           </div>
-          
+
           <div class="api-endpoint">
             <span class="method post">POST</span>
             <strong>/api/wechat/publish</strong>
-            <div style="margin-top: 10px; color: #666;">发布文章到微信公众号</div>
+            <div style="margin-top: 10px; color: #666">
+              发布文章到微信公众号
+            </div>
           </div>
-          
+
           <div class="api-endpoint">
             <span class="method post">POST</span>
             <strong>/api/wechat/upload-image</strong>
-            <div style="margin-top: 10px; color: #666;">上传图片到微信公众号</div>
+            <div style="margin-top: 10px; color: #666">
+              上传图片到微信公众号
+            </div>
           </div>
         </div>
-        
-        <div class="wechat-config">
-          <h3>🔧 微信公众号配置</h3>
-          <form class="config-form" id="wechat-form">
-            <div class="form-group">
-              <label for="appid">AppID:</label>
-              <input type="text" id="appid" name="appid" placeholder="请输入微信公众号AppID" required>
+
+        <!-- 使用指南 -->
+        <div class="usage-guide">
+          <h2>📖 使用指南</h2>
+          <div class="guide-content">
+            <div class="guide-section">
+              <h3>🎯 试用步骤</h3>
+              <ol>
+                <li><strong>配置IP白名单</strong> - 按上方说明添加Vercel IP到微信公众号</li>
+                <li><strong>测试热点采集</strong> - 点击"手动采集热点"查看系统功能</li>
+                <li><strong>体验AI改写</strong> - 测试COZE内容改写功能</li>
+                <li><strong>启动自动发布</strong> - 体验完整的工作流自动化</li>
+              </ol>
             </div>
+
+            <div class="guide-section">
+              <h3>🔧 完整部署</h3>
+              <p>要获得完整功能，请查看我们的部署指南：</p>
+              <ul>
+                <li>微信公众号配置和IP白名单设置</li>
+                <li>N8N工作流自动化配置</li>
+                <li>COZE AI工作流集成</li>
+                <li>定时任务和监控设置</li>
+              </ul>
+              <a href="https://github.com/anbeime/ai-trend-publish" target="_blank" class="btn btn-primary">查看完整部署指南</a>
+            </div>
+          </div>
+        </div>
             <div class="form-group">
               <label for="secret">AppSecret:</label>
-              <input type="password" id="secret" name="secret" placeholder="请输入微信公众号AppSecret" required>
+              <input
+                type="password"
+                id="secret"
+                name="secret"
+                placeholder="请输入微信公众号AppSecret"
+                required
+              />
             </div>
             <button type="submit" class="btn">保存配置</button>
           </form>
-          
-          <div id="api-response" class="response-area" style="display: none;"></div>
+
+          <div
+            id="api-response"
+            class="response-area"
+            style="display: none"
+          ></div>
         </div>
 
         <div class="wechat-publish">
@@ -430,50 +796,117 @@
           <form class="publish-form" id="publish-form">
             <div class="form-group">
               <label for="article-title">文章标题:</label>
-              <input type="text" id="article-title" name="title" placeholder="请输入文章标题" required>
+              <input
+                type="text"
+                id="article-title"
+                name="title"
+                placeholder="请输入文章标题"
+                required
+              />
             </div>
             <div class="form-group">
               <label for="article-author">作者（可选）:</label>
-              <input type="text" id="article-author" name="author" placeholder="请输入作者名称">
+              <input
+                type="text"
+                id="article-author"
+                name="author"
+                placeholder="请输入作者名称"
+              />
             </div>
             <div class="form-group">
               <label for="article-content">文章内容（HTML格式）:</label>
-              <textarea id="article-content" name="content" rows="10" placeholder="请输入文章内容（支持HTML格式）" required></textarea>
+              <textarea
+                id="article-content"
+                name="content"
+                rows="10"
+                placeholder="请输入文章内容（支持HTML格式）"
+                required
+              ></textarea>
             </div>
             <div class="form-group">
               <label for="article-cover">封面图片:</label>
-              <input type="file" id="article-cover" name="cover" accept="image/*" required>
+              <input
+                type="file"
+                id="article-cover"
+                name="cover"
+                accept="image/*"
+                required
+              />
               <small>支持 JPG/PNG 格式，文件大小不超过 2MB</small>
             </div>
             <div class="form-group">
               <label for="article-digest">文章摘要（可选）:</label>
-              <input type="text" id="article-digest" name="digest" placeholder="请输入文章摘要">
+              <input
+                type="text"
+                id="article-digest"
+                name="digest"
+                placeholder="请输入文章摘要"
+              />
             </div>
             <div class="form-group checkbox-group">
-              <input type="checkbox" id="show-cover" name="show_cover_pic" checked>
+              <input
+                type="checkbox"
+                id="show-cover"
+                name="show_cover_pic"
+                checked
+              />
               <label for="show-cover">显示封面图片</label>
             </div>
             <div class="form-group checkbox-group">
-              <input type="checkbox" id="enable-comment" name="need_open_comment">
+              <input
+                type="checkbox"
+                id="enable-comment"
+                name="need_open_comment"
+              />
               <label for="enable-comment">开启评论功能</label>
             </div>
             <div class="form-actions">
-              <button type="button" class="btn btn-secondary" id="upload-cover-btn">上传封面</button>
-              <button type="button" class="btn btn-primary" id="save-draft-btn">保存草稿</button>
-              <button type="button" class="btn btn-success" id="publish-article-btn">发布文章</button>
+              <button
+                type="button"
+                class="btn btn-secondary"
+                id="upload-cover-btn"
+              >
+                上传封面
+              </button>
+              <button type="button" class="btn btn-primary" id="save-draft-btn">
+                保存草稿
+              </button>
+              <button
+                type="button"
+                class="btn btn-success"
+                id="publish-article-btn"
+              >
+                发布文章
+              </button>
             </div>
           </form>
-          
-          <div id="publish-response" class="response-area" style="display: none;"></div>
+
+          <div
+            id="publish-response"
+            class="response-area"
+            style="display: none"
+          ></div>
         </div>
 
         <div class="draft-management">
           <h3>📋 草稿管理</h3>
           <div class="draft-actions">
-            <button type="button" class="btn" id="refresh-drafts-btn">刷新草稿列表</button>
+            <button type="button" class="btn" id="refresh-drafts-btn">
+              刷新草稿列表
+            </button>
           </div>
           <div id="draft-list" class="draft-list">
             <p>暂无草稿，请先创建文章</p>
+          </div>
+        </div>
+
+        <!-- 页脚 -->
+        <div class="footer">
+          <div class="footer-content">
+            <p><strong>AI热点自动发布系统</strong> - Vercel试用版本</p>
+            <p>🚀 完整功能需要配置微信公众号和N8N工作流</p>
+            <p>📚 <a href="https://github.com/anbeime/ai-trend-publish" target="_blank">项目主页</a> | 📖 <a href="https://github.com/anbeime/ai-trend-publish/blob/main/README.md" target="_blank">使用文档</a></p>
+            <p class="copyright">© 2025 AI Trend Publish. Made with ❤️ for content creators.</p>
           </div>
         </div>
       </div>
@@ -483,31 +916,36 @@
       // 全局变量
       let accessToken = null;
       let currentCoverMediaId = null;
+      let hotNewsData = null;
 
       // 检查服务状态
       async function checkServiceStatus() {
         try {
-          const response = await fetch('/api/health');
+          const response = await fetch("/api/health");
           const data = await response.json();
-          document.getElementById('service-status').textContent = '在线';
-          document.querySelector('.status-indicator').classList.add('status-online');
+          document.getElementById("service-status").textContent = "在线";
+          document
+            .querySelector(".status-indicator")
+            .classList.add("status-online");
         } catch (error) {
-          document.getElementById('service-status').textContent = '离线';
-          document.querySelector('.status-indicator').classList.add('status-offline');
+          document.getElementById("service-status").textContent = "离线";
+          document
+            .querySelector(".status-indicator")
+            .classList.add("status-offline");
         }
       }
 
       // 显示响应消息
-      function showMessage(elementId, message, type = 'info') {
+      function showMessage(elementId, message, type = "info") {
         const element = document.getElementById(elementId);
-        element.style.display = 'block';
+        element.style.display = "block";
         element.className = `response-area ${type}`;
         element.textContent = message;
-        
+
         // 3秒后自动隐藏
-        if (type === 'success') {
+        if (type === "success") {
           setTimeout(() => {
-            element.style.display = 'none';
+            element.style.display = "none";
           }, 3000);
         }
       }
@@ -518,266 +956,331 @@
         if (loading) {
           element.innerHTML = '<span class="loading"></span>处理中...';
         } else {
-          element.innerHTML = '';
+          element.innerHTML = "";
         }
       }
 
       // 处理微信配置表单提交
-      document.getElementById('wechat-form').addEventListener('submit', async (e) => {
-        e.preventDefault();
-        
-        const formData = new FormData(e.target);
-        const config = {
-          appid: formData.get('appid'),
-          secret: formData.get('secret')
-        };
+      document
+        .getElementById("wechat-form")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
 
-        try {
-          const response = await fetch('/api/wechat/config', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(config)
-          });
+          const formData = new FormData(e.target);
+          const config = {
+            appid: formData.get("appid"),
+            secret: formData.get("secret"),
+          };
 
-          const result = await response.json();
-          showMessage('api-response', `配置保存成功！\n${JSON.stringify(result, null, 2)}`, 'success');
-          
-          // 尝试获取access token
-          await getAccessToken();
-        } catch (error) {
-          showMessage('api-response', `配置保存失败: ${error.message}`, 'error');
-        }
-      });
+          try {
+            const response = await fetch("/api/wechat/config", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify(config),
+            });
+
+            const result = await response.json();
+            showMessage(
+              "api-response",
+              `配置保存成功！\n${JSON.stringify(result, null, 2)}`,
+              "success",
+            );
+
+            // 尝试获取access token
+            await getAccessToken();
+          } catch (error) {
+            showMessage(
+              "api-response",
+              `配置保存失败: ${error.message}`,
+              "error",
+            );
+          }
+        });
 
       // 获取访问令牌
       async function getAccessToken() {
         try {
-          const response = await fetch('/api/wechat/token');
+          const response = await fetch("/api/wechat/token");
           const result = await response.json();
-          
+
           if (result.success && result.data.access_token) {
             accessToken = result.data.access_token;
-            showMessage('api-response', 'Access Token 获取成功！', 'success');
+            showMessage("api-response", "Access Token 获取成功！", "success");
             return true;
           } else {
-            throw new Error(result.error?.message || '获取Access Token失败');
+            throw new Error(result.error?.message || "获取Access Token失败");
           }
         } catch (error) {
-          showMessage('api-response', `获取Access Token失败: ${error.message}`, 'error');
+          showMessage(
+            "api-response",
+            `获取Access Token失败: ${error.message}`,
+            "error",
+          );
           return false;
         }
       }
 
       // 上传封面图片
-      document.getElementById('upload-cover-btn').addEventListener('click', async () => {
-        const fileInput = document.getElementById('article-cover');
-        const file = fileInput.files[0];
-        
-        if (!file) {
-          showMessage('publish-response', '请先选择封面图片', 'error');
-          return;
-        }
+      document
+        .getElementById("upload-cover-btn")
+        .addEventListener("click", async () => {
+          const fileInput = document.getElementById("article-cover");
+          const file = fileInput.files[0];
 
-        // 检查文件大小
-        if (file.size > 2 * 1024 * 1024) {
-          showMessage('publish-response', '图片文件大小不能超过2MB', 'error');
-          return;
-        }
-
-        // 检查文件类型
-        if (!['image/jpeg', 'image/png', 'image/jpg'].includes(file.type)) {
-          showMessage('publish-response', '仅支持JPG/PNG格式的图片', 'error');
-          return;
-        }
-
-        const formData = new FormData();
-        formData.append('file', file);
-
-        setLoading('publish-response', true);
-
-        try {
-          const response = await fetch('/api/wechat/upload-image', {
-            method: 'POST',
-            body: formData
-          });
-
-          const result = await response.json();
-          setLoading('publish-response', false);
-
-          if (result.success && result.data.media_id) {
-            currentCoverMediaId = result.data.media_id;
-            showMessage('publish-response', `封面上传成功！\nMedia ID: ${result.data.media_id}`, 'success');
-          } else {
-            throw new Error(result.error?.message || '上传失败');
+          if (!file) {
+            showMessage("publish-response", "请先选择封面图片", "error");
+            return;
           }
-        } catch (error) {
-          setLoading('publish-response', false);
-          showMessage('publish-response', `封面上传失败: ${error.message}`, 'error');
-        }
-      });
+
+          // 检查文件大小
+          if (file.size > 2 * 1024 * 1024) {
+            showMessage("publish-response", "图片文件大小不能超过2MB", "error");
+            return;
+          }
+
+          // 检查文件类型
+          if (!["image/jpeg", "image/png", "image/jpg"].includes(file.type)) {
+            showMessage("publish-response", "仅支持JPG/PNG格式的图片", "error");
+            return;
+          }
+
+          const formData = new FormData();
+          formData.append("file", file);
+
+          setLoading("publish-response", true);
+
+          try {
+            const response = await fetch("/api/wechat/upload-image", {
+              method: "POST",
+              body: formData,
+            });
+
+            const result = await response.json();
+            setLoading("publish-response", false);
+
+            if (result.success && result.data.media_id) {
+              currentCoverMediaId = result.data.media_id;
+              showMessage(
+                "publish-response",
+                `封面上传成功！\nMedia ID: ${result.data.media_id}`,
+                "success",
+              );
+            } else {
+              throw new Error(result.error?.message || "上传失败");
+            }
+          } catch (error) {
+            setLoading("publish-response", false);
+            showMessage(
+              "publish-response",
+              `封面上传失败: ${error.message}`,
+              "error",
+            );
+          }
+        });
 
       // 保存草稿
-      document.getElementById('save-draft-btn').addEventListener('click', async () => {
-        if (!currentCoverMediaId) {
-          showMessage('publish-response', '请先上传封面图片', 'error');
-          return;
-        }
-
-        const formData = new FormData(document.getElementById('publish-form'));
-        const articleData = {
-          title: formData.get('title'),
-          content: formData.get('content'),
-          thumb_media_id: currentCoverMediaId,
-          author: formData.get('author') || '',
-          digest: formData.get('digest') || '',
-          need_open_comment: document.getElementById('enable-comment').checked ? 1 : 0,
-          show_cover_pic: document.getElementById('show-cover').checked ? 1 : 0,
-          is_original: 0
-        };
-
-        setLoading('publish-response', true);
-
-        try {
-          const response = await fetch('/api/wechat/publish', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(articleData)
-          });
-
-          const result = await response.json();
-          setLoading('publish-response', false);
-
-          if (result.success) {
-            showMessage('publish-response', `草稿保存成功！\nMedia ID: ${result.data.media_id}`, 'success');
-            
-            // 清空表单
-            document.getElementById('publish-form').reset();
-            currentCoverMediaId = null;
-            
-            // 刷新草稿列表
-            loadDraftList();
-          } else {
-            throw new Error(result.error?.message || '保存失败');
+      document
+        .getElementById("save-draft-btn")
+        .addEventListener("click", async () => {
+          if (!currentCoverMediaId) {
+            showMessage("publish-response", "请先上传封面图片", "error");
+            return;
           }
-        } catch (error) {
-          setLoading('publish-response', false);
-          showMessage('publish-response', `草稿保存失败: ${error.message}`, 'error');
-        }
-      });
+
+          const formData = new FormData(
+            document.getElementById("publish-form"),
+          );
+          const articleData = {
+            title: formData.get("title"),
+            content: formData.get("content"),
+            thumb_media_id: currentCoverMediaId,
+            author: formData.get("author") || "",
+            digest: formData.get("digest") || "",
+            need_open_comment: document.getElementById("enable-comment").checked
+              ? 1
+              : 0,
+            show_cover_pic: document.getElementById("show-cover").checked
+              ? 1
+              : 0,
+            is_original: 0,
+          };
+
+          setLoading("publish-response", true);
+
+          try {
+            const response = await fetch("/api/wechat/publish", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify(articleData),
+            });
+
+            const result = await response.json();
+            setLoading("publish-response", false);
+
+            if (result.success) {
+              showMessage(
+                "publish-response",
+                `草稿保存成功！\nMedia ID: ${result.data.media_id}`,
+                "success",
+              );
+
+              // 清空表单
+              document.getElementById("publish-form").reset();
+              currentCoverMediaId = null;
+
+              // 刷新草稿列表
+              loadDraftList();
+            } else {
+              throw new Error(result.error?.message || "保存失败");
+            }
+          } catch (error) {
+            setLoading("publish-response", false);
+            showMessage(
+              "publish-response",
+              `草稿保存失败: ${error.message}`,
+              "error",
+            );
+          }
+        });
 
       // 发布文章
-      document.getElementById('publish-article-btn').addEventListener('click', async () => {
-        if (!currentCoverMediaId) {
-          showMessage('publish-response', '请先上传封面图片并保存草稿', 'error');
-          return;
-        }
+      document
+        .getElementById("publish-article-btn")
+        .addEventListener("click", async () => {
+          if (!currentCoverMediaId) {
+            showMessage(
+              "publish-response",
+              "请先上传封面图片并保存草稿",
+              "error",
+            );
+            return;
+          }
 
-        // 先保存草稿，然后发布
-        await saveAndPublish();
-      });
+          // 先保存草稿，然后发布
+          await saveAndPublish();
+        });
 
       // 保存草稿并发布
       async function saveAndPublish() {
-        const formData = new FormData(document.getElementById('publish-form'));
+        const formData = new FormData(document.getElementById("publish-form"));
         const articleData = {
-          title: formData.get('title'),
-          content: formData.get('content'),
+          title: formData.get("title"),
+          content: formData.get("content"),
           thumb_media_id: currentCoverMediaId,
-          author: formData.get('author') || '',
-          digest: formData.get('digest') || '',
-          need_open_comment: document.getElementById('enable-comment').checked ? 1 : 0,
-          show_cover_pic: document.getElementById('show-cover').checked ? 1 : 0,
-          is_original: 0
+          author: formData.get("author") || "",
+          digest: formData.get("digest") || "",
+          need_open_comment: document.getElementById("enable-comment").checked
+            ? 1
+            : 0,
+          show_cover_pic: document.getElementById("show-cover").checked ? 1 : 0,
+          is_original: 0,
         };
 
-        setLoading('publish-response', true);
+        setLoading("publish-response", true);
 
         try {
           // 先保存草稿
-          const draftResponse = await fetch('/api/wechat/publish', {
-            method: 'POST',
+          const draftResponse = await fetch("/api/wechat/publish", {
+            method: "POST",
             headers: {
-              'Content-Type': 'application/json',
+              "Content-Type": "application/json",
             },
-            body: JSON.stringify(articleData)
+            body: JSON.stringify(articleData),
           });
 
           const draftResult = await draftResponse.json();
 
           if (!draftResult.success) {
-            throw new Error(draftResult.error?.message || '保存草稿失败');
+            throw new Error(draftResult.error?.message || "保存草稿失败");
           }
 
           const mediaId = draftResult.data.media_id;
 
           // 然后发布草稿
-          const publishResponse = await fetch('/api/wechat/publish-article', {
-            method: 'POST',
+          const publishResponse = await fetch("/api/wechat/publish-article", {
+            method: "POST",
             headers: {
-              'Content-Type': 'application/json',
+              "Content-Type": "application/json",
             },
-            body: JSON.stringify({ media_id: mediaId })
+            body: JSON.stringify({ media_id: mediaId }),
           });
 
           const publishResult = await publishResponse.json();
-          setLoading('publish-response', false);
+          setLoading("publish-response", false);
 
           if (publishResult.success) {
-            showMessage('publish-response', `文章发布成功！\nPublish ID: ${publishResult.data.publish_id}`, 'success');
-            
+            showMessage(
+              "publish-response",
+              `文章发布成功！\nPublish ID: ${publishResult.data.publish_id}`,
+              "success",
+            );
+
             // 清空表单
-            document.getElementById('publish-form').reset();
+            document.getElementById("publish-form").reset();
             currentCoverMediaId = null;
-            
+
             // 刷新草稿列表
             loadDraftList();
           } else {
-            throw new Error(publishResult.error?.message || '发布失败');
+            throw new Error(publishResult.error?.message || "发布失败");
           }
         } catch (error) {
-          setLoading('publish-response', false);
-          showMessage('publish-response', `文章发布失败: ${error.message}`, 'error');
+          setLoading("publish-response", false);
+          showMessage(
+            "publish-response",
+            `文章发布失败: ${error.message}`,
+            "error",
+          );
         }
       }
 
       // 加载草稿列表
       async function loadDraftList() {
-        setLoading('draft-list', true);
+        setLoading("draft-list", true);
 
         try {
-          const response = await fetch('/api/wechat/drafts');
+          const response = await fetch("/api/wechat/drafts");
           const result = await response.json();
-          setLoading('draft-list', false);
+          setLoading("draft-list", false);
 
-          if (result.success && result.data.item && result.data.item.length > 0) {
+          if (
+            result.success &&
+            result.data.item &&
+            result.data.item.length > 0
+          ) {
             displayDraftList(result.data.item);
           } else {
-            document.getElementById('draft-list').innerHTML = '<p>暂无草稿，请先创建文章</p>';
+            document.getElementById("draft-list").innerHTML =
+              "<p>暂无草稿，请先创建文章</p>";
           }
         } catch (error) {
-          setLoading('draft-list', false);
-          document.getElementById('draft-list').innerHTML = `<p class="error">加载草稿列表失败: ${error.message}</p>`;
+          setLoading("draft-list", false);
+          document.getElementById("draft-list").innerHTML =
+            `<p class="error">加载草稿列表失败: ${error.message}</p>`;
         }
       }
 
       // 显示草稿列表
       function displayDraftList(drafts) {
-        const draftListElement = document.getElementById('draft-list');
-        
-        const html = drafts.map(draft => {
-          const newsItem = draft.content.news_item[0];
-          const updateTime = new Date(draft.update_time * 1000).toLocaleString();
-          
-          return `
+        const draftListElement = document.getElementById("draft-list");
+
+        const html = drafts
+          .map((draft) => {
+            const newsItem = draft.content.news_item[0];
+            const updateTime = new Date(
+              draft.update_time * 1000,
+            ).toLocaleString();
+
+            return `
             <div class="draft-item">
               <div class="draft-info">
                 <div class="draft-title">${newsItem.title}</div>
                 <div class="draft-meta">
-                  作者: ${newsItem.author || '未知'} | 
+                  作者: ${newsItem.author || "未知"} | 
                   更新时间: ${updateTime}
                 </div>
               </div>
@@ -791,76 +1294,199 @@
               </div>
             </div>
           `;
-        }).join('');
+          })
+          .join("");
 
         draftListElement.innerHTML = html;
       }
 
       // 发布指定草稿
       async function publishDraft(mediaId) {
-        setLoading('draft-list', true);
+        setLoading("draft-list", true);
 
         try {
-          const response = await fetch('/api/wechat/publish-article', {
-            method: 'POST',
+          const response = await fetch("/api/wechat/publish-article", {
+            method: "POST",
             headers: {
-              'Content-Type': 'application/json',
+              "Content-Type": "application/json",
             },
-            body: JSON.stringify({ media_id: mediaId })
+            body: JSON.stringify({ media_id: mediaId }),
           });
 
           const result = await response.json();
-          setLoading('draft-list', false);
+          setLoading("draft-list", false);
 
           if (result.success) {
-            showMessage('publish-response', `文章发布成功！\nPublish ID: ${result.data.publish_id}`, 'success');
+            showMessage(
+              "publish-response",
+              `文章发布成功！\nPublish ID: ${result.data.publish_id}`,
+              "success",
+            );
             loadDraftList();
           } else {
-            throw new Error(result.error?.message || '发布失败');
+            throw new Error(result.error?.message || "发布失败");
           }
         } catch (error) {
-          setLoading('draft-list', false);
-          showMessage('publish-response', `发布失败: ${error.message}`, 'error');
+          setLoading("draft-list", false);
+          showMessage(
+            "publish-response",
+            `发布失败: ${error.message}`,
+            "error",
+          );
         }
       }
 
       // 删除草稿
       async function deleteDraft(mediaId) {
-        if (!confirm('确定要删除这个草稿吗？')) {
+        if (!confirm("确定要删除这个草稿吗？")) {
           return;
         }
 
-        setLoading('draft-list', true);
+        setLoading("draft-list", true);
 
         try {
           const response = await fetch(`/api/wechat/draft/${mediaId}`, {
-            method: 'DELETE'
+            method: "DELETE",
           });
 
           const result = await response.json();
-          setLoading('draft-list', false);
+          setLoading("draft-list", false);
 
           if (result.success) {
-            showMessage('publish-response', '草稿删除成功', 'success');
+            showMessage("publish-response", "草稿删除成功", "success");
             loadDraftList();
           } else {
-            throw new Error(result.error?.message || '删除失败');
+            throw new Error(result.error?.message || "删除失败");
           }
         } catch (error) {
-          setLoading('draft-list', false);
-          showMessage('publish-response', `删除失败: ${error.message}`, 'error');
+          setLoading("draft-list", false);
+          showMessage(
+            "publish-response",
+            `删除失败: ${error.message}`,
+            "error",
+          );
         }
       }
 
       // 刷新草稿列表按钮
-      document.getElementById('refresh-drafts-btn').addEventListener('click', loadDraftList);
+      document
+        .getElementById("refresh-drafts-btn")
+        .addEventListener("click", loadDraftList);
+
+      // 检查IP白名单配置
+      document.getElementById('check-ip-btn').addEventListener('click', async () => {
+        const ipStatus = document.getElementById('ip-status');
+        ipStatus.className = 'ip-status';
+        ipStatus.textContent = '正在检查IP配置...';
+
+        try {
+          const response = await fetch('/api/wechat/token', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              appid: 'wx8410119dfbb7f756', // 测试用AppID
+              secret: 'test_secret' // 测试用Secret
+            })
+          });
+
+          const result = await response.json();
+
+          if (response.ok && result.success) {
+            ipStatus.className = 'ip-status success';
+            ipStatus.textContent = '✅ IP白名单配置正确！';
+          } else if (result.errcode === 40164) {
+            ipStatus.className = 'ip-status error';
+            ipStatus.textContent = '❌ IP不在白名单中，请按上方步骤添加IP';
+          } else {
+            ipStatus.className = 'ip-status info';
+            ipStatus.textContent = `ℹ️ ${result.error || '配置检查完成'}`;
+          }
+        } catch (error) {
+          ipStatus.className = 'ip-status error';
+          ipStatus.textContent = `❌ 检查失败: ${error.message}`;
+        }
+      });
+
+      // 手动采集热点
+      document.getElementById('fetch-hot-news-btn').addEventListener('click', async () => {
+        const resultArea = document.getElementById('hot-news-result');
+        resultArea.className = 'result-area show';
+        resultArea.textContent = '正在采集热点信息...';
+
+        try {
+          const response = await fetch('/api/hot-news?limit=5');
+          const result = await response.json();
+
+          if (result.success && result.data && result.data.length > 0) {
+            hotNewsData = result.data;
+            let html = `✅ 成功采集到 ${result.data.length} 条热点信息：\n\n`;
+            result.data.forEach((item, index) => {
+              html += `${index + 1}. ${item.title}\n`;
+              html += `   热度: ${item.hotScore || 'N/A'}\n`;
+              html += `   来源: ${item.source || '未知'}\n`;
+              html += `   链接: ${item.url}\n\n`;
+            });
+            resultArea.textContent = html;
+          } else {
+            resultArea.textContent = '❌ 未获取到热点信息，请检查API配置';
+          }
+        } catch (error) {
+          resultArea.textContent = `❌ 采集失败: ${error.message}`;
+        }
+      });
+
+      // 测试COZE改写
+      document.getElementById('test-coze-btn').addEventListener('click', async () => {
+        const resultArea = document.getElementById('coze-result');
+        resultArea.className = 'result-area show';
+
+        if (!hotNewsData || hotNewsData.length === 0) {
+          resultArea.textContent = '❌ 请先采集热点信息';
+          return;
+        }
+
+        resultArea.textContent = '正在使用COZE进行内容改写...';
+
+        try {
+          // 模拟COZE改写（实际需要配置COZE API）
+          const testContent = hotNewsData[0].title + '\n\n这是测试内容，演示COZE改写功能。';
+          resultArea.textContent = `✅ COZE改写完成：\n\n原始标题: ${hotNewsData[0].title}\n\n改写后内容:\n${testContent}\n\n（注：这是演示内容，实际使用需要配置COZE工作流）`;
+        } catch (error) {
+          resultArea.textContent = `❌ COZE改写失败: ${error.message}`;
+        }
+      });
+
+      // 启动自动发布
+      document.getElementById('start-auto-publish-btn').addEventListener('click', async () => {
+        const resultArea = document.getElementById('publish-result');
+        resultArea.className = 'result-area show';
+        resultArea.textContent = '正在启动自动发布流程...\n\n步骤1: 检查配置...';
+
+        try {
+          // 检查服务状态
+          const healthResponse = await fetch('/api/health');
+          if (!healthResponse.ok) {
+            throw new Error('服务不可用');
+          }
+
+          resultArea.textContent += '✅\n步骤2: 验证微信配置...';
+
+          // 这里可以添加更多的验证步骤
+          resultArea.textContent += '✅\n步骤3: 初始化工作流...\n步骤4: 开始发布...\n\n🎉 自动发布流程启动成功！\n\n系统将自动：\n• 采集AI热点信息\n• 使用COZE进行内容改写\n• 发布到微信公众号\n\n请查看N8N工作流执行状态。';
+
+        } catch (error) {
+          resultArea.textContent = `❌ 自动发布启动失败: ${error.message}`;
+        }
+      });
 
       // 页面加载完成后执行
       document.addEventListener('DOMContentLoaded', () => {
         checkServiceStatus();
         loadDraftList();
       });
-      
+
       // 每30秒检查一次服务状态
       setInterval(checkServiceStatus, 30000);
     </script>

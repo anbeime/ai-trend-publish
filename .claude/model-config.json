@@ -1,0 +1,126 @@
+{
+  "api": {
+    "primary": {
+      "name": "cursorweb2api",
+      "base_url": "http://localhost:8000/v1",
+      "api_key": "aaa",
+      "timeout": 30000
+    },
+    "aardio": {
+      "name": "aardio公益接口",
+      "base_url": "http://ai.aardio.com/api/v1",
+      "api_key": "\\0\\1\\96",
+      "timeout": 30000
+    }
+  },
+  "models": {
+    "openai": [
+      {
+        "id": "gpt-5",
+        "name": "GPT-5",
+        "description": "OpenAI最新旗舰模型"
+      },
+      {
+        "id": "gpt-5-codex",
+        "name": "GPT-5 Codex",
+        "description": "编程专用版本",
+        "tags": ["code"]
+      },
+      {
+        "id": "gpt-5-mini",
+        "name": "GPT-5 Mini",
+        "description": "轻量快速版本",
+        "tags": ["fast"]
+      },
+      {
+        "id": "gpt-4o",
+        "name": "GPT-4o",
+        "description": "经典强大模型",
+        "tags": ["recommended"]
+      }
+    ],
+    "claude": [
+      {
+        "id": "claude-4.5-sonnet",
+        "name": "Claude 4.5 Sonnet",
+        "description": "Anthropic最新旗舰，日常对话首选",
+        "tags": ["recommended", "conversation"]
+      },
+      {
+        "id": "claude-4-opus",
+        "name": "Claude 4 Opus",
+        "description": "强大的分析能力"
+      },
+      {
+        "id": "claude-3.5-haiku",
+        "name": "Claude 3.5 Haiku",
+        "description": "快速响应版本",
+        "tags": ["fast"]
+      }
+    ],
+    "gemini": [
+      {
+        "id": "gemini-2.5-pro",
+        "name": "Gemini 2.5 Pro",
+        "description": "超长上下文(2M tokens)",
+        "tags": ["recommended", "long-context"],
+        "context_window": 2000000
+      },
+      {
+        "id": "gemini-2.5-flash",
+        "name": "Gemini 2.5 Flash",
+        "description": "Google快速响应模型",
+        "tags": ["recommended", "fast"]
+      }
+    ],
+    "reasoning": [
+      {
+        "id": "deepseek-r1",
+        "name": "DeepSeek R1",
+        "description": "推理能力超强",
+        "tags": ["recommended", "reasoning"]
+      },
+      {
+        "id": "o3",
+        "name": "OpenAI O3",
+        "description": "OpenAI推理模型",
+        "tags": ["reasoning"]
+      },
+      {
+        "id": "o4-mini",
+        "name": "OpenAI O4 Mini",
+        "description": "轻量推理模型",
+        "tags": ["reasoning", "fast"]
+      }
+    ],
+    "specialized": [
+      {
+        "id": "code-supernova-1-million",
+        "name": "Code Supernova",
+        "description": "编程专用，1M上下文",
+        "tags": ["recommended", "code"],
+        "context_window": 1000000
+      },
+      {
+        "id": "kimi-k2-instruct",
+        "name": "Kimi K2",
+        "description": "中文优化模型",
+        "tags": ["recommended", "chinese"]
+      },
+      {
+        "id": "deepseek-v3.1",
+        "name": "DeepSeek V3.1",
+        "description": "通用性好",
+        "tags": ["general"]
+      }
+    ]
+  },
+  "usage_recommendations": {
+    "conversation": ["claude-4.5-sonnet", "gpt-4o"],
+    "reasoning": ["deepseek-r1", "o3"],
+    "code": ["code-supernova-1-million", "gpt-5-codex"],
+    "long_context": ["gemini-2.5-pro", "code-supernova-1-million"],
+    "fast": ["gemini-2.5-flash", "claude-3.5-haiku"],
+    "chinese": ["kimi-k2-instruct", "deepseek-v3.1"]
+  }
+}

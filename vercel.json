@@ -25,7 +25,7 @@
     }
   ],
   "env": {
-    "WX_APPID": "wx8410119dfbb7f756",
-    "WX_SECRET": "3c93e33e087e57b906f5c341aa5223b9"
+    "WX_APPID": "",
+    "WX_SECRET": ""
   }
 }

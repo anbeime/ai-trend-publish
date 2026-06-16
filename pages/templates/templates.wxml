@@ -1,0 +1,57 @@
+<!--pages/templates/templates.wxml-->
+<view class="container">
+  <view class="page-header">
+    <text class="page-title">模板中心</text>
+    <text class="page-subtitle">快速开始，选择热门模板</text>
+  </view>
+
+  <!-- 模板列表 -->
+  <view class="template-list">
+    <view class="template-card" wx:for="{{templates}}" wx:key="id" bindtap="useTemplate" data-template="{{item}}">
+      <view class="template-icon">{{item.icon}}</view>
+      <view class="template-info">
+        <view class="template-name">{{item.name}}</view>
+        <view class="template-desc">{{item.desc}}</view>
+        <view class="template-tags">
+          <text class="tag" wx:for="{{item.tags}}" wx:for-item="tag" wx:key="*this">{{tag}}</text>
+        </view>
+      </view>
+      <view class="template-use">
+        <text>使用</text>
+      </view>
+    </view>
+  </view>
+</view>
+
+<!-- 热点选择对话框 -->
+<view class="hotspot-dialog" wx:if="{{showHotspotDialog}}" catchtap="skipHotspot">
+  <view class="hotspot-dialog-content" catchtap="noop">
+    <view class="hotspot-dialog-header">
+      <text class="hotspot-dialog-title">🔥 为您匹配到相关热点</text>
+      <text class="hotspot-dialog-subtitle">选择一个热点，让内容更有热度</text>
+    </view>
+    
+    <scroll-view class="hotspot-list" scroll-y>
+      <view 
+        class="hotspot-item" 
+        wx:for="{{matchedHotspots}}" 
+        wx:key="index"
+        bindtap="selectHotspot"
+        data-index="{{index}}"
+      >
+        <view class="hotspot-index">{{index + 1}}</view>
+        <view class="hotspot-content">
+          <text class="hotspot-name">{{item.name}}</text>
+          <view class="hotspot-meta">
+            <text class="hotspot-source">{{item.source}}</text>
+            <text class="hotspot-heat">🔥 {{item.heat}}</text>
+          </view>
+        </view>
+      </view>
+    </scroll-view>
+    
+    <view class="hotspot-dialog-footer">
+      <button class="skip-btn" bindtap="skipHotspot">跳过，直接使用模板</button>
+    </view>
+  </view>
+</view>

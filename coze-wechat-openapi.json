@@ -1,0 +1,229 @@
+openapi: 3.0.0
+info:
+  title: 微信文章发布极简API
+  description: 包含获取令牌、图片上传、草稿创建、文章发布等核心功能
+  version: 1.0.0
+servers:
+  - url: https://mp.miyucaicai.cn  # 你的代理域名（纯根域名，无路径）
+components:
+  parameters:
+    access_token:
+      name: access_token
+      in: query
+      required: true
+      schema:
+        type: string
+      description: 微信公众号API访问令牌
+paths:
+  # 1. 获取AccessToken（基础工具，所有其他工具的前置条件）
+  /cgi-bin/token:
+    get:
+      summary: get_access_token
+      description: 获取微信公众号访问令牌，所有API调用的基础
+      parameters:
+        - name: grant_type
+          in: query
+          required: true
+          schema:
+            type: string
+            default: client_credential
+        - name: appid
+          in: query
+          required: true
+          schema:
+            type: string
+            description: 微信公众号AppID
+        - name: secret
+          in: query
+          required: true
+          schema:
+            type: string
+            description: 微信公众号AppSecret
+      responses:
+        '200':
+          description: 返回访问令牌
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  access_token: 
+                    type: string
+                    description: 访问令牌，有效期2小时
+                  expires_in:
+                    type: integer
+                    description: 令牌有效期（秒）
+  
+  # 2. 上传图片素材（封面图必需）
+  /cgi-bin/material/add_material:
+    post:
+      summary: upload_img
+      description: 上传图片素材，用于文章封面或内容图片
+      parameters:
+        - $ref: '#/components/parameters/access_token'
+        - name: type
+          in: query
+          required: true
+          schema:
+            type: string
+            enum: [image, thumb]
+            default: thumb
+            description: 素材类型，thumb为封面图，image为内容图片
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                media:
+                  type: string
+                  format: binary
+                  description: 图片文件（支持jpg、png格式，大小限制2MB）
+              required: [media]
+      responses:
+        '200':
+          description: 返回素材ID
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  media_id:
+                    type: string
+                    description: 素材ID，用于创建草稿时引用
+                  url:
+                    type: string
+                    description: 图片URL
+  
+  # 3. 创建文章草稿（核心功能）
+  /cgi-bin/draft/add:
+    post:
+      summary: add_draft
+      description: 创建文章草稿，支持图文混合内容
+      parameters:
+        - $ref: '#/components/parameters/access_token'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                articles:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      title:
+                        type: string
+                        description: 文章标题（必填）
+                      content:
+                        type: string
+                        description: 文章内容，支持HTML格式（必填）
+                      thumb_media_id:
+                        type: string
+                        description: 封面图片素材ID（必填）
+                      author:
+                        type: string
+                        description: 作者名称（可选）
+                      digest:
+                        type: string
+                        description: 文章摘要（可选）
+                      show_cover_pic:
+                        type: integer
+                        enum: [0, 1]
+                        default: 1
+                        description: 是否显示封面图（1显示，0不显示）
+                      need_open_comment:
+                        type: integer
+                        enum: [0, 1]
+                        default: 0
+                        description: 是否开启评论（1开启，0不开启）
+                      only_fans_can_comment:
+                        type: integer
+                        enum: [0, 1]
+                        default: 0
+                        description: 是否仅粉丝可评论（1是，0否）
+                    required: [title, content, thumb_media_id]
+                  minItems: 1
+                  maxItems: 8
+              required: [articles]
+      responses:
+        '200':
+          description: 返回草稿ID
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  media_id:
+                    type: string
+                    description: 草稿ID，用于后续发布操作
+  
+  # 4. 发布文章到公众号（最终发布）
+  /wx_post:
+    post:
+      summary: publish_article
+      description: 将草稿发布到微信公众号（群发或专属通道）
+      parameters:
+        - $ref: '#/components/parameters/access_token'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                media_id:
+                  type: string
+                  description: 草稿ID（必填）
+                channel:
+                  type: string
+                  description: 发布通道，默认为空表示群发，或指定专属通道编码
+                  default: ""
+                publish_status:
+                  type: integer
+                  enum: [0, 1]
+                  default: 0
+                  description: 发布状态（0草稿，1发布）
+              required: [media_id]
+      responses:
+        '200':
+          description: 发布成功
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  publish_id:
+                    type: string
+                    description: 发布ID，用于查询发布状态
+                  msg:
+                    type: string
+                    description: 发布结果信息
+  
+  # 5. 获取公众号基本信息（账号验证）
+  /cgi-bin/account/getaccountbasicinfo:
+    get:
+      summary: get_gzh_info
+      description: 获取公众号基本信息，用于验证连接和权限
+      parameters:
+        - $ref: '#/components/parameters/access_token'
+      responses:
+        '200':
+          description: 返回公众号信息
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  nick_name:
+                    type: string
+                    description: 公众号昵称
+                  head_img:
+                    type: string
+                    description: 公众号头像URL
+                  service_type:
+                    type: integer
+                    description: 公众号类型（1订阅号，2服务号）
+                  verify_type:
+                    type: integer
+                    description: 认证类型（-1未认证，0微信认证）

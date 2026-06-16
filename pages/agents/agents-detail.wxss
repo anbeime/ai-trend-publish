@@ -1,0 +1,369 @@
+/* pages/agents/agents-detail.wxss - 分镜详情页样式 */
+page {
+  background-color: #F5F5F5;
+}
+
+.page-container {
+  min-height: 100vh;
+  background-color: #F5F5F5;
+  padding-bottom: 160rpx; /* 为底部操作栏留空间 */
+}
+
+/* ==================== 预览区 Banner ==================== */
+.preview-banner {
+  position: relative;
+  width: 100%;
+  height: 420rpx;
+  background: #000;
+  overflow: hidden;
+}
+
+.preview-image {
+  width: 100%;
+  height: 100%;
+}
+
+.play-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.3);
+}
+
+.play-button {
+  width: 96rpx;
+  height: 96rpx;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8rpx 24rpx rgba(0, 0, 0, 0.3);
+  transition: all 0.3s ease;
+}
+
+.play-button:active {
+  transform: scale(0.9);
+}
+
+.play-icon {
+  font-size: 36rpx;
+  color: #333;
+  margin-left: 6rpx;
+}
+
+.preview-info {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 20rpx 32rpx;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.duration-text {
+  color: white;
+  font-size: 26rpx;
+  font-weight: 600;
+}
+
+.consistency-status {
+  padding: 8rpx 16rpx;
+  border-radius: 20rpx;
+  font-size: 22rpx;
+  font-weight: 600;
+}
+
+.consistency-status.good {
+  background: rgba(139, 92, 246, 0.2);
+  color: #8B5CF6;
+}
+
+.consistency-status.warning {
+  background: rgba(255, 169, 64, 0.2);
+  color: #FFA940;
+}
+
+.consistency-status.error {
+  background: rgba(239, 68, 68, 0.2);
+  color: #EF4444;
+}
+
+.status-text {
+  display: block;
+}
+
+/* ==================== 表单编辑区 ==================== */
+.form-section {
+  padding: 32rpx;
+}
+
+.form-group {
+  margin-bottom: 40rpx;
+}
+
+.form-label {
+  font-size: 28rpx;
+  font-weight: 700;
+  color: #333333;
+  display: block;
+  margin-bottom: 16rpx;
+}
+
+.form-input {
+  width: 100%;
+  height: 88rpx;
+  background: white;
+  border-radius: 20rpx;
+  padding: 0 32rpx;
+  font-size: 28rpx;
+  border: 2rpx solid #F3F4F6;
+  transition: all 0.3s ease;
+}
+
+.form-input:focus {
+  border-color: #EB2F96;
+  box-shadow: 0 0 0 4rpx rgba(235, 47, 150, 0.1);
+}
+
+.form-textarea {
+  width: 100%;
+  min-height: 200rpx;
+  background: white;
+  border-radius: 20rpx;
+  padding: 24rpx 32rpx;
+  font-size: 28rpx;
+  border: 2rpx solid #F3F4F6;
+  line-height: 1.6;
+  transition: all 0.3s ease;
+}
+
+.form-textarea:focus {
+  border-color: #EB2F96;
+  box-shadow: 0 0 0 4rpx rgba(235, 47, 150, 0.1);
+}
+
+/* ==================== 场景选择器 ==================== */
+.scene-selector {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: white;
+  border-radius: 20rpx;
+  padding: 24rpx 32rpx;
+  border: 2rpx solid #F3F4F6;
+  transition: all 0.3s ease;
+}
+
+.scene-selector:active {
+  border-color: #EB2F96;
+  box-shadow: 0 0 0 4rpx rgba(235, 47, 150, 0.1);
+}
+
+.selected-scene {
+  font-size: 28rpx;
+  color: #333333;
+  flex: 1;
+}
+
+.selector-arrow {
+  font-size: 20rpx;
+  color: #9CA3AF;
+  transition: transform 0.3s ease;
+}
+
+.scene-selector.open .selector-arrow {
+  transform: rotate(180deg);
+}
+
+.scene-options {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: white;
+  border-radius: 20rpx;
+  margin-top: 8rpx;
+  box-shadow: 0 12rpx 36rpx rgba(0, 0, 0, 0.15);
+  overflow: hidden;
+  z-index: 10;
+}
+
+.scene-option {
+  padding: 24rpx 32rpx;
+  border-bottom: 1rpx solid #F3F4F6;
+  transition: all 0.3s ease;
+}
+
+.scene-option:last-child {
+  border-bottom: none;
+}
+
+.scene-option.selected {
+  background: rgba(235, 47, 150, 0.05);
+}
+
+.scene-name {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #333333;
+  display: block;
+  margin-bottom: 4rpx;
+}
+
+.scene-desc {
+  font-size: 24rpx;
+  color: #9CA3AF;
+  display: block;
+}
+
+/* ==================== 标签云 ==================== */
+.tag-cloud {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16rpx;
+}
+
+.tag-chip {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+  background: white;
+  border-radius: 24rpx;
+  padding: 12rpx 20rpx;
+  border: 2rpx solid #F3F4F6;
+  transition: all 0.3s ease;
+}
+
+.tag-chip.selected {
+  background: #EB2F96;
+  border-color: #EB2F96;
+}
+
+.tag-chip.selected .tag-text {
+  color: white;
+}
+
+.tag-text {
+  font-size: 26rpx;
+  color: #333333;
+}
+
+.tag-icon {
+  font-size: 18rpx;
+  color: white;
+}
+
+.add-tag-btn {
+  display: flex;
+  align-items: center;
+  gap: 6rpx;
+  background: rgba(139, 92, 246, 0.1);
+  border-radius: 24rpx;
+  padding: 12rpx 20rpx;
+  transition: all 0.3s ease;
+}
+
+.add-tag-btn:active {
+  background: rgba(139, 92, 246, 0.2);
+}
+
+.add-icon {
+  font-size: 24rpx;
+  color: #8B5CF6;
+  font-weight: 700;
+}
+
+.add-text {
+  font-size: 26rpx;
+  color: #8B5CF6;
+}
+
+/* ==================== 底部操作栏 ==================== */
+.action-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: white;
+  box-shadow: 0 -4rpx 12rpx rgba(0, 0, 0, 0.08);
+  padding: 24rpx 32rpx 32rpx;
+  z-index: 100;
+}
+
+.apply-all-section {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+  margin-bottom: 20rpx;
+}
+
+.apply-all-checkbox {
+  transform: scale(0.8);
+}
+
+.apply-all-text {
+  font-size: 26rpx;
+  color: #333333;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 20rpx;
+}
+
+.action-btn {
+  flex: 1;
+  height: 88rpx;
+  border-radius: 24rpx;
+  font-size: 32rpx;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+.action-btn.primary {
+  background: #EB2F96;
+  color: white;
+  box-shadow: 0 8rpx 24rpx rgba(235, 47, 150, 0.3);
+}
+
+.action-btn.primary:active {
+  transform: scale(0.96);
+  box-shadow: 0 4rpx 12rpx rgba(235, 47, 150, 0.2);
+}
+
+.action-btn.secondary {
+  background: white;
+  color: #EB2F96;
+  border: 2rpx solid #EB2F96;
+}
+
+.action-btn.secondary:active {
+  background: rgba(235, 47, 150, 0.05);
+}
+
+/* ==================== 响应式调整 ==================== */
+@media (max-width: 375px) {
+  .preview-banner {
+    height: 360rpx;
+  }
+  
+  .action-buttons {
+    flex-direction: column;
+  }
+  
+  .action-btn {
+    width: 100%;
+  }
+}

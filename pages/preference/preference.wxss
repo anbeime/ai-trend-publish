@@ -1,0 +1,154 @@
+/* pages/preference/preference.wxss */
+.container {
+  min-height: 100vh;
+  background: #f5f5f5;
+  padding-bottom: 40rpx;
+}
+
+.header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 60rpx 30rpx 40rpx;
+}
+
+.title {
+  display: block;
+  color: white;
+  font-size: 36rpx;
+  font-weight: bold;
+  margin-bottom: 12rpx;
+}
+
+.subtitle {
+  display: block;
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 24rpx;
+}
+
+.section {
+  background: white;
+  margin: 20rpx;
+  padding: 30rpx;
+  border-radius: 16rpx;
+}
+
+.section-title {
+  display: block;
+  font-size: 28rpx;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 24rpx;
+}
+
+/* 内容类型 */
+.content-types {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20rpx;
+}
+
+.type-item {
+  flex: 0 0 calc(50% - 10rpx);
+  display: flex;
+  align-items: center;
+  padding: 24rpx;
+  border: 2rpx solid #eee;
+  border-radius: 12rpx;
+  transition: all 0.3s;
+}
+
+.type-item.selected {
+  border-color: #667eea;
+  background: rgba(102, 126, 234, 0.1);
+}
+
+.type-icon {
+  font-size: 36rpx;
+  margin-right: 12rpx;
+}
+
+.type-name {
+  flex: 1;
+  font-size: 26rpx;
+  color: #333;
+}
+
+.check-icon {
+  font-size: 32rpx;
+  color: #667eea;
+}
+
+/* 滑块 */
+.duration-slider {
+  width: 100%;
+  margin: 20rpx 0;
+}
+
+/* 选择器 */
+.style-picker {
+  width: 100%;
+}
+
+.picker-value {
+  padding: 20rpx;
+  background: #f5f5f5;
+  border-radius: 8rpx;
+  font-size: 28rpx;
+  color: #333;
+}
+
+/* 单选框 */
+.language-group {
+  display: flex;
+  flex-direction: column;
+  gap: 20rpx;
+}
+
+.radio-item {
+  display: flex;
+  align-items: center;
+}
+
+.radio-item text {
+  margin-left: 16rpx;
+  font-size: 28rpx;
+  color: #333;
+}
+
+/* 设置行 */
+.setting-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10rpx 0;
+}
+
+.setting-label {
+  font-size: 28rpx;
+  color: #333;
+}
+
+/* 操作按钮 */
+.actions {
+  padding: 0 20rpx;
+  margin-top: 20rpx;
+}
+
+.action-btn {
+  width: 100%;
+  height: 88rpx;
+  border-radius: 44rpx;
+  font-size: 28rpx;
+  font-weight: bold;
+  margin-bottom: 20rpx;
+}
+
+.save-btn {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.reset-btn {
+  background: #f5f5f5;
+  color: #666;
+  border: 2rpx solid #ddd;
+}

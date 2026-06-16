@@ -1,0 +1,23 @@
+{
+  "name": "wechat-publish-api",
+  "version": "1.0.0",
+  "description": "微信公众号发布云函数 - 素材上传、草稿创建、完整工作流",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "wx-server-sdk": "~2.6.3",
+    "axios": "^1.6.0",
+    "form-data": "^4.0.0"
+  },
+  "keywords": [
+    "wechat",
+    "publish",
+    "api",
+    "draft",
+    "material"
+  ],
+  "author": "AI Team",
+  "license": "MIT"
+}

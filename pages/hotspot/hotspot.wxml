@@ -1,0 +1,137 @@
+<!--pages/hotspot/hotspot.wxml-->
+<view class="container">
+  <!-- 分析报告入口 -->
+  <view class="analysis-entry" bindtap="viewAnalysisReport" wx:if="{{!loading && hotspots.length > 0}}">
+    <view class="entry-icon">📊</view>
+    <view class="entry-content">
+      <text class="entry-title">热点深度分析</text>
+      <text class="entry-desc">查看{{selectedCategory}}类热点的趋势预测和用户洞察</text>
+    </view>
+    <view class="entry-arrow">→</view>
+  </view>
+
+  <!-- 顶部分类和刷新 -->
+  <view class="top-bar">
+    <scroll-view class="category-scroll" scroll-x>
+      <view class="category-list">
+        <view
+          class="category-item {{selectedCategory === item ? 'active' : ''}}"
+          wx:for="{{categories}}"
+          wx:key="*this"
+          bindtap="selectCategory"
+          data-category="{{item}}"
+        >
+          {{item}}
+        </view>
+      </view>
+    </scroll-view>
+    <view class="refresh-btn" bindtap="refreshHotspots" wx:if="{{!loading && !refreshing}}">
+      <text class="refresh-icon">↻</text>
+    </view>
+  </view>
+
+  <!-- 排序和缓存状态 -->
+  <view class="info-bar">
+    <view class="sort-section">
+      <view
+        class="sort-item {{sortBy === 'hot' ? 'active' : ''}}"
+        bindtap="changeSortBy"
+        data-sort="hot"
+      >
+        <text>热度</text>
+      </view>
+      <view
+        class="sort-item {{sortBy === 'fit' ? 'active' : ''}}"
+        bindtap="changeSortBy"
+        data-sort="fit"
+      >
+        <text>适合度</text>
+      </view>
+    </view>
+    <view class="cache-status" wx:if="{{lastHotspotFetch}}">
+      <text class="cache-dot {{cacheExpired ? 'expired' : ''}}"></text>
+      <text class="cache-text">{{cacheExpired ? '缓存已过期' : '使用缓存'}}</text>
+    </view>
+  </view>
+
+  <!-- 加载状态 -->
+  <view class="loading" wx:if="{{loading || refreshing}}">
+    <text class="loading-text">{{refreshing ? '刷新中...' : '加载中...'}}</text>
+  </view>
+
+  <!-- 热点列表 -->
+  <view class="hotspot-list" wx:else>
+    <view
+      class="hotspot-card"
+      wx:for="{{hotspots}}"
+      wx:key="id"
+      bindtap="viewDetail"
+      data-hotspot="{{item}}"
+    >
+      <!-- 排名 -->
+      <view class="rank-badge rank-{{index + 1}}">
+        {{index + 1}}
+      </view>
+
+      <!-- 内容 -->
+      <view class="card-content">
+        <view class="card-header">
+          <text class="card-title">{{item.title}}</text>
+          <view class="trend-icon trend-{{item.trend}}">
+            {{item.trend === 'up' ? '↑' : item.trend === 'down' ? '↓' : '→'}}
+          </view>
+        </view>
+
+        <view class="card-tags">
+          <text class="tag" wx:for="{{item.tags}}" wx:key="*this" wx:for-item="tag">
+            #{{tag}}
+          </text>
+        </view>
+
+        <view class="card-scores">
+          <view class="score-item">
+            <text class="score-label">热度</text>
+            <view class="score-bar">
+              <view class="score-fill hot" style="width: {{item.hotScore}}%"></view>
+            </view>
+            <text class="score-value">{{item.hotScore}}</text>
+          </view>
+          <view class="score-item">
+            <text class="score-label">适合度</text>
+            <view class="score-bar">
+              <view class="score-fill fit" style="width: {{item.fitScore}}%"></view>
+            </view>
+            <text class="score-value">{{item.fitScore}}</text>
+          </view>
+        </view>
+
+        <view class="card-angles">
+          <text class="angles-label">建议角度：</text>
+          <view class="angles-list">
+            <text class="angle-item" wx:for="{{item.suggestedAngles}}" wx:key="*this" wx:for-item="angle">
+              {{angle}}
+            </text>
+          </view>
+        </view>
+      </view>
+
+      <!-- 操作按钮 -->
+      <view class="card-action">
+        <button
+          class="create-btn"
+          catchtap="createFromHotspot"
+          data-hotspot="{{item}}"
+        >
+          立即创作
+        </button>
+      </view>
+    </view>
+  </view>
+
+  <!-- 空状态 -->
+  <view class="empty" wx:if="{{!loading && !refreshing && hotspots.length === 0}}">
+    <text class="empty-icon">暂无数据</text>
+    <text class="empty-text">点击右上角刷新按钮获取最新热点</text>
+    <button class="empty-btn" bindtap="refreshHotspots">立即刷新</button>
+  </view>
+</view>

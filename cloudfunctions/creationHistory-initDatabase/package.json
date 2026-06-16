@@ -1,0 +1,9 @@
+{
+  "name": "creationHistory-initDatabase",
+  "version": "1.0.0",
+  "description": "初始化创作历史数据库云函数",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "latest"
+  }
+}

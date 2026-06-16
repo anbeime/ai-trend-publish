@@ -1,0 +1,12 @@
+{
+  "name": "agentAI",
+  "version": "1.0.0",
+  "description": "智能体AI调用云函数 - 支持智谱AI和混元模型生成短视频创作内容",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "~2.6.3",
+    "request-promise": "^4.2.6"
+  },
+  "author": "",
+  "license": "ISC"
+}

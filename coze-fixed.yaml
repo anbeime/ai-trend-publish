@@ -1,0 +1,208 @@
+openapi: 3.0.0
+info:
+  title: 微信文章发布
+  description: 微信公众号文章发布插件
+  version: 1.0.0
+servers:
+  - url: https://mp.miyucaicai.cn
+paths:
+  /coze/token:
+    get:
+      summary: 获取微信访问令牌
+      operationId: getAccessToken
+      parameters:
+        - name: appid
+          in: query
+          required: true
+          schema:
+            type: string
+          description: 微信公众号AppID
+        - name: secret
+          in: query
+          required: true
+          schema:
+            type: string
+          description: 微信公众号AppSecret
+        - name: grant_type
+          in: query
+          required: true
+          schema:
+            type: string
+            default: client_credential
+          description: 授权类型（固定值）
+      responses:
+        '200':
+          description: 令牌获取成功
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: object
+                    properties:
+                      access_token:
+                        type: string
+                        description: 微信API访问令牌
+                      expires_in:
+                        type: integer
+                        description: 过期时间（秒）
+  /coze/upload:
+    post:
+      summary: 上传图片素材
+      operationId: uploadImage
+      parameters:
+        - name: access_token
+          in: query
+          required: true
+          schema:
+            type: string
+          description: 微信API访问令牌
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - media
+              properties:
+                media:
+                  type: string
+                  format: binary
+                  description: 封面图片文件（≤2MB，JPG/PNG）
+                type:
+                  type: string
+                  default: thumb
+                  description: 素材类型（固定为thumb）
+      responses:
+        '200':
+          description: 图片上传成功
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: object
+                    properties:
+                      media_id:
+                        type: string
+                        description: 图片素材ID
+                      url:
+                        type: string
+                        description: 图片在线链接
+  /coze/draft:
+    post:
+      summary: 创建文章草稿
+      operationId: createDraft
+      parameters:
+        - name: access_token
+          in: query
+          required: true
+          schema:
+            type: string
+          description: 微信API访问令牌
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - articles
+              properties:
+                articles:
+                  type: array
+                  items:
+                    type: object
+                    required:
+                      - title
+                      - content
+                      - thumb_media_id
+                    properties:
+                      title:
+                        type: string
+                        description: 文章标题
+                      content:
+                        type: string
+                        description: 文章内容（HTML格式）
+                      thumb_media_id:
+                        type: string
+                        description: 封面图片media_id
+                      author:
+                        type: string
+                        description: 文章作者（可选）
+                      digest:
+                        type: string
+                        description: 文章摘要（可选）
+                      show_cover_pic:
+                        type: integer
+                        default: 1
+                        description: 是否显示封面（1=显示，0=不显示）
+      responses:
+        '200':
+          description: 草稿创建成功
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: object
+                    properties:
+                      media_id:
+                        type: string
+                        description: 草稿ID（用于发布）
+  /coze/publish:
+    post:
+      summary: 发布文章到公众号
+      operationId: publishArticle
+      parameters:
+        - name: access_token
+          in: query
+          required: true
+          schema:
+            type: string
+          description: 微信API访问令牌
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - media_id
+              properties:
+                media_id:
+                  type: string
+                  description: 草稿ID（从createDraft获取）
+      responses:
+        '200':
+          description: 文章发布成功
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: object
+                    properties:
+                      publish_id:
+                        type: string
+                        description: 发布ID
+                      msg_id:
+                        type: integer
+                        description: 公众号消息ID（可选）

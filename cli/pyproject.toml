@@ -1,0 +1,17 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "ai-trend-publish-cli"
+version = "1.0.0"
+description = "AI Trend Publish CLI tools"
+requires-python = ">=3.10"
+dependencies = [
+    "httpx",
+    "rich",
+    "pyyaml",
+]
+
+[project.scripts]
+ai-trend-publish = "agent_reach.cli:main"

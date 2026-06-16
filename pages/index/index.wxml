@@ -1,0 +1,291 @@
+<!--pages/index/index.wxml - 简化可用版本-->
+<view class="page-container">
+  <!-- 🔧 诊断工具：强制关闭遮罩 -->
+  <!-- <button class="force-close-btn" bindtap="forceCloseAllMasks">🔧 强制关闭遮罩</button> -->
+  <!-- <button class="test-click-btn" bindtap="testButtonClick">🔍 测试按钮点击</button> -->
+
+  <!-- 顶部区域 -->
+  <view class="header-section">
+    <view class="header-content">
+      <view class="app-icon">🎬</view>
+      <view class="header-text">
+        <text class="app-title">热点视频工坊</text>
+        <text class="app-subtitle">AI短视频创作助手</text>
+      </view>
+    </view>
+    <view class="header-actions">
+      <!-- 积分显示 -->
+      <view class="credits-display" wx:if="{{userCredits}}" bindtap="showCreditsDetail">
+        <view class="credits-item">
+          <text class="credits-icon">⚡</text>
+          <text class="credits-value">{{userCredits.dailyQuota - userCredits.dailyUsed}}/{{userCredits.dailyQuota}}</text>
+        </view>
+        <view class="credits-item">
+          <text class="credits-icon">💰</text>
+          <text class="credits-value">{{userCredits.coins}}</text>
+        </view>
+      </view>
+      <view class="icon-btn" bindtap="openMoreDrawer">
+        <text class="icon">☰</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 主要创作区域 -->
+  <view class="main-section">
+    
+    <!-- 输入框 -->
+    <view class="input-box">
+      <textarea 
+        class="input-textarea" 
+        placeholder="输入你的视频创意，例如：制作一个AI工具测评视频" 
+        value="{{inputValue}}" 
+        bindinput="onInputChange"
+        maxlength="5000"
+        auto-height
+      ></textarea>
+      <view class="input-footer">
+        <text class="char-count">{{inputValue.length}}/5000</text>
+        <button class="create-btn" bindtap="handleCreateClick" disabled="{{!inputValue}}">
+          开始创作
+        </button>
+      </view>
+    </view>
+
+    <!-- 快捷功能 -->
+    <view class="quick-functions" style="position: relative; z-index: 9999; pointer-events: auto;">
+      <view class="function-btn" style="position: relative; z-index: 10000; pointer-events: auto;" bindtap="openContentCreator">
+        <text class="btn-icon">✍️</text>
+        <text class="btn-text">自媒体创作</text>
+      </view>
+      <view class="function-btn" style="position: relative; z-index: 10000; pointer-events: auto;" bindtap="handleAgentsClick" data-action="agents" data-url="/pages/agents/agents">
+        <text class="btn-icon">🎬</text>
+        <text class="btn-text">视频创作</text>
+      </view>
+      <view class="function-btn" style="position: relative; z-index: 10000; pointer-events: auto;" bindtap="handleTemplatesClick" data-action="templates" data-url="/pages/templates/templates">
+        <text class="btn-icon">📦</text>
+        <text class="btn-text">模板库</text>
+      </view>
+      <view class="function-btn" style="position: relative; z-index: 10000; pointer-events: auto;" bindtap="handleProjectClick" data-action="project" data-url="/pages/project/project">
+        <text class="btn-icon">📁</text>
+        <text class="btn-text">我的项目</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- === 创作灵感（热点整合） === -->
+  <view class="inspiration-section">
+    <view class="section-header">
+      <view class="section-title-group">
+        <text class="section-title">🔥 创作灵感</text>
+        <text class="section-subtitle">实时热点 · 创意建议</text>
+      </view>
+      <view class="header-actions">
+        <view class="refresh-btn" bindtap="refreshHotspots" disabled="{{loadingHotspots}}">
+          <text class="refresh-icon">{{loadingHotspots ? '⏳' : '🔄'}}</text>
+          <text class="refresh-text">{{loadingHotspots ? '加载中' : '刷新'}}</text>
+        </view>
+        <view class="view-all-btn" bindtap="openHotspotPage">
+          <text>查看全部 →</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 分类标签 -->
+    <scroll-view class="category-tabs" scroll-x enable-flex>
+      <view 
+        class="category-tab {{selectedCategory === 'all' ? 'active' : ''}}"
+        bindtap="selectCategory"
+        data-category="all"
+      >
+        <text>全部</text>
+      </view>
+      <view 
+        class="category-tab {{selectedCategory === 'tech' ? 'active' : ''}}"
+        bindtap="selectCategory"
+        data-category="tech"
+      >
+        <text>📱 科技</text>
+      </view>
+      <view 
+        class="category-tab {{selectedCategory === 'life' ? 'active' : ''}}"
+        bindtap="selectCategory"
+        data-category="life"
+      >
+        <text>🏠 生活</text>
+      </view>
+      <view 
+        class="category-tab {{selectedCategory === 'entertainment' ? 'active' : ''}}"
+        bindtap="selectCategory"
+        data-category="entertainment"
+      >
+        <text>🎬 娱乐</text>
+      </view>
+      <view 
+        class="category-tab {{selectedCategory === 'food' ? 'active' : ''}}"
+        bindtap="selectCategory"
+        data-category="food"
+      >
+        <text>🍳 美食</text>
+      </view>
+    </scroll-view>
+
+    <!-- 热点列表（根据选中分类显示） -->
+    <view class="hotspot-list" wx:if="{{!loadingHotspots}}">
+       <!-- 全部/未分类显示所有热点 - 改为网格布局 -->
+      <block wx:if="{{selectedCategory === 'all'}}">
+        <view class="hotspot-grid">
+          <view
+            class="hotspot-card"
+            wx:for="{{displayedHotspots}}"
+            wx:key="id"
+            bindtap="goToContentCreatorWithHotspot"
+            data-hotspot="{{item}}"
+          >
+            <view class="hotspot-rank">{{index + 1}}</view>
+            <view class="hotspot-content">
+              <text class="hotspot-title">{{item.title || item.name}}</text>
+              <view class="hotspot-meta">
+                <text class="source-tag">{{item.source}}</text>
+                <text class="heat-value">🔥 {{item.hotness || item.heat}}</text>
+              </view>
+            </view>
+          </view>
+        </view>
+        
+        <!-- 查看更多按钮 -->
+        <view class="view-more-section" wx:if="{{realtimeHotspots.length > maxDisplayCount}}">
+          <button class="view-more-btn" bindtap="openHotspotPage">
+            查看全部 {{realtimeHotspots.length}} 条热点 →
+          </button>
+        </view>
+      </block>
+
+      <!-- 分类热点 -->
+      <block wx:else>
+        <view class="hotspot-grid">
+          <view 
+            class="hotspot-card"
+            wx:for="{{displayedHotspots}}"
+            wx:key="id"
+            bindtap="useHotspotForCreation"
+            data-hotspot="{{item}}"
+          >
+            <view class="hotspot-rank">{{index + 1}}</view>
+            <view class="hotspot-content">
+              <text class="hotspot-title">{{item.title || item.name}}</text>
+              <view class="hotspot-meta">
+                <text class="source-tag">{{item.source}}</text>
+                <text class="heat-value">🔥 {{item.hotness || item.heat}}</text>
+              </view>
+            </view>
+          </view>
+        </view>
+
+        <!-- 空状态 -->
+        <view class="empty-hotspot" wx:if="{{displayedHotspots.length === 0}}">
+          <text class="empty-icon">📭</text>
+          <text class="empty-text">暂无该分类的热点</text>
+        </view>
+      </block>
+    </view>
+
+    <!-- 加载中状态 -->
+    <view class="loading-hotspot" wx:if="{{loadingHotspots}}">
+      <text class="loading-icon">⏳</text>
+      <text class="loading-text">正在加载热点...</text>
+    </view>
+
+    <!-- 创意建议 -->
+    <view class="suggestion-section" wx:if="{{suggestions && suggestions.length > 0}}">
+      <view class="suggestion-header">
+        <text class="suggestion-title">💡 创意建议</text>
+      </view>
+      <scroll-view class="suggestion-scroll" scroll-x enable-flex>
+        <view
+          class="suggestion-card"
+          wx:for="{{suggestions}}"
+          wx:key="id"
+          bindtap="applySuggestion"
+          data-suggestion="{{item}}"
+        >
+          <view class="suggestion-icon">{{item.icon}}</view>
+          <view class="suggestion-content">
+            <text class="suggestion-title">{{item.title}}</text>
+            <text class="suggestion-desc">{{item.desc}}</text>
+          </view>
+          <view class="suggestion-tags">
+            <text class="tag" wx:for="{{item.tags}}" wx:key="*this" wx:for-item="tag">#{{tag}}</text>
+          </view>
+        </view>
+      </scroll-view>
+    </view>
+  </view>
+
+  <!-- 更多功能抽屉 -->
+  <view class="drawer-mask" wx:if="{{showMoreDrawer === true}}" bindtap="closeMoreDrawer"></view>
+  <view class="drawer-content {{showMoreDrawer === true ? 'show' : ''}}">
+    <view class="drawer-header">
+      <text class="drawer-title">更多功能</text>
+      <view class="drawer-close" bindtap="closeMoreDrawer">✕</view>
+    </view>
+    
+    <view class="drawer-body">
+      <!-- 创作工具 -->
+      <view class="drawer-group">
+        <view class="group-title">创作工具</view>
+        <view class="drawer-item" bindtap="navigateToAgentsFromDrawer">
+          <view class="item-icon-box"></view>
+          <view class="item-content">
+            <text class="item-title">视频创作-多智能体协作</text>
+            <text class="item-desc">多智能体协同创作</text>
+          </view>
+        </view>
+        <view class="drawer-item" bindtap="navigateToAgentUIFromDrawer">
+          <view class="item-icon-box">💬</view>
+          <view class="item-content">
+            <text class="item-title">AI对话模式</text>
+            <text class="item-desc">对话式创作体验</text>
+          </view>
+        </view>
+        <view class="drawer-item" bindtap="navigateToParamsFromDrawer">
+          <view class="item-icon-box">⚙️</view>
+          <view class="item-content">
+            <text class="item-title">参数设置</text>
+            <text class="item-desc">自定义创作参数</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- 其他功能 -->
+      <view class="drawer-group">
+        <view class="group-title">其他功能</view>
+        <view class="drawer-item" bindtap="navigateToTemplatesFromDrawer">
+          <view class="item-icon-box">📦</view>
+          <view class="item-content">
+            <text class="item-title">模板库</text>
+            <text class="item-desc">精选视频模板</text>
+          </view>
+        </view>
+        <view class="drawer-item" bindtap="navigateToProjectFromDrawer">
+          <view class="item-icon-box">📁</view>
+          <view class="item-content">
+            <text class="item-title">我的项目</text>
+            <text class="item-desc">查看历史项目</text>
+          </view>
+        </view>
+        <view class="drawer-item" bindtap="navigateToApiConfigFromDrawer">
+          <view class="item-icon-box">🔑</view>
+          <view class="item-content">
+            <text class="item-title">API配置</text>
+            <text class="item-desc">查看API状态</text>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+
+
+
+</view>

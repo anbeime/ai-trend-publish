@@ -1,0 +1,393 @@
+/* pages/hotspot/hotspot.wxss */
+.container {
+  min-height: 100vh;
+  background: #F5F3FF;
+  padding-bottom: 40rpx;
+}
+
+/* 分析报告入口 */
+.analysis-entry {
+  margin: 20rpx;
+  padding: 24rpx;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 16rpx;
+  display: flex;
+  align-items: center;
+  box-shadow: 0 4rpx 12rpx rgba(102, 126, 234, 0.3);
+  transition: all 0.3s ease;
+}
+
+.analysis-entry:active {
+  transform: scale(0.98);
+}
+
+.entry-icon {
+  font-size: 48rpx;
+  margin-right: 16rpx;
+}
+
+.entry-content {
+  flex: 1;
+}
+
+.entry-title {
+  display: block;
+  font-size: 28rpx;
+  font-weight: 600;
+  color: white;
+  margin-bottom: 6rpx;
+}
+
+.entry-desc {
+  display: block;
+  font-size: 22rpx;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.entry-arrow {
+  font-size: 32rpx;
+  color: white;
+  margin-left: 16rpx;
+}
+
+/* 顶栏 */
+.top-bar {
+  display: flex;
+  align-items: center;
+  background: white;
+  padding: 16rpx 20rpx;
+  border-bottom: 1rpx solid #E5E7EB;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.category-scroll {
+  flex: 1;
+}
+
+.category-list {
+  display: flex;
+  gap: 12rpx;
+  white-space: nowrap;
+}
+
+.category-item {
+  padding: 10rpx 20rpx;
+  background: #F3F4F6;
+  border-radius: 20rpx;
+  font-size: 24rpx;
+  color: #6B7280;
+  transition: all 0.3s ease;
+  flex-shrink: 0;
+}
+
+.category-item.active {
+  background: linear-gradient(135deg, #A855F7 0%, #EC4899 100%);
+  color: white;
+  font-weight: 600;
+}
+
+.refresh-btn {
+  width: 60rpx;
+  height: 60rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #F3F4F6;
+  border-radius: 50%;
+  margin-left: 16rpx;
+  flex-shrink: 0;
+}
+
+.refresh-icon {
+  font-size: 32rpx;
+  color: #6B7280;
+}
+
+/* 信息栏 */
+.info-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12rpx 20rpx;
+  background: white;
+  border-bottom: 1rpx solid #E5E7EB;
+}
+
+.sort-section {
+  display: flex;
+  gap: 12rpx;
+}
+
+.sort-item {
+  padding: 8rpx 16rpx;
+  background: #F3F4F6;
+  border-radius: 12rpx;
+  font-size: 22rpx;
+  color: #6B7280;
+  transition: all 0.3s ease;
+}
+
+.sort-item.active {
+  background: #A855F7;
+  color: white;
+  font-weight: 600;
+}
+
+.cache-status {
+  display: flex;
+  align-items: center;
+  gap: 6rpx;
+}
+
+.cache-dot {
+  width: 12rpx;
+  height: 12rpx;
+  border-radius: 50%;
+  background: #10B981;
+}
+
+.cache-dot.expired {
+  background: #F59E0B;
+}
+
+.cache-text {
+  font-size: 20rpx;
+  color: #9CA3AF;
+}
+
+/* 加载状态 */
+.loading {
+  padding: 100rpx 0;
+  text-align: center;
+}
+
+.loading-text {
+  font-size: 28rpx;
+  color: #9CA3AF;
+}
+
+/* 热点列表 */
+.hotspot-list {
+  padding: 20rpx;
+}
+
+.hotspot-card {
+  background: white;
+  border-radius: 16rpx;
+  padding: 24rpx;
+  margin-bottom: 16rpx;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.06);
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.hotspot-card:active {
+  transform: scale(0.98);
+}
+
+/* 排名徽章 */
+.rank-badge {
+  position: absolute;
+  top: 16rpx;
+  left: 16rpx;
+  width: 48rpx;
+  height: 48rpx;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24rpx;
+  font-weight: bold;
+  color: white;
+  background: #9CA3AF;
+}
+
+.rank-badge.rank-1 {
+  background: linear-gradient(135deg, #F59E0B 0%, #F97316 100%);
+}
+
+.rank-badge.rank-2 {
+  background: linear-gradient(135deg, #9CA3AF 0%, #6B7280 100%);
+}
+
+.rank-badge.rank-3 {
+  background: linear-gradient(135deg, #D97706 0%, #B45309 100%);
+}
+
+/* 卡片内容 */
+.card-content {
+  margin-left: 60rpx;
+}
+
+.card-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 12rpx;
+  margin-bottom: 12rpx;
+}
+
+.card-title {
+  flex: 1;
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #1F2937;
+  line-height: 1.4;
+}
+
+.trend-icon {
+  font-size: 24rpx;
+  flex-shrink: 0;
+}
+
+/* 标签 */
+.card-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8rpx;
+  margin-bottom: 16rpx;
+}
+
+.tag {
+  padding: 4rpx 12rpx;
+  background: #F5F3FF;
+  color: #A855F7;
+  font-size: 20rpx;
+  border-radius: 8rpx;
+}
+
+/* 评分 */
+.card-scores {
+  margin-bottom: 16rpx;
+}
+
+.score-item {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+  margin-bottom: 8rpx;
+}
+
+.score-label {
+  font-size: 22rpx;
+  color: #6B7280;
+  width: 80rpx;
+}
+
+.score-bar {
+  flex: 1;
+  height: 12rpx;
+  background: #E5E7EB;
+  border-radius: 6rpx;
+  overflow: hidden;
+}
+
+.score-fill {
+  height: 100%;
+  border-radius: 6rpx;
+  transition: width 0.3s ease;
+}
+
+.score-fill.hot {
+  background: linear-gradient(90deg, #F97316 0%, #FB923C 100%);
+}
+
+.score-fill.fit {
+  background: linear-gradient(90deg, #A855F7 0%, #EC4899 100%);
+}
+
+.score-value {
+  font-size: 22rpx;
+  font-weight: 600;
+  color: #1F2937;
+  width: 60rpx;
+  text-align: right;
+}
+
+/* 建议角度 */
+.card-angles {
+  padding: 12rpx;
+  background: #F9FAFB;
+  border-radius: 8rpx;
+  margin-bottom: 16rpx;
+}
+
+.angles-label {
+  font-size: 22rpx;
+  color: #6B7280;
+  display: block;
+  margin-bottom: 8rpx;
+}
+
+.angles-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8rpx;
+}
+
+.angle-item {
+  display: inline-block;
+  font-size: 22rpx;
+  color: #374151;
+  padding: 4rpx 12rpx;
+  background: white;
+  border-radius: 6rpx;
+  border: 1rpx solid #E5E7EB;
+}
+
+/* 操作按钮 */
+.card-action {
+  margin-left: 60rpx;
+}
+
+.create-btn {
+  width: 100%;
+  height: 72rpx;
+  background: linear-gradient(135deg, #A855F7 0%, #EC4899 100%);
+  color: white;
+  border: none;
+  border-radius: 36rpx;
+  font-size: 26rpx;
+  font-weight: 600;
+  box-shadow: 0 4rpx 12rpx rgba(168, 85, 247, 0.3);
+}
+
+.create-btn::after {
+  border: none;
+}
+
+/* 空状态 */
+.empty {
+  padding: 120rpx 40rpx;
+  text-align: center;
+}
+
+.empty-icon {
+  font-size: 28rpx;
+  color: #9CA3AF;
+  display: block;
+  margin-bottom: 16rpx;
+}
+
+.empty-text {
+  font-size: 24rpx;
+  color: #6B7280;
+  display: block;
+  margin-bottom: 32rpx;
+}
+
+.empty-btn {
+  width: 280rpx;
+  height: 72rpx;
+  background: linear-gradient(135deg, #A855F7 0%, #EC4899 100%);
+  color: white;
+  border: none;
+  border-radius: 36rpx;
+  font-size: 26rpx;
+  font-weight: 600;
+}
+
+.empty-btn::after {
+  border: none;
+}

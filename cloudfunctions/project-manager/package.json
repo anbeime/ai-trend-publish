@@ -1,0 +1,9 @@
+{
+  "name": "project-manager",
+  "version": "1.0.0",
+  "description": "项目管理云函数 - 管理视频项目的创建、更新、查询和删除",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "~2.6.3"
+  }
+}

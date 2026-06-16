@@ -1,0 +1,10 @@
+{
+  "name": "hotspot-miyucaicai",
+  "version": "1.0.0",
+  "description": "爬取miyucaicai热点数据",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "~2.6.3",
+    "axios": "^0.27.2"
+  }
+}

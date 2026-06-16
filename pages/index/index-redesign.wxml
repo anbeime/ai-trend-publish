@@ -1,0 +1,167 @@
+<!--pages/index/index.wxml - 符合设计规范的新布局-->
+<view class="page-container">
+  <!-- 顶部导航 Tabs -->
+  <view class="main-tabs">
+    <view class="tab-item active" bindtap="switchTab" data-tab="home">
+      <text class="tab-text">首页</text>
+      <view class="tab-indicator"></view>
+    </view>
+    <view class="tab-item" bindtap="switchTab" data-tab="agents">
+      <text class="tab-text">分镜</text>
+      <view class="tab-indicator"></view>
+    </view>
+    <view class="tab-item" bindtap="switchTab" data-tab="params">
+      <text class="tab-text">参数</text>
+      <view class="tab-indicator"></view>
+    </view>
+    <view class="tab-item" bindtap="switchTab" data-tab="export">
+      <text class="tab-text">导出</text>
+      <view class="tab-indicator"></view>
+    </view>
+    <view class="tab-item" bindtap="switchTab" data-tab="check">
+      <text class="tab-text">检查</text>
+      <view class="tab-indicator"></view>
+    </view>
+    <view class="tab-item" bindtap="switchTab" data-tab="roles">
+      <text class="tab-text">角色库</text>
+      <view class="tab-indicator"></view>
+    </view>
+  </view>
+
+  <!-- 步骤导航条 - 多智能体协作状态 -->
+  <view class="agent-navigation">
+    <view class="agent-step completed" bindtap="navigateToStep" data-step="script">
+      <view class="step-icon">📝</view>
+      <text class="step-label">脚本理解</text>
+    </view>
+    <view class="agent-step current" bindtap="navigateToStep" data-step="storyboard">
+      <view class="step-icon">🎬</view>
+      <text class="step-label">分镜生成</text>
+      <view class="step-active-indicator"></view>
+    </view>
+    <view class="agent-step" bindtap="navigateToStep" data-step="consistency">
+      <view class="step-icon">👥</view>
+      <text class="step-label">角色一致性</text>
+    </view>
+    <view class="agent-step" bindtap="navigateToStep" data-step="ai-paint">
+      <view class="step-icon">🎨</view>
+      <text class="step-label">AI绘画</text>
+    </view>
+    <view class="agent-step" bindtap="navigateToStep" data-step="export">
+      <view class="step-icon">📦</view>
+      <text class="step-label">导出</text>
+    </view>
+    
+    <!-- 进度条 -->
+    <view class="progress-bar">
+      <view class="progress-fill" style="width: 40%;"></view>
+    </view>
+    
+    <!-- 计数胶囊 -->
+    <view class="step-counter">
+      <text class="counter-text">2/5</text>
+    </view>
+  </view>
+
+  <!-- 主内容区 -->
+  <scroll-view class="main-content" scroll-y>
+    <!-- 快捷操作区 - 重新设计为三大高频入口 -->
+    <view class="quick-actions-section">
+      <text class="section-title">快捷创作</text>
+      <view class="quick-actions-grid">
+        <view class="quick-action-card primary" bindtap="createNewStoryboard">
+          <view class="action-icon">✨</view>
+          <text class="action-title">新建分镜</text>
+          <text class="action-subtitle">从头开始创作</text>
+        </view>
+        <view class="quick-action-card secondary" bindtap="importScript">
+          <view class="action-icon"></view>
+          <text class="action-title">导入脚本</text>
+          <text class="action-subtitle">批量生成分镜</text>
+        </view>
+        <view class="quick-action-card accent" bindtap="oneClickGenerate">
+          <view class="action-icon">🚀</view>
+          <text class="action-title">一键生成</text>
+          <text class="action-subtitle">智能创作模式</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 分镜列表 - 纵向卡片流 -->
+    <view class="storyboard-section">
+      <view class="section-header">
+        <text class="section-title">我的分镜</text>
+        <view class="view-all-btn" bindtap="viewAllStoryboards">
+          <text>查看全部</text>
+          <text class="arrow-icon">→</text>
+        </view>
+      </view>
+      
+      <view class="storyboard-list">
+        <view class="storyboard-item" wx:for="{{storyboards}}" wx:key="id" bindtap="openStoryboard" data-id="{{item.id}}">
+          <!-- 缩略图 -->
+          <view class="storyboard-thumbnail">
+            <image src="{{item.thumbnail}}" mode="aspectFill" class="thumbnail-image" />
+            <view class="storyboard-duration">{{item.duration}}s</view>
+          </view>
+          
+          <!-- 信息区 -->
+          <view class="storyboard-info">
+            <text class="storyboard-title">{{item.title}}</text>
+            <text class="storyboard-desc">{{item.description}}</text>
+            <view class="storyboard-tags">
+              <text class="tag" wx:for="{{item.tags}}" wx:key="*this">{{item}}</text>
+            </view>
+          </view>
+          
+          <!-- 状态指示点 -->
+          <view class="storyboard-status">
+            <view class="status-dot {{item.consistencyStatus}}"></view>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 任务队列 -->
+    <view class="task-queue-section">
+      <view class="section-header">
+        <text class="section-title">任务队列</text>
+        <text class="queue-count">{{queueCount}}个任务</text>
+      </view>
+      
+      <view class="task-queue">
+        <view class="task-item" wx:for="{{taskQueue}}" wx:key="id">
+          <view class="task-icon {{item.status}}">{{item.agentIcon}}</view>
+          <view class="task-info">
+            <text class="task-name">{{item.taskName}}</text>
+            <text class="task-status">{{item.statusText}}</text>
+          </view>
+          <view class="task-progress">
+            <view class="progress-ring">
+              <view class="progress-circle" style="stroke-dasharray: {{item.progress}} 100;"></view>
+            </view>
+            <text class="progress-text">{{item.progress}}%</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 新手教程 -->
+    <view class="tutorial-section">
+      <text class="section-title">快速上手</text>
+      <view class="tutorial-card" bindtap="openTutorial">
+        <view class="tutorial-content">
+          <view class="tutorial-icon">📚</view>
+          <view class="tutorial-text">
+            <text class="tutorial-title">3分钟快速入门</text>
+            <text class="tutorial-desc">了解多智能体协作创作流程</text>
+          </view>
+        </view>
+        <view class="tutorial-action">
+          <text>立即学习</text>
+          <text class="arrow-icon">→</text>
+        </view>
+      </view>
+    </view>
+  </scroll-view>
+</view>

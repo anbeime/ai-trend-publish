@@ -1,0 +1,9 @@
+{
+  "name": "hotspot-scorer",
+  "version": "1.0.0",
+  "description": "热点智能评分云函数",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "~2.6.3"
+  }
+}

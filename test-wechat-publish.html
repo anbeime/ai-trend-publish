@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>微信发布功能测试工具</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #f5f5f5;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .test-section {
+            padding: 20px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .test-section h3 {
+            color: #333;
+            margin-bottom: 15px;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        
+        .btn {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+        
+        .btn:hover {
+            background: #0056b3;
+        }
+        
+        .btn-success {
+            background: #28a745;
+        }
+        
+        .btn-success:hover {
+            background: #1e7e34;
+        }
+        
+        .btn-warning {
+            background: #ffc107;
+            color: #212529;
+        }
+        
+        .result {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            padding: 15px;
+            margin-top: 10px;
+            font-family: monospace;
+            white-space: pre-wrap;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        .status {
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 10px;
+        }
+        
+        .status-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .status-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .status-info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        
+        .step-indicator {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            padding: 10px;
+            background: #e9ecef;
+            border-radius: 5px;
+        }
+        
+        .step {
+            flex: 1;
+            text-align: center;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        
+        .step.active {
+            background: #007bff;
+            color: white;
+        }
+        
+        .step.completed {
+            background: #28a745;
+            color: white;
+        }
+        
+        .step.pending {
+            background: #6c757d;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🧪 微信发布功能测试工具</h1>
+            <p>逐步测试微信公众号API调用功能</p>
+        </div>
+        
+        <div class="test-section">
+            <div class="step-indicator">
+                <div class="step active" id="step1">1. 配置</div>
+                <div class="step pending" id="step2">2. 获取Token</div>
+                <div class="step pending" id="step3">3. 上传图片</div>
+                <div class="step pending" id="step4">4. 创建草稿</div>
+                <div class="step pending" id="step5">5. 完成</div>
+            </div>
+        </div>
+        
+        <!-- 步骤1：配置测试 -->
+        <div class="test-section">
+            <h3>📋 步骤1：配置测试</h3>
+            <div class="form-group">
+                <label>微信公众号AppID:</label>
+                <input type="text" id="test-appid" placeholder="输入你的微信公众号AppID">
+            </div>
+            <div class="form-group">
+                <label>微信公众号AppSecret:</label>
+                <input type="password" id="test-secret" placeholder="输入你的微信公众号AppSecret">
+            </div>
+            <button class="btn" onclick="testConfig()">测试配置</button>
+            <div id="config-result" class="result" style="display: none;"></div>
+        </div>
+        
+        <!-- 步骤2：获取Token测试 -->
+        <div class="test-section">
+            <h3>🔑 步骤2：获取访问令牌</h3>
+            <button class="btn btn-success" onclick="testToken()" id="token-btn" disabled>获取Access Token</button>
+            <div id="token-result" class="result" style="display: none;"></div>
+        </div>
+        
+        <!-- 步骤3：上传图片测试 -->
+        <div class="test-section">
+            <h3>🖼️ 步骤3：上传测试图片</h3>
+            <div class="form-group">
+                <label>选择测试图片:</label>
+                <input type="file" id="test-image" accept="image/*">
+            </div>
+            <button class="btn btn-warning" onclick="testImageUpload()" id="upload-btn" disabled>上传图片</button>
+            <div id="upload-result" class="result" style="display: none;"></div>
+        </div>
+        
+        <!-- 步骤4：创建草稿测试 -->
+        <div class="test-section">
+            <h3>📝 步骤4：创建测试草稿</h3>
+            <div class="form-group">
+                <label>测试标题:</label>
+                <input type="text" id="test-title" value="这是一篇测试文章 - " placeholder="输入测试标题">
+            </div>
+            <div class="form-group">
+                <label>测试内容:</label>
+                <textarea id="test-content" rows="4" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">这是通过测试工具发布的文章内容。
+
+发布时间：<span id="publish-time"></span>
+
+测试功能包括：
+✅ Access Token获取
+✅ 图片上传
+✅ 草稿创建
+
+如需查看效果，请登录微信公众号后台查看草稿箱。</textarea>
+            </div>
+            <button class="btn btn-success" onclick="testCreateDraft()" id="draft-btn" disabled>创建草稿</button>
+            <div id="draft-result" class="result" style="display: none;"></div>
+        </div>
+        
+        <!-- 步骤5：测试总结 -->
+        <div class="test-section">
+            <h3>🎉 步骤5：测试总结</h3>
+            <button class="btn btn-success" onclick="runFullTest()" id="full-test-btn">运行完整测试</button>
+            <button class="btn" onclick="clearResults()">清空结果</button>
+            <div id="summary-result" class="result" style="display: none;"></div>
+        </div>
+        
+        <!-- 状态显示 -->
+        <div id="status-message"></div>
+    </div>
+
+    <script>
+        let currentAccessToken = '';
+        let uploadedImageUrl = '';
+        let createdDraftId = '';
+        
+        // 初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('publish-time').textContent = new Date().toLocaleString();
+        });
+        
+        // 显示状态消息
+        function showStatus(message, type) {
+            const statusDiv = document.getElementById('status-message');
+            statusDiv.className = 'status status-' + type;
+            statusDiv.textContent = message;
+            statusDiv.style.display = 'block';
+            
+            if (type !== 'error') {
+                setTimeout(() => {
+                    statusDiv.style.display = 'none';
+                }, 5000);
+            }
+        }
+        
+        // 更新步骤指示器
+        function updateStepIndicator(currentStep) {
+            for (let i = 1; i <= 5; i++) {
+                const step = document.getElementById('step' + i);
+                step.className = 'step';
+                if (i < currentStep) {
+                    step.className = 'step completed';
+                } else if (i === currentStep) {
+                    step.className = 'step active';
+                } else {
+                    step.className = 'step pending';
+                }
+            }
+        }
+        
+        // 显示结果
+        function showResult(elementId, data) {
+            const element = document.getElementById(elementId);
+            element.style.display = 'block';
+            element.textContent = JSON.stringify(data, null, 2);
+        }
+        
+        // 步骤1：测试配置
+        async function testConfig() {
+            const appid = document.getElementById('test-appid').value.trim();
+            const secret = document.getElementById('test-secret').value.trim();
+            
+            if (!appid || !secret) {
+                showStatus('请填写AppID和AppSecret', 'error');
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/wechat/config', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ appid, secret })
+                });
+                
+                const result = await response.json();
+                showResult('config-result', result);
+                
+                if (result.success) {
+                    showStatus('✅ 配置保存成功！', 'success');
+                    updateStepIndicator(2);
+                    document.getElementById('token-btn').disabled = false;
+                } else {
+                    showStatus('❌ 配置失败：' + result.error, 'error');
+                }
+            } catch (error) {
+                showResult('config-result', { error: error.message });
+                showStatus('❌ 网络错误：' + error.message, 'error');
+            }
+        }
+        
+        // 步骤2：获取Token
+        async function testToken() {
+            try {
+                showStatus('正在获取Access Token...', 'info');
+                
+                const response = await fetch('/api/wechat/token', {
+                    method: 'POST'
+                });
+                
+                const result = await response.json();
+                showResult('token-result', result);
+                
+                if (result.success) {
+                    currentAccessToken = result.access_token;
+                    showStatus('✅ Access Token获取成功！', 'success');
+                    updateStepIndicator(3);
+                    document.getElementById('upload-btn').disabled = false;
+                } else {
+                    showStatus('❌ Token获取失败：' + result.error, 'error');
+                }
+            } catch (error) {
+                showResult('token-result', { error: error.message });
+                showStatus('❌ 网络错误：' + error.message, 'error');
+            }
+        }
+        
+        // 步骤3：上传图片
+        async function testImageUpload() {
+            const fileInput = document.getElementById('test-image');
+            const file = fileInput.files[0];
+            
+            if (!file) {
+                showStatus('请选择测试图片', 'error');
+                return;
+            }
+            
+            try {
+                showStatus('正在上传图片...', 'info');
+                
+                const formData = new FormData();
+                formData.append('media', file);
+                
+                const response = await fetch('/api/wechat/upload-image', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const result = await response.json();
+                showResult('upload-result', result);
+                
+                if (result.success) {
+                    uploadedImageUrl = result.url;
+                    showStatus('✅ 图片上传成功！', 'success');
+                    updateStepIndicator(4);
+                    document.getElementById('draft-btn').disabled = false;
+                } else {
+                    showStatus('❌ 图片上传失败：' + result.error, 'error');
+                }
+            } catch (error) {
+                showResult('upload-result', { error: error.message });
+                showStatus('❌ 网络错误：' + error.message, 'error');
+            }
+        }
+        
+        // 步骤4：创建草稿
+        async function testCreateDraft() {
+            const title = document.getElementById('test-title').value.trim();
+            const content = document.getElementById('test-content').value.trim();
+            
+            if (!title || !content) {
+                showStatus('请填写测试标题和内容', 'error');
+                return;
+            }
+            
+            try {
+                showStatus('正在创建草稿...', 'info');
+                
+                const response = await fetch('/api/wechat/publish', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        title,
+                        content,
+                        summary: '这是一篇通过API测试工具创建的草稿文章',
+                        thumb_media_id: uploadedImageUrl
+                    })
+                });
+                
+                const result = await response.json();
+                showResult('draft-result', result);
+                
+                if (result.success) {
+                    createdDraftId = result.media_id;
+                    showStatus('🎉 草稿创建成功！请登录微信后台查看', 'success');
+                    updateStepIndicator(5);
+                } else {
+                    showStatus('❌ 草稿创建失败：' + result.error, 'error');
+                }
+            } catch (error) {
+                showResult('draft-result', { error: error.message });
+                showStatus('❌ 网络错误：' + error.message, 'error');
+            }
+        }
+        
+        // 完整测试
+        async function runFullTest() {
+            showStatus('开始完整测试流程...', 'info');
+            
+            // 重置状态
+            updateStepIndicator(1);
+            document.getElementById('token-btn').disabled = true;
+            document.getElementById('upload-btn').disabled = true;
+            document.getElementById('draft-btn').disabled = true;
+            
+            const results = [];
+            
+            try {
+                // 步骤1：配置
+                await new Promise(resolve => {
+                    setTimeout(() => {
+                        testConfig();
+                        resolve();
+                    }, 1000);
+                });
+                
+                // 等待配置完成
+                await new Promise(resolve => setTimeout(resolve, 2000));
+                
+                // 步骤2：获取Token
+                await testToken();
+                await new Promise(resolve => setTimeout(resolve, 2000));
+                
+                // 步骤3：上传图片（如果有）
+                if (document.getElementById('test-image').files[0]) {
+                    await testImageUpload();
+                    await new Promise(resolve => setTimeout(resolve, 2000));
+                }
+                
+                // 步骤4：创建草稿
+                await testCreateDraft();
+                
+                // 生成测试报告
+                const report = {
+                    test_time: new Date().toLocaleString(),
+                    config_test: 'completed',
+                    token_test: currentAccessToken ? 'success' : 'failed',
+                    image_test: uploadedImageUrl ? 'success' : 'skipped',
+                    draft_test: createdDraftId ? 'success' : 'failed',
+                    draft_id: createdDraftId,
+                    status: createdDraftId ? '✅ 所有测试通过' : '❌ 部分测试失败'
+                };
+                
+                showResult('summary-result', report);
+                showStatus(report.status, report.status.includes('✅') ? 'success' : 'error');
+                
+            } catch (error) {
+                const errorReport = {
+                    test_time: new Date().toLocaleString(),
+                    error: error.message,
+                    status: '❌ 测试过程中发生错误'
+                };
+                
+                showResult('summary-result', errorReport);
+                showStatus('❌ 测试失败：' + error.message, 'error');
+            }
+        }
+        
+        // 清空结果
+        function clearResults() {
+            ['config-result', 'token-result', 'upload-result', 'draft-result', 'summary-result'].forEach(id => {
+                document.getElementById(id).style.display = 'none';
+            });
+            
+            // 重置状态
+            updateStepIndicator(1);
+            currentAccessToken = '';
+            uploadedImageUrl = '';
+            createdDraftId = '';
+            
+            document.getElementById('token-btn').disabled = true;
+            document.getElementById('upload-btn').disabled = true;
+            document.getElementById('draft-btn').disabled = true;
+            
+            showStatus('测试结果已清空', 'info');
+        }
+    </script>
+</body>
+</html>

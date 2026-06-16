@@ -1,0 +1,349 @@
+<!--pages/content-creator/content-creator.wxml-->
+<view class="page-container">
+  <!-- 顶部导航栏 -->
+  <view class="header-section">
+    <view class="header-content">
+      <view class="back-btn" bindtap="goBack">
+        <text class="icon">←</text>
+      </view>
+      <view class="header-text">
+        <text class="page-title">自媒体创作</text>
+        <text class="page-subtitle">AI驱动的内容创作工作流</text>
+      </view>
+    </view>
+    <view class="header-actions">
+      <!-- 积分显示 -->
+      <view class="credits-display" wx:if="{{userCredits}}">
+        <text class="credits-icon">⚡</text>
+        <text class="credits-value">{{userCredits.dailyQuota - userCredits.dailyUsed}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 创作流程步骤指示器 -->
+  <view class="workflow-steps">
+    <view class="step-item {{currentStep >= 1 ? 'active' : ''}} {{currentStep > 1 ? 'completed' : ''}}">
+      <view class="step-icon">1</view>
+      <text class="step-label">选择热点</text>
+    </view>
+    <view class="step-line {{currentStep > 1 ? 'active' : ''}}"></view>
+    <view class="step-item {{currentStep >= 2 ? 'active' : ''}} {{currentStep > 2 ? 'completed' : ''}}">
+      <view class="step-icon">2</view>
+      <text class="step-label">内容创作</text>
+    </view>
+    <view class="step-line {{currentStep > 2 ? 'active' : ''}}"></view>
+    <view class="step-item {{currentStep >= 3 ? 'active' : ''}} {{currentStep > 3 ? 'completed' : ''}}">
+      <view class="step-icon">3</view>
+      <text class="step-label">优化发布</text>
+    </view>
+  </view>
+
+  <!-- 步骤1: 热点选择 -->
+  <view class="step-content" wx:if="{{currentStep === 1}}">
+    <view class="section-header">
+      <text class="section-title">🔥 选择创作热点</text>
+      <view class="refresh-btn" bindtap="refreshHotspots" disabled="{{loadingHotspots}}">
+        <text class="refresh-icon">{{loadingHotspots ? '⏳' : '🔄'}}</text>
+      </view>
+    </view>
+
+    <!-- 热点分类标签 -->
+    <scroll-view class="category-tabs" scroll-x enable-flex>
+      <view
+        class="category-tab {{selectedCategory === 'all' ? 'active' : ''}}"
+        bindtap="selectCategory"
+        data-category="all"
+      >
+        <text>全部</text>
+      </view>
+      <view
+        class="category-tab {{selectedCategory === 'tech' ? 'active' : ''}}"
+        bindtap="selectCategory"
+        data-category="tech"
+      >
+        <text>📱 科技</text>
+      </view>
+      <view
+        class="category-tab {{selectedCategory === 'life' ? 'active' : ''}}"
+        bindtap="selectCategory"
+        data-category="life"
+      >
+        <text>🏠 生活</text>
+      </view>
+      <view
+        class="category-tab {{selectedCategory === 'entertainment' ? 'active' : ''}}"
+        bindtap="selectCategory"
+        data-category="entertainment"
+      >
+        <text>🎬 娱乐</text>
+      </view>
+      <view
+        class="category-tab {{selectedCategory === 'food' ? 'active' : ''}}"
+        bindtap="selectCategory"
+        data-category="food"
+      >
+        <text>🍳 美食</text>
+      </view>
+      <view
+        class="category-tab {{selectedCategory === 'travel' ? 'active' : ''}}"
+        bindtap="selectCategory"
+        data-category="travel"
+      >
+        <text>✈️ 旅行</text>
+      </view>
+    </scroll-view>
+
+    <!-- 热点列表 -->
+    <scroll-view class="hotspot-list" scroll-y wx:if="{{!loadingHotspots}}">
+      <view 
+        class="hotspot-card {{selectedHotspot && selectedHotspot.id === item.id ? 'selected' : ''}}"
+        wx:for="{{displayedHotspots}}"
+        wx:key="id"
+        bindtap="selectHotspot"
+        data-hotspot="{{item}}"
+      >
+        <view class="hotspot-rank">{{index + 1}}</view>
+        <view class="hotspot-content">
+          <text class="hotspot-title">{{item.title || item.name}}</text>
+          <view class="hotspot-meta">
+            <text class="source-tag">{{item.source}}</text>
+            <text class="heat-value">🔥 {{item.hotness || item.heat}}</text>
+          </view>
+        </view>
+        <view class="select-icon" wx:if="{{selectedHotspot && selectedHotspot.id === item.id}}">✓</view>
+      </view>
+    </scroll-view>
+
+    <!-- 加载中 -->
+    <view class="loading-state" wx:if="{{loadingHotspots}}">
+      <text class="loading-icon">⏳</text>
+      <text class="loading-text">正在加载热点...</text>
+    </view>
+
+    <!-- 下一步按钮 - 固定在底部 -->
+    <view class="step-actions step1-actions">
+      <button class="next-btn {{!selectedHotspot ? 'disabled' : ''}}" bindtap="goToStep2">
+        下一步：开始创作
+      </button>
+    </view>
+  </view>
+
+  <!-- 步骤2: 内容创作 -->
+  <view class="step-content" wx:if="{{currentStep === 2}}">
+    <!-- 已选热点卡片 -->
+    <view class="selected-hotspot-card" wx:if="{{selectedHotspot}}">
+      <view class="card-header">
+        <text class="card-title">🔥 创作主题</text>
+        <text class="change-btn" bindtap="backToStep1">更换</text>
+      </view>
+      <view class="card-content">
+        <text class="hotspot-title">{{selectedHotspot.title || selectedHotspot.name}}</text>
+        <view class="hotspot-tags">
+          <text class="tag" wx:for="{{selectedHotspot.tags}}" wx:key="*this">#{{item}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 创作类型选择 -->
+    <view class="creation-type-section">
+      <text class="section-title">📝 选择创作类型</text>
+      <view class="type-grid">
+        <view 
+          class="type-card {{creationType === 'article' ? 'selected' : ''}}"
+          bindtap="selectCreationType"
+          data-type="article"
+        >
+          <text class="type-icon">📄</text>
+          <text class="type-name">文章</text>
+          <text class="type-desc">深度长文</text>
+        </view>
+        <view 
+          class="type-card {{creationType === 'post' ? 'selected' : ''}}"
+          bindtap="selectCreationType"
+          data-type="post"
+        >
+          <text class="type-icon">💬</text>
+          <text class="type-name">帖子</text>
+          <text class="type-desc">短文快讯</text>
+        </view>
+        <view 
+          class="type-card {{creationType === 'video-script' ? 'selected' : ''}}"
+          bindtap="selectCreationType"
+          data-type="video-script"
+        >
+          <text class="type-icon">🎬</text>
+          <text class="type-name">视频脚本</text>
+          <text class="type-desc">短视频文案</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 创作参数设置 -->
+    <view class="creation-params">
+      <view class="param-item">
+        <text class="param-label">内容风格</text>
+        <picker mode="selector" range="{{styleOptions}}" value="{{styleIndex}}" bindchange="onStyleChange">
+          <view class="picker-value">
+            {{styleOptions[styleIndex]}}
+            <text class="picker-arrow">▼</text>
+          </view>
+        </picker>
+      </view>
+
+      <view class="param-item">
+        <text class="param-label">内容长度</text>
+        <picker mode="selector" range="{{lengthOptions}}" value="{{lengthIndex}}" bindchange="onLengthChange">
+          <view class="picker-value">
+            {{lengthOptions[lengthIndex]}}
+            <text class="picker-arrow">▼</text>
+          </view>
+        </picker>
+      </view>
+
+      <view class="param-item">
+        <view class="param-label-row">
+          <text class="param-label">目标平台</text>
+          <text class="platform-tip" wx:if="{{selectedPlatformInfo}}">{{selectedPlatformInfo.userHabit}}</text>
+        </view>
+        <picker mode="selector" range="{{platformOptions}}" value="{{platformIndex}}" bindchange="onPlatformChange">
+          <view class="picker-value">
+            {{platformOptions[platformIndex]}}
+            <text class="picker-arrow">▼</text>
+          </view>
+        </picker>
+      </view>
+      
+      <!-- 平台特性提示 -->
+      <view class="platform-features" wx:if="{{selectedPlatformInfo}}">
+        <view class="feature-item" wx:for="{{selectedPlatformInfo.features}}" wx:key="*this">
+          <text class="feature-tag">{{item}}</text>
+        </view>
+        <text class="platform-tip-text">💡 {{selectedPlatformInfo.contentTips}}</text>
+      </view>
+    </view>
+
+    <!-- 额外需求输入 -->
+    <view class="additional-input">
+      <text class="input-label">补充需求（可选）</text>
+      <textarea 
+        class="input-textarea" 
+        placeholder="例如：重点突出产品优势、加入情感共鸣..." 
+        value="{{additionalRequirements}}" 
+        bindinput="onAdditionalInput"
+        maxlength="500"
+      ></textarea>
+      <text class="char-count">{{additionalRequirements.length}}/500</text>
+    </view>
+
+    <!-- 操作按钮 -->
+    <view class="step-actions">
+      <button class="back-btn-secondary" bindtap="backToStep1">上一步</button>
+      <button class="generate-btn {{!creationType || generating ? 'disabled' : ''}}" bindtap="generateContent">
+        {{generating ? '生成中...' : '开始生成'}}
+      </button>
+    </view>
+  </view>
+
+  <!-- 步骤3: 内容优化与发布 -->
+  <view class="step-content" wx:if="{{currentStep === 3}}">
+    <!-- 生成的内容展示 - 结构化 -->
+    <view class="generated-content-section" wx:if="{{generatedContent}}">
+      <!-- 标题区块 -->
+      <view class="content-block">
+        <view class="block-header">
+          <text class="block-title">📝 标题</text>
+          <text class="copy-btn" bindtap="copyContent" data-type="title">复制</text>
+        </view>
+        <view class="title-display">
+          <text class="title-text" selectable>{{generatedContent.title}}</text>
+        </view>
+      </view>
+
+      <!-- 正文区块 -->
+      <view class="content-block">
+        <view class="block-header">
+          <text class="block-title">📄 正文</text>
+          <text class="copy-btn" bindtap="copyContent" data-type="content">复制</text>
+        </view>
+        <scroll-view class="content-scroll" scroll-y>
+          <text class="content-text" selectable user-select="{{true}}">{{generatedContent.content}}</text>
+        </scroll-view>
+      </view>
+
+      <!-- 标签区块 -->
+      <view class="content-block" wx:if="{{generatedContent.tags && generatedContent.tags.length > 0}}">
+        <view class="block-header">
+          <text class="block-title">🏷️ 推荐标签</text>
+          <text class="copy-btn" bindtap="copyContent" data-type="tags">复制</text>
+        </view>
+        <view class="tags-display">
+          <text class="tag-item" wx:for="{{generatedContent.tags}}" wx:key="*this">#{{item}}</text>
+        </view>
+      </view>
+
+      <!-- 封面建议区块 -->
+      <view class="content-block" wx:if="{{generatedContent.coverSuggestion}}">
+        <view class="block-header">
+          <text class="block-title">🖼️ 封面建议</text>
+        </view>
+        <text class="suggestion-text">{{generatedContent.coverSuggestion}}</text>
+      </view>
+
+      <!-- 优化建议区块 -->
+      <view class="content-block" wx:if="{{generatedContent.optimizationTips && generatedContent.optimizationTips.length > 0}}">
+        <view class="block-header">
+          <text class="block-title">💡 优化建议</text>
+        </view>
+        <view class="tips-list">
+          <view class="tip-item" wx:for="{{generatedContent.optimizationTips}}" wx:key="*this">
+            <text class="tip-dot">•</text>
+            <text class="tip-text">{{item}}</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- 操作按钮 -->
+      <view class="content-actions">
+        <button class="action-btn-secondary" bindtap="regenerateContent">🔄 重新生成</button>
+        <button class="action-btn-primary" bindtap="copyContent" data-type="all">📋 复制全部</button>
+      </view>
+    </view>
+
+    <!-- 发布平台选择 -->
+    <view class="publish-section">
+      <text class="section-title">📤 发布到平台</text>
+      <view class="platform-options">
+        <view 
+          class="platform-card {{item.selected ? 'selected' : ''}}"
+          wx:for="{{publishPlatforms}}"
+          wx:key="id"
+          bindtap="togglePlatform"
+          data-id="{{item.id}}"
+        >
+          <text class="platform-icon">{{item.icon}}</text>
+          <text class="platform-name">{{item.name}}</text>
+          <view class="check-icon" wx:if="{{item.selected}}">✓</view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 最终操作 -->
+    <view class="step-actions-final">
+      <button class="back-btn-secondary" bindtap="backToStep2">上一步</button>
+      <view class="main-actions">
+        <button class="save-btn" bindtap="saveContent">保存草稿</button>
+        <button class="publish-btn {{publishing ? 'disabled' : ''}}" bindtap="publishContent">
+          {{publishing ? '发布中...' : '立即发布'}}
+        </button>
+      </view>
+    </view>
+  </view>
+
+  <!-- 全局加载遮罩 -->
+  <view class="loading-mask" wx:if="{{generating || publishing}}">
+    <view class="loading-content">
+      <view class="loading-spinner"></view>
+      <text class="loading-text">{{loadingText}}</text>
+    </view>
+  </view>
+</view>

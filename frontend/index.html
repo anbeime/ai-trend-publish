@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TikTok Digital Human Generator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ['Inter', 'sans-serif'],
+            },
+            colors: {
+              glass: {
+                100: 'rgba(255, 255, 255, 0.05)',
+                200: 'rgba(255, 255, 255, 0.1)',
+                300: 'rgba(255, 255, 255, 0.15)',
+                border: 'rgba(255, 255, 255, 0.1)',
+              }
+            },
+            animation: {
+              'marquee': 'marquee 40s linear infinite',
+              'border-beam': 'border-beam 4s infinite linear',
+              'text-reveal': 'text-reveal 0.8s cubic-bezier(0.16, 1, 0.3, 1) both',
+              'gradient-x': 'gradient-x 5s ease infinite',
+              'spotlight': 'spotlight 2s ease .75s 1 forwards',
+            },
+            keyframes: {
+              marquee: {
+                '0%': { transform: 'translateX(0%)' },
+                '100%': { transform: 'translateX(-100%)' },
+              },
+              'border-beam': {
+                '100%': { offsetDistance: '100%' },
+              },
+              'text-reveal': {
+                '0%': { transform: 'translateY(100%)', opacity: 0, filter: 'blur(10px)' },
+                '100%': { transform: 'translateY(0)', opacity: 1, filter: 'blur(0)' },
+              },
+              'gradient-x': {
+                '0%, 100%': { 'background-size': '200% 200%', 'background-position': 'left center' },
+                '50%': { 'background-size': '200% 200%', 'background-position': 'right center' },
+              },
+              spotlight: {
+                '0%': { opacity: 0, transform: 'translate(-72%, -62%) scale(0.5)' },
+                '100%': { opacity: 1, transform: 'translate(-50%,-40%) scale(1)' },
+              }
+            }
+          }
+        }
+      }
+    </script>
+    <style>
+      body {
+        background: #000;
+        color: white;
+        min-height: 100vh;
+        overflow-x: hidden;
+      }
+      .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+      .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+      .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 20px; }
+
+      /* Utilities for High-End Effects */
+      .mask-marquee {
+        mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+        -webkit-mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+      }
+
+      .glass-frosted {
+        background: rgba(0, 0, 0, 0.4);
+        backdrop-filter: blur(24px);
+        -webkit-backdrop-filter: blur(24px);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      }
+
+      /* Border Beam Logic */
+      .border-beam-container {
+        position: relative;
+        background: transparent;
+        overflow: hidden;
+      }
+      .border-beam-line {
+        position: absolute;
+        inset: 0;
+        border: 1px solid transparent;
+        border-radius: inherit;
+        pointer-events: none;
+        mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+        -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+        mask-composite: exclude;
+        -webkit-mask-composite: xor;
+      }
+      .border-beam-line::after {
+        content: "";
+        position: absolute;
+        width: 80px;
+        height: 100%;
+        top: 0;
+        left: 0;
+        background: linear-gradient(to right, transparent, #22d3ee, transparent);
+        offset-path: rect(0 auto auto 0 round 999px);
+        animation: border-beam 3s linear infinite;
+      }
+    </style>
+  <script type="importmap">
+{
+  "imports": {
+    "lucide-react": "https://esm.sh/lucide-react@^0.562.0",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
+    "react/": "https://esm.sh/react@^19.2.3/",
+    "react": "https://esm.sh/react@^19.2.3"
+  }
+}
+</script>
+<link rel="stylesheet" href="/index.css">
+</head>
+  <body>
+    <div id="root"></div>
+  <script type="module" src="/index.tsx"></script>
+</body>
+</html>

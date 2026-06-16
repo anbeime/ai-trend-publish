@@ -1,0 +1,10 @@
+{
+  "name": "coze-skill",
+  "version": "1.0.0",
+  "description": "调用扣子（Coze）平台的Bot技能",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "~2.6.3",
+    "axios": "^1.6.0"
+  }
+}

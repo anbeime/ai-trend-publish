@@ -1,0 +1,492 @@
+openapi: 3.0.0
+info:
+  title: TrendPublish 微信文章发布 Coze 插件
+  description: |
+    专为 Coze 平台设计的微信文章发布插件，支持完整的发布流程。
+    
+    功能特性：
+    - ✅ 获取微信访问令牌
+    - ✅ 上传图片素材
+    - ✅ 创建文章草稿
+    - ✅ 发布文章到公众号
+    - ✅ 统一的错误处理
+    - ✅ 完整的状态返回
+    
+    使用方法：
+    1. 先调用 get_access_token 获取令牌
+    2. 使用 upload_img 上传封面图片获取 media_id
+    3. 调用 add_draft 创建草稿
+    4. 最后调用 publish_article 发布文章
+    
+    所有接口都通过 https://mp.miyucaicai.cn 访问
+  version: 1.0.0
+  contact:
+    name: TrendPublish Team
+    email: support@trendpublish.ai
+
+servers:
+  - url: https://mp.miyucaicai.cn
+    description: 生产环境 API 端点
+
+paths:
+  # 获取访问令牌 - 所有接口的基础
+  /coze/token:
+    post:
+      summary: get_access_token
+      description: |
+        获取微信公众号访问令牌，这是调用所有其他接口的基础。
+        
+        使用说明：
+        - 获取令牌后，有效期 2 小时
+        - 建议缓存令牌，避免频繁获取
+        - 如果令牌过期，重新调用此接口
+        
+        参数说明：
+        - appid: 微信公众号 AppID
+        - secret: 微信公众号 AppSecret
+        - grant_type: 固定为 client_credential
+      operationId: getAccessToken
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [appid, secret]
+              properties:
+                appid:
+                  type: string
+                  description: 微信公众号 AppID
+                  example: "wx1234567890abcdef"
+                secret:
+                  type: string
+                  description: 微信公众号 AppSecret
+                  example: "abcdef1234567890abcdef1234567890"
+                grant_type:
+                  type: string
+                  description: 授权类型，固定为 client_credential
+                  default: "client_credential"
+                  example: "client_credential"
+      responses:
+        '200':
+          description: 成功获取访问令牌
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: object
+                    properties:
+                      access_token:
+                        type: string
+                        description: 访问令牌
+                        example: "73_xxxxxxx"
+                      expires_in:
+                        type: integer
+                        description: 令牌有效期（秒）
+                        example: 7200
+                      appid:
+                        type: string
+                        description: 应用ID
+                        example: "wx1234567890abcdef"
+                  message:
+                    type: string
+                    example: "Token obtained successfully"
+                  timestamp:
+                    type: string
+                    example: "2025-12-28T10:30:00.000Z"
+        '400':
+          description: 参数错误或令牌获取失败
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  error:
+                    type: object
+                    properties:
+                      code:
+                        type: string
+                        example: "INVALID_APPID"
+                      message:
+                        type: string
+                        example: "invalid appid"
+                  timestamp:
+                    type: string
+                    example: "2025-12-28T10:30:00.000Z"
+
+  # 上传图片素材
+  /coze/upload:
+    post:
+      summary: upload_img
+      description: |
+        上传图片素材，支持封面图片和内容图片。
+        
+        使用说明：
+        - 支持的格式：JPG、PNG
+        - 封面图片：type=thumb，建议大小 200px × 200px
+        - 内容图片：type=image，大小不超过 2MB
+        - 返回的 media_id 用于创建草稿时引用
+        
+        注意事项：
+        - 需要先获取 access_token
+        - 图片必须是有效的图片文件
+        - 文件大小不能超过微信限制
+      operationId: uploadImage
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [access_token, media]
+              properties:
+                access_token:
+                  type: string
+                  description: 访问令牌
+                  example: "73_xxxxxxx"
+                media:
+                  type: string
+                  format: binary
+                  description: 图片文件（JPG/PNG格式）
+                type:
+                  type: string
+                  description: 素材类型
+                  enum: [thumb, image]
+                  default: thumb
+                  example: "thumb"
+      responses:
+        '200':
+          description: 图片上传成功
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: object
+                    properties:
+                      media_id:
+                        type: string
+                        description: 素材ID，用于创建草稿
+                        example: "MEDIA_ID_123456"
+                      url:
+                        type: string
+                        description: 图片访问链接
+                        example: "http://mmbiz.qpic.cn/..."
+                      created_at:
+                        type: integer
+                        description: 创建时间戳
+                        example: 1703721600
+                  message:
+                    type: string
+                    example: "Image uploaded successfully"
+                  timestamp:
+                    type: string
+                    example: "2025-12-28T10:30:00.000Z"
+
+  # 创建文章草稿
+  /coze/draft:
+    post:
+      summary: add_draft
+      description: |
+        创建文章草稿，支持完整的富文本内容。
+        
+        使用说明：
+        - 支持 HTML 格式的内容
+        - 可以设置作者、摘要等信息
+        - 支持显示/隐藏封面图
+        - 可以控制评论权限
+        
+        参数说明：
+        - title: 文章标题（必填）
+        - content: 文章内容，支持 HTML（必填）
+        - thumb_media_id: 封面图片的 media_id（必填）
+        - author: 作者名称（可选）
+        - digest: 文章摘要（可选）
+        - show_cover_pic: 是否显示封面图，1显示，0不显示
+        - need_open_comment: 是否开启评论
+        - only_fans_can_comment: 是否仅粉丝可评论
+      operationId: createDraft
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [access_token, articles]
+              properties:
+                access_token:
+                  type: string
+                  description: 访问令牌
+                  example: "73_xxxxxxx"
+                articles:
+                  type: array
+                  items:
+                    type: object
+                    required: [title, content, thumb_media_id]
+                    properties:
+                      title:
+                        type: string
+                        description: 文章标题
+                        example: "测试文章标题"
+                        maxLength: 64
+                      content:
+                        type: string
+                        description: 文章内容，支持 HTML
+                        example: "<p>这是一篇测试文章的内容。</p><p>支持<strong>富文本</strong>格式。</p>"
+                      thumb_media_id:
+                        type: string
+                        description: 封面图片的 media_id
+                        example: "MEDIA_ID_123456"
+                      author:
+                        type: string
+                        description: 作者名称
+                        example: "作者名"
+                        maxLength: 8
+                      digest:
+                        type: string
+                        description: 文章摘要，如果不填写会自动生成
+                        example: "这是文章的摘要"
+                        maxLength: 120
+                      show_cover_pic:
+                        type: integer
+                        description: 是否显示封面图
+                        enum: [0, 1]
+                        default: 1
+                        example: 1
+                      need_open_comment:
+                        type: integer
+                        description: 是否开启评论
+                        enum: [0, 1]
+                        default: 0
+                        example: 0
+                      only_fans_can_comment:
+                        type: integer
+                        description: 是否仅粉丝可评论
+                        enum: [0, 1]
+                        default: 0
+                        example: 0
+                  maxItems: 8
+                  description: 文章数组，最多支持8篇文章
+      responses:
+        '200':
+          description: 草稿创建成功
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: object
+                    properties:
+                      media_id:
+                        type: string
+                        description: 草稿的 media_id，用于后续发布操作
+                        example: "DRAFT_MEDIA_ID_789"
+                      item:
+                        type: array
+                        description: 创建的草稿信息
+                        items:
+                          type: object
+                  message:
+                    type: string
+                    example: "Draft created successfully"
+                  timestamp:
+                    type: string
+                    example: "2025-12-28T10:30:00.000Z"
+
+  # 发布文章到公众号
+  /coze/publish:
+    post:
+      summary: publish_article
+      description: |
+        将草稿发布到微信公众号。
+        
+        使用说明：
+        - 需要先创建草稿并获取 media_id
+        - 发布后需要审核，审核通过后才会正式发布
+        - 可以通过发布ID查询发布状态
+        
+        注意事项：
+        - 一天只能发布一次
+        - 发布后的文章需要符合微信规范
+        - 发布操作不可撤销
+      operationId: publishArticle
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [access_token, media_id]
+              properties:
+                access_token:
+                  type: string
+                  description: 访问令牌
+                  example: "73_xxxxxxx"
+                media_id:
+                  type: string
+                  description: 要发布的草稿的 media_id
+                  example: "DRAFT_MEDIA_ID_789"
+      responses:
+        '200':
+          description: 文章发布成功
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: object
+                    properties:
+                      publish_id:
+                        type: string
+                        description: 发布ID，用于查询发布状态
+                        example: "PUBLISH_ID_456"
+                      msg_data:
+                        type: object
+                        properties:
+                          msg_id:
+                            type: integer
+                            description: 消息ID
+                            example: 1000000001
+                          item:
+                            type: array
+                            description: 发布的文章信息
+                  message:
+                    type: string
+                    example: "Article published successfully"
+                  timestamp:
+                    type: string
+                    example: "2025-12-28T10:30:00.000Z"
+
+  # 健康检查
+  /api/health:
+    get:
+      summary: health_check
+      description: 检查 API 服务状态
+      operationId: healthCheck
+      responses:
+        '200':
+          description: 服务正常
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: object
+                    properties:
+                      status:
+                        type: string
+                        example: "ok"
+                      service:
+                        type: string
+                        example: "TrendPublish API"
+                      version:
+                        type: string
+                        example: "1.0.0"
+                      timestamp:
+                        type: string
+                        example: "2025-12-28T10:30:00.000Z"
+                  message:
+                    type: string
+                    example: "Service is running normally"
+
+# 通用组件定义
+components:
+  responses:
+    BadRequest:
+      description: 请求参数错误
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: false
+              error:
+                type: object
+                properties:
+                  code:
+                    type: string
+                    example: "BAD_REQUEST"
+                  message:
+                    type: string
+                    example: "Invalid request parameters"
+              timestamp:
+                type: string
+                example: "2025-12-28T10:30:00.000Z"
+    
+    Unauthorized:
+      description: 认证失败
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: false
+              error:
+                type: object
+                properties:
+                  code:
+                    type: string
+                    example: "UNAUTHORIZED"
+                  message:
+                    type: string
+                    example: "Invalid access token"
+              timestamp:
+                type: string
+                example: "2025-12-28T10:30:00.000Z"
+    
+    InternalServerError:
+      description: 服务器内部错误
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: false
+              error:
+                type: object
+                properties:
+                  code:
+                    type: string
+                    example: "INTERNAL_ERROR"
+                  message:
+                    type: string
+                    example: "Internal server error"
+              timestamp:
+                type: string
+                example: "2025-12-28T10:30:00.000Z"
+
+tags:
+  - name: Authentication
+    description: 认证相关接口
+  - name: Media
+    description: 素材管理接口
+  - name: Article
+    description: 文章管理接口
+  - name: System
+    description: 系统接口

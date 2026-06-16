@@ -1,0 +1,346 @@
+# 模板与爬虫任务映射配置
+# 版本: 1.0
+# 更新时间: 2026-01-31
+
+version: "1.0"
+update_time: "2026-01-31"
+
+# 全局配置
+global:
+  storage: csv
+  use_proxy: true
+  get_comments: true
+  login: qrcode
+  base_path: "/workspace/projects/media-crawler"
+
+# 模板配置
+templates:
+  # AI工具测评模板
+  - template_id: ai-tool
+    template_name: AI工具测评
+    description: 展示AI工具的核心功能和使用效果
+    
+    crawler_tasks:
+      - name: "AI工具_抖音_每日"
+        platform: douyin
+        mode: search
+        keywords:
+          - "AI工具"
+          - "人工智能"
+          - "ChatGPT"
+          - "AI绘画"
+          - "AI写作"
+        schedule:
+          type: daily
+          time: "02:00"
+        filter:
+          min_likes: 10000
+          publish_days: 7
+      
+      - name: "AI工具_小红书_每日"
+        platform: xhs
+        mode: search
+        keywords:
+          - "AI工具测评"
+          - "人工智能推荐"
+          - "AI神器"
+          - "效率工具"
+        schedule:
+          type: daily
+          time: "02:30"
+        filter:
+          min_likes: 5000
+          publish_days: 7
+      
+      - name: "AI工具_知乎_每日"
+        platform: zhihu
+        mode: search
+        keywords:
+          - "AI工具推荐"
+          - "人工智能应用"
+          - "ChatGPT使用"
+        schedule:
+          type: daily
+          time: "03:00"
+        filter:
+          min_likes: 1000
+          publish_days: 7
+    
+    analysis:
+      enabled: true
+      frequency: daily
+
+  # 副业变现模板
+  - template_id: side-hustle
+    template_name: 副业变现
+    description: 分享副业赚钱的方法和技巧
+    
+    crawler_tasks:
+      - name: "副业_抖音_每日"
+        platform: douyin
+        mode: search
+        keywords:
+          - "副业赚钱"
+          - "兼职变现"
+          - "在家赚钱"
+          - "副业推荐"
+          - "赚钱方法"
+        schedule:
+          type: daily
+          time: "03:30"
+        filter:
+          min_likes: 10000
+          publish_days: 7
+      
+      - name: "副业_小红书_每日"
+        platform: xhs
+        mode: search
+        keywords:
+          - "副业分享"
+          - "兼职经验"
+          - "赚钱技巧"
+        schedule:
+          type: daily
+          time: "04:00"
+        filter:
+          min_likes: 5000
+          publish_days: 7
+    
+    analysis:
+      enabled: true
+      frequency: daily
+
+  # 生活小技巧模板
+  - template_id: life-tips
+    template_name: 生活小技巧
+    description: 分享实用的生活小技巧
+    
+    crawler_tasks:
+      - name: "生活技巧_抖音_每日"
+        platform: douyin
+        mode: search
+        keywords:
+          - "生活小技巧"
+          - "生活妙招"
+          - "实用技巧"
+          - "家居技巧"
+        schedule:
+          type: daily
+          time: "04:30"
+        filter:
+          min_likes: 10000
+          publish_days: 7
+      
+      - name: "生活技巧_小红书_每日"
+        platform: xhs
+        mode: search
+        keywords:
+          - "生活技巧"
+          - "实用妙招"
+          - "日常技巧"
+        schedule:
+          type: daily
+          time: "05:00"
+        filter:
+          min_likes: 5000
+          publish_days: 7
+    
+    analysis:
+      enabled: true
+      frequency: daily
+
+  # 产品测评模板
+  - template_id: product-review
+    template_name: 产品测评
+    description: 详细介绍产品特点和优势
+    
+    crawler_tasks:
+      - name: "产品测评_抖音_每日"
+        platform: douyin
+        mode: search
+        keywords:
+          - "产品测评"
+          - "好物推荐"
+          - "种草"
+          - "测评分享"
+        schedule:
+          type: daily
+          time: "05:30"
+        filter:
+          min_likes: 10000
+          publish_days: 7
+      
+      - name: "产品测评_小红书_每日"
+        platform: xhs
+        mode: search
+        keywords:
+          - "产品测评"
+          - "好物分享"
+          - "种草推荐"
+        schedule:
+          type: daily
+          time: "06:00"
+        filter:
+          min_likes: 5000
+          publish_days: 7
+    
+    analysis:
+      enabled: true
+      frequency: daily
+
+  # 美食制作模板
+  - template_id: food-making
+    template_name: 美食制作
+    description: 展示美食制作过程
+    
+    crawler_tasks:
+      - name: "美食_抖音_每日"
+        platform: douyin
+        mode: search
+        keywords:
+          - "美食教程"
+          - "家常菜做法"
+          - "烹饪技巧"
+          - "美食分享"
+          - "菜谱"
+        schedule:
+          type: daily
+          time: "06:30"
+        filter:
+          min_likes: 10000
+          publish_days: 7
+      
+      - name: "美食_小红书_每日"
+        platform: xhs
+        mode: search
+        keywords:
+          - "美食教程"
+          - "做饭日常"
+          - "美食分享"
+        schedule:
+          type: daily
+          time: "07:00"
+        filter:
+          min_likes: 5000
+          publish_days: 7
+    
+    analysis:
+      enabled: true
+      frequency: daily
+
+  # 旅行Vlog模板
+  - template_id: travel-vlog
+    template_name: 旅行Vlog
+    description: 记录旅行中的美好瞬间
+    
+    crawler_tasks:
+      - name: "旅行_抖音_每日"
+        platform: douyin
+        mode: search
+        keywords:
+          - "旅行vlog"
+          - "旅游攻略"
+          - "景点推荐"
+          - "旅行分享"
+        schedule:
+          type: daily
+          time: "07:30"
+        filter:
+          min_likes: 10000
+          publish_days: 7
+      
+      - name: "旅行_小红书_每日"
+        platform: xhs
+        mode: search
+        keywords:
+          - "旅行攻略"
+          - "旅游分享"
+          - "景点推荐"
+        schedule:
+          type: daily
+          time: "08:00"
+        filter:
+          min_likes: 5000
+          publish_days: 7
+    
+    analysis:
+      enabled: true
+      frequency: daily
+
+  # 健身教学模板
+  - template_id: fitness
+    template_name: 健身教学
+    description: 分享健身动作和技巧
+    
+    crawler_tasks:
+      - name: "健身_抖音_每日"
+        platform: douyin
+        mode: search
+        keywords:
+          - "健身教程"
+          - "减肥操"
+          - "健身技巧"
+          - "运动教学"
+        schedule:
+          type: daily
+          time: "08:30"
+        filter:
+          min_likes: 10000
+          publish_days: 7
+      
+      - name: "健身_小红书_每日"
+        platform: xhs
+        mode: search
+        keywords:
+          - "健身教程"
+          - "运动分享"
+          - "健身技巧"
+        schedule:
+          type: daily
+          time: "09:00"
+        filter:
+          min_likes: 5000
+          publish_days: 7
+    
+    analysis:
+      enabled: true
+      frequency: daily
+
+  # 音乐翻唱模板
+  - template_id: music-cover
+    template_name: 音乐翻唱
+    description: 演唱流行歌曲
+    
+    crawler_tasks:
+      - name: "音乐_抖音_每日"
+        platform: douyin
+        mode: search
+        keywords:
+          - "翻唱"
+          - "音乐分享"
+          - "歌曲推荐"
+          - "唱歌"
+        schedule:
+          type: daily
+          time: "09:30"
+        filter:
+          min_likes: 10000
+          publish_days: 7
+      
+      - name: "音乐_小红书_每日"
+        platform: xhs
+        mode: search
+        keywords:
+          - "翻唱分享"
+          - "音乐推荐"
+          - "歌曲分享"
+        schedule:
+          type: daily
+          time: "10:00"
+        filter:
+          min_likes: 5000
+          publish_days: 7
+    
+    analysis:
+      enabled: true
+      frequency: daily

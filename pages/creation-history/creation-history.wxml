@@ -1,0 +1,97 @@
+<!--pages/creation-history/creation-history.wxml-->
+<view class="page-container">
+  <!-- 顶部导航 -->
+  <view class="header-section">
+    <view class="header-content">
+      <view class="back-btn" bindtap="goBack">
+        <text class="icon">←</text>
+      </view>
+      <view class="header-text">
+        <text class="page-title">创作历史</text>
+        <text class="page-subtitle">查看您的创作记录</text>
+      </view>
+    </view>
+    <view class="header-actions">
+      <text class="clear-btn" bindtap="clearHistory">清空</text>
+    </view>
+  </view>
+
+  <!-- 标签切换 -->
+  <view class="tabs">
+    <view 
+      class="tab-item {{currentTab === 'all' ? 'active' : ''}}"
+      bindtap="switchTab"
+      data-tab="all"
+    >
+      <text>全部</text>
+    </view>
+    <view 
+      class="tab-item {{currentTab === 'completed' ? 'active' : ''}}"
+      bindtap="switchTab"
+      data-tab="completed"
+    >
+      <text>已完成</text>
+    </view>
+    <view 
+      class="tab-item {{currentTab === 'draft' ? 'active' : ''}}"
+      bindtap="switchTab"
+      data-tab="draft"
+    >
+      <text>草稿</text>
+    </view>
+    <view 
+      class="tab-item {{currentTab === 'published' ? 'active' : ''}}"
+      bindtap="switchTab"
+      data-tab="published"
+    >
+      <text>已发布</text>
+    </view>
+  </view>
+
+  <!-- 历史记录列表 -->
+  <scroll-view class="history-list" scroll-y enable-flex>
+    <view 
+      class="history-card"
+      wx:for="{{displayedHistory}}"
+      wx:key="id"
+      bindtap="viewDetail"
+      data-item="{{item}}"
+    >
+      <view class="card-header">
+        <view class="type-badge {{item.type}}">
+          <text wx:if="{{item.type === 'article'}}">📄 文章</text>
+          <text wx:elif="{{item.type === 'post'}}">💬 帖子</text>
+          <text wx:else>🎬 视频脚本</text>
+        </view>
+        <view class="status-badge {{item.status}}">
+          <text wx:if="{{item.status === 'completed'}}">✅ 已完成</text>
+          <text wx:elif="{{item.status === 'draft'}}">📝 草稿</text>
+          <text wx:else>📤 已发布</text>
+        </view>
+      </view>
+
+      <view class="card-content">
+        <text class="hotspot-title">{{item.hotspot.title || item.hotspot.name}}</text>
+        <view wx:if="{{item.contentType === 'object' && item.content.title}}" class="content-title">
+          <text class="title-text">{{item.content.title}}</text>
+        </view>
+        <text class="content-preview">{{item.content.title ? item.content.content : item.content}}</text>
+      </view>
+
+      <view class="card-footer">
+        <text class="time">{{item.createTime}}</text>
+        <view class="actions">
+          <text class="action-btn" catchtap="copyContent" data-content="{{item.content}}">复制</text>
+          <text class="action-btn" catchtap="deleteItem" data-id="{{item.id}}">删除</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 空状态 -->
+    <view class="empty-state" wx:if="{{displayedHistory.length === 0}}">
+      <text class="empty-icon">📭</text>
+      <text class="empty-text">暂无创作记录</text>
+      <button class="start-btn" bindtap="goToCreate">开始创作</button>
+    </view>
+  </scroll-view>
+</view>

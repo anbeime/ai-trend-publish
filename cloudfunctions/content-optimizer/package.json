@@ -1,0 +1,21 @@
+{
+  "name": "content-optimizer",
+  "version": "1.0.0",
+  "description": "内容优化云函数 - 格式化、SEO、配图",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "wx-server-sdk": "~2.6.3"
+  },
+  "keywords": [
+    "content",
+    "optimizer",
+    "markdown",
+    "seo",
+    "illustration"
+  ],
+  "author": "AI Team",
+  "license": "MIT"
+}

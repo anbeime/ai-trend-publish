@@ -1,0 +1,9 @@
+{
+  "name": "glm-api",
+  "version": "1.0.0",
+  "description": "智谱GLM API云函数中转",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "~2.6.3"
+  }
+}

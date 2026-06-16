@@ -1,0 +1,12 @@
+{
+  "name": "chatDream",
+  "version": "1.0.0",
+  "description": "梦境对话云函数 - 使用混元AI进行梦境和灵感对话",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "~2.6.3",
+    "@cloudbase/node-sdk": "^3.16.0"
+  },
+  "author": "",
+  "license": "ISC"
+}

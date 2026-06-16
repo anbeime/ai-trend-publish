@@ -1,0 +1,9 @@
+{
+  "name": "hotspot-analyzer",
+  "version": "1.0.0",
+  "description": "热点深度分析云函数",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "~2.6.3"
+  }
+}

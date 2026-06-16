@@ -1,0 +1,177 @@
+<!--pages/project/project.wxml-->
+<view class="container">
+  <!-- 项目列表视图 -->
+  <view class="project-list-view" wx:if="{{showProjectList}}">
+    <view class="header">
+      <text class="title">我的项目</text>
+    </view>
+
+    <!-- 加载中 -->
+    <view class="loading" wx:if="{{loadingProjects}}">
+      <text class="loading-icon">⏳</text>
+      <text class="loading-text">加载中...</text>
+    </view>
+
+    <!-- 项目列表 -->
+    <view class="project-list" wx:else>
+      <view
+        class="project-item"
+        wx:for="{{projects}}"
+        wx:key="_id"
+        bindtap="onProjectClick"
+        data-id="{{item._id}}"
+      >
+        <view class="project-item-content">
+          <view class="project-info">
+            <text class="project-title">{{item.title || '未命名项目'}}</text>
+            <text class="project-desc">{{item.description || item.script || '暂无描述'}}</text>
+          </view>
+          <view class="project-meta">
+            <text class="project-time">{{item.createTime || ''}}</text>
+            <text class="project-status">{{item.status === 'completed' ? '已完成' : '进行中'}}</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- 空状态 -->
+      <view class="empty-state" wx:if="{{projects.length === 0 && !loadingProjects}}">
+        <text class="empty-icon">📭</text>
+        <text class="empty-text">{{errorMessage || '暂无项目'}}</text>
+        <text class="empty-hint">快去创建您的第一个项目吧！</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 项目详情视图 -->
+  <view class="project-detail-view" wx:if="{{!showProjectList}}">
+    <view class="project-header">
+      <view class="back-btn" bindtap="goBack">← 返回</view>
+      <view class="project-title">{{project.title}}</view>
+    </view>
+
+    <!-- 标签页 -->
+    <view class="tabs">
+      <view class="tab-item {{activeTab === 'script' ? 'active' : ''}}"
+            bindtap="switchTab" data-tab="script">
+        <text>脚本</text>
+      </view>
+      <view class="tab-item {{activeTab === 'storyboard' ? 'active' : ''}}"
+            bindtap="switchTab" data-tab="storyboard">
+        <text>分镜</text>
+      </view>
+      <view class="tab-item {{activeTab === 'video' ? 'active' : ''}}"
+            bindtap="switchTab" data-tab="video">
+        <text>视频</text>
+      </view>
+    </view>
+
+    <!-- 脚本内容 -->
+    <view class="content-area" wx:if="{{activeTab === 'script'}}">
+      <view class="history-list" wx:if="{{!loadingHistory}}">
+        <view class="history-item" 
+              wx:for="{{scriptHistory}}" 
+              wx:key="_id"
+              bindtap="viewHistoryDetail"
+              data-item="{{item}}">
+          <view class="history-header">
+            <text class="history-prompt">{{item.prompt || '脚本生成'}}</text>
+            <text class="history-time">{{item.createTime}}</text>
+          </view>
+          <view class="history-content">
+            <text class="history-text">{{item.content}}</text>
+          </view>
+          <view class="history-actions">
+            <button class="copy-btn" catchtap="copyHistoryContent" data-content="{{item.content}}">复制</button>
+          </view>
+        </view>
+        
+        <!-- 空状态 -->
+        <view class="empty-history" wx:if="{{scriptHistory.length === 0}}">
+          <text class="empty-icon">📝</text>
+          <text class="empty-text">暂无脚本历史记录</text>
+        </view>
+      </view>
+      
+      <!-- 加载中 -->
+      <view class="loading-history" wx:if="{{loadingHistory}}">
+        <text>加载中...</text>
+      </view>
+    </view>
+
+    <!-- 分镜内容 -->
+    <view class="content-area" wx:if="{{activeTab === 'storyboard'}}">
+      <view class="history-list" wx:if="{{!loadingHistory}}">
+        <view class="history-item" 
+              wx:for="{{storyboardHistory}}" 
+              wx:key="_id"
+              bindtap="viewHistoryDetail"
+              data-item="{{item}}">
+          <view class="history-header">
+            <text class="history-prompt">{{item.prompt || '分镜生成'}}</text>
+            <text class="history-time">{{item.createTime}}</text>
+          </view>
+          <view class="history-content">
+            <text class="history-text">{{item.content}}</text>
+          </view>
+          <view class="history-actions">
+            <button class="copy-btn" catchtap="copyHistoryContent" data-content="{{item.content}}">复制</button>
+          </view>
+        </view>
+        
+        <!-- 空状态 -->
+        <view class="empty-history" wx:if="{{storyboardHistory.length === 0}}">
+          <text class="empty-icon">🎬</text>
+          <text class="empty-text">暂无分镜历史记录</text>
+        </view>
+      </view>
+      
+      <!-- 加载中 -->
+      <view class="loading-history" wx:if="{{loadingHistory}}">
+        <text>加载中...</text>
+      </view>
+    </view>
+
+    <!-- 视频内容 -->
+    <view class="content-area" wx:if="{{activeTab === 'video'}}">
+      <view class="history-list" wx:if="{{!loadingHistory}}">
+        <view class="history-item" 
+              wx:for="{{videoHistory}}" 
+              wx:key="_id"
+              bindtap="viewHistoryDetail"
+              data-item="{{item}}">
+          <view class="history-header">
+            <text class="history-prompt">{{item.prompt || '视频生成'}}</text>
+            <text class="history-time">{{item.createTime}}</text>
+          </view>
+          <view class="history-content">
+            <text class="history-text">{{item.content}}</text>
+          </view>
+          <view class="history-actions">
+            <button class="copy-btn" catchtap="copyHistoryContent" data-content="{{item.content}}">复制</button>
+          </view>
+        </view>
+        
+        <!-- 空状态 -->
+        <view class="empty-history" wx:if="{{videoHistory.length === 0}}">
+          <text class="empty-icon">📹</text>
+          <text class="empty-text">暂无视频历史记录</text>
+        </view>
+      </view>
+      
+      <!-- 加载中 -->
+      <view class="loading-history" wx:if="{{loadingHistory}}">
+        <text>加载中...</text>
+      </view>
+    </view>
+
+    <!-- 底部操作栏 -->
+    <view class="action-bar">
+      <button class="action-btn" bindtap="exportScript">
+         导出脚本
+      </button>
+      <button class="action-btn" bindtap="shareProject">
+         🔗 分享项目
+      </button>
+    </view>
+  </view>
+</view>

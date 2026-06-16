@@ -1,0 +1,10 @@
+{
+  "name": "mediacrawler-hotspot",
+  "version": "1.0.0",
+  "description": "集成MediaCrawler爬虫获取热点数据",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "~2.6.3",
+    "axios": "^1.6.0"
+  }
+}

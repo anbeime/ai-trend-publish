@@ -1,0 +1,5 @@
+<!-- pages/api-config/api-config.wxml -->
+<view class="container">
+  <view class="icon"></view>
+  <text class="message">{{message}}</text>
+</view>

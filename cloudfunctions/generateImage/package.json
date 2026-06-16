@@ -1,0 +1,12 @@
+{
+  "name": "generateImage",
+  "version": "1.0.0",
+  "description": "AI生图云函数 - 使用智谱CogView图片模型",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "~2.6.3",
+    "request-promise": "~4.2.6"
+  },
+  "author": "",
+  "license": "ISC"
+}

@@ -1,0 +1,72 @@
+name: Sync from Gitee
+
+on:
+  schedule:
+    ◦ cron: '0 1 * * *'
+
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+env:
+  GITEE_REPO: https://gitee.com/anbeime/ai-trend-publish.git
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      ◦ name: Checkout GitHub Repository
+
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      ◦ name: Configure Git
+
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+      ◦ name: Add Gitee Remote and Fetch
+
+        run: |
+          git remote add gitee ${{ env.GITEE_REPO }} || git remote set-url gitee ${{ env.GITEE_REPO }}
+          git fetch gitee master
+      ◦ name: Check for Updates
+
+        id: check_updates
+        run: |
+          GITEE_COMMIT=$(git rev-parse gitee/master)
+          GITHUB_COMMIT=$(git rev-parse HEAD)
+          echo "Gitee master: $GITEE_COMMIT"
+          echo "GitHub main: $GITHUB_COMMIT"
+          if [ "$GITEE_COMMIT" = "$GITHUB_COMMIT" ]; then
+            echo "no_updates=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "no_updates=false" >> "$GITHUB_OUTPUT"
+          fi
+      ◦ name: Sync from Gitee (merge only, preserve GitHub workflows)
+
+        if: steps.check_updates.outputs.no_updates == 'false'
+        run: |
+          # Stash GitHub-specific files first
+          git stash push -- .github/ .gitee/ --include-untracked || true
+          # Merge Gitee's changes
+          git merge gitee/master --no-edit || true
+          # Restore GitHub-specific files
+          git stash pop || true
+      ◦ name: Push to GitHub
+
+        if: steps.check_updates.outputs.no_updates == 'false'
+        run: |
+          git push origin main
+          echo "Successfully synced from Gitee!"
+      ◦ name: Create Summary
+
+        run: |
+          if [ "${{ steps.check_updates.outputs.no_updates }}" = "true" ]; then
+            echo "✅ Already in sync with Gitee"
+          else
+            echo "✅ Synced latest changes from Gitee (preserved workflows)"
+          fi

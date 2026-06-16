@@ -1,0 +1,33 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/agents/agents",
+    "pages/content-creator/content-creator",
+    "pages/templates/templates",
+    "pages/hotspot/hotspot",
+    "pages/dream/dream",
+    "pages/project/project",
+    "pages/profile/profile",
+    "pages/agent-ui/agent-ui",
+    "pages/params/params",
+    "pages/preference/preference",
+    "pages/api-config/api-config",
+    "pages/test-wechat-publish/test-wechat-publish",
+    "pages/test-cloudfunctions/test-cloudfunctions",
+    "pages/creation-history/creation-history"
+  ],
+  "window": {
+    "backgroundTextStyle": "light",
+    "navigationBarBackgroundColor": "#1890ff",
+    "navigationBarTitleText": "AI短视频创作",
+    "navigationBarTextStyle": "white",
+    "backgroundColor": "#f5f5f5"
+  },
+  "cloud": true,
+  "functionalPages": {
+    "independent": true
+  },
+  "style": "v2",
+  "sitemapLocation": "sitemap.json",
+  "lazyCodeLoading": "requiredComponents"
+}

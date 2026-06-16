@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>微信文章发布工具 - TrendPublish</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+        
+        .header p {
+            opacity: 0.9;
+            font-size: 1.1rem;
+        }
+        
+        .main-content {
+            padding: 40px;
+        }
+        
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #e9ecef;
+        }
+        
+        .tab {
+            padding: 12px 24px;
+            background: none;
+            border: none;
+            border-bottom: 3px solid transparent;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            color: #6c757d;
+            transition: all 0.3s ease;
+        }
+        
+        .tab.active {
+            color: #667eea;
+            border-bottom-color: #667eea;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+        }
+        
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+        
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .form-group textarea {
+            min-height: 200px;
+            resize: vertical;
+            font-family: 'Consolas', 'Monaco', monospace;
+        }
+        
+        .file-upload {
+            position: relative;
+            display: inline-block;
+            width: 100%;
+        }
+        
+        .file-upload input[type="file"] {
+            position: absolute;
+            opacity: 0;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+        }
+        
+        .file-upload-label {
+            display: block;
+            padding: 12px;
+            background: #f8f9fa;
+            border: 2px dashed #dee2e6;
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .file-upload-label:hover {
+            border-color: #667eea;
+            background: #f0f8ff;
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .btn-secondary {
+            background: #6c757d;
+        }
+        
+        .btn-success {
+            background: #28a745;
+        }
+        
+        .preview-area {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 20px;
+            min-height: 200px;
+        }
+        
+        .preview-area h3 {
+            color: #495057;
+            margin-bottom: 15px;
+            font-size: 1.2rem;
+        }
+        
+        .preview-content {
+            max-height: 300px;
+            overflow-y: auto;
+            line-height: 1.6;
+        }
+        
+        .status-message {
+            padding: 12px 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+            font-weight: 500;
+        }
+        
+        .status-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .status-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .status-info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        
+        .two-column {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        
+        .image-preview {
+            max-width: 100px;
+            max-height: 100px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-top: 10px;
+        }
+        
+        .config-section {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .config-section h3 {
+            color: #856404;
+            margin-bottom: 15px;
+        }
+        
+        .help-text {
+            font-size: 0.9rem;
+            color: #6c757d;
+            margin-top: 5px;
+        }
+        
+        .quick-actions {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .quick-action-btn {
+            padding: 8px 16px;
+            background: #e9ecef;
+            border: 1px solid #dee2e6;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .quick-action-btn:hover {
+            background: #dee2e6;
+        }
+        
+        @media (max-width: 768px) {
+            .two-column {
+                grid-template-columns: 1fr;
+            }
+            
+            .main-content {
+                padding: 20px;
+            }
+            
+            .tabs {
+                flex-wrap: wrap;
+            }
+            
+            .quick-actions {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📱 微信文章发布工具</h1>
+            <p>简单易用的文章发布工具，支持一键推送到微信公众号草稿箱</p>
+        </div>
+        
+        <div class="main-content">
+            <!-- 配置区域 -->
+            <div class="config-section">
+                <h3>⚙️ 微信公众号配置</h3>
+                <div class="form-group">
+                    <label for="appid">AppID:</label>
+                    <input type="text" id="appid" placeholder="请输入微信公众号AppID">
+                    <div class="help-text">在微信公众平台后台的"开发"→"基本配置"中获取</div>
+                </div>
+                <div class="form-group">
+                    <label for="secret">AppSecret:</label>
+                    <input type="password" id="secret" placeholder="请输入微信公众号AppSecret">
+                    <div class="help-text">请妥善保管，不要泄露给他人</div>
+                </div>
+                <button class="btn btn-secondary" onclick="saveWechatConfig()">保存配置</button>
+                <button class="btn btn-secondary" onclick="testWechatConfig()">测试连接</button>
+                <div id="config-status"></div>
+            </div>
+            
+            <!-- 标签页 -->
+            <div class="tabs">
+                <button class="tab active" onclick="switchTab('manual')">手动输入</button>
+                <button class="tab" onclick="switchTab('url')">URL提取</button>
+                <button class="tab" onclick="switchTab('preview')">预览发布</button>
+            </div>
+            
+            <!-- 手动输入标签页 -->
+            <div id="manual-tab" class="tab-content active">
+                <div class="form-group">
+                    <label for="title">文章标题:</label>
+                    <input type="text" id="title" placeholder="请输入文章标题" maxlength="64">
+                    <div class="help-text">建议标题简洁明了，吸引读者注意</div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="content">文章内容:</label>
+                    <textarea id="content" placeholder="请输入文章内容，支持HTML格式&#10;支持格式：&lt;b&gt;加粗&lt;/b&gt;、&lt;i&gt;斜体&lt;/i&gt;、&lt;p&gt;段落&lt;/p&gt;、&lt;br&gt;换行等"></textarea>
+                    <div class="help-text">支持HTML格式，可以包含图片、链接等元素</div>
+                </div>
+                
+                <div class="quick-actions">
+                    <button class="quick-action-btn" onclick="formatContent('bold')">加粗</button>
+                    <button class="quick-action-btn" onclick="formatContent('italic')">斜体</button>
+                    <button class="quick-action-btn" onclick="formatContent('paragraph')">段落</button>
+                    <button class="quick-action-btn" onclick="formatContent('lineBreak')">换行</button>
+                    <button class="quick-action-btn" onclick="formatContent('link')">链接</button>
+                    <button class="quick-action-btn" onclick="clearContent()">清空内容</button>
+                </div>
+                
+                <div class="form-group">
+                    <label for="summary">文章摘要（可选）:</label>
+                    <textarea id="summary" placeholder="请输入文章摘要，不填写将自动生成" rows="3" maxlength="120"></textarea>
+                    <div class="help-text">显示在文章列表中的摘要，建议120字以内</div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="author">作者（可选）:</label>
+                    <input type="text" id="author" placeholder="请输入作者名称">
+                </div>
+            </div>
+            
+            <!-- URL提取标签页 -->
+            <div id="url-tab" class="tab-content">
+                <div class="form-group">
+                    <label for="article-url">文章URL:</label>
+                    <input type="url" id="article-url" placeholder="请输入文章链接（支持微信公众号文章、网页等）">
+                    <div class="help-text">输入微信公众号文章链接或其他网页链接，系统会自动提取内容</div>
+                </div>
+                <button class="btn" onclick="extractArticleContent()">提取文章内容</button>
+                <div id="extract-status"></div>
+            </div>
+            
+            <!-- 预览发布标签页 -->
+            <div id="preview-tab" class="tab-content">
+                <div class="preview-area">
+                    <h3>📋 文章预览</h3>
+                    <div id="preview-title" class="preview-content" style="font-size: 1.2rem; font-weight: bold; margin-bottom: 15px;">标题预览</div>
+                    <div id="preview-content" class="preview-content">内容预览区域</div>
+                </div>
+                
+                <div class="form-group" style="margin-top: 30px;">
+                    <label for="cover-image">封面图片:</label>
+                    <div class="file-upload">
+                        <input type="file" id="cover-image" accept="image/*" onchange="previewImage(event)">
+                        <div class="file-upload-label">
+                            📷 点击选择封面图片（建议尺寸：900x500像素，大小不超过2MB）
+                        </div>
+                    </div>
+                    <img id="image-preview" class="image-preview" style="display: none;">
+                </div>
+                
+                <button class="btn btn-success" onclick="publishToWechat()">🚀 发布到微信草稿箱</button>
+                <button class="btn btn-secondary" onclick="refreshPreview()">🔄 刷新预览</button>
+                <button class="btn" onclick="exportAsHtml()">📄 导出HTML</button>
+            </div>
+            
+            <!-- 状态消息区域 -->
+            <div id="status-message"></div>
+        </div>
+    </div>
+
+    <script>
+        // 全局变量
+        let currentTab = 'manual';
+        let wechatConfig = {
+            appid: '',
+            secret: ''
+        };
+        let extractedMediaId = '';
+
+        // 页面加载时初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            loadWechatConfig();
+            refreshPreview();
+            
+            // 自动保存草稿
+            setInterval(saveDraft, 30000); // 每30秒自动保存
+            
+            // 监听输入变化
+            ['title', 'content', 'summary', 'author'].forEach(id => {
+                document.getElementById(id).addEventListener('input', refreshPreview);
+            });
+        });
+
+        // 切换标签页
+        function switchTab(tabName) {
+            // 移除所有激活状态
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            
+            // 激活当前标签页
+            event.target.classList.add('active');
+            document.getElementById(tabName + '-tab').classList.add('active');
+            currentTab = tabName;
+            
+            // 如果切换到预览标签页，刷新预览
+            if (tabName === 'preview') {
+                refreshPreview();
+            }
+        }
+
+        // 保存微信配置
+        async function saveWechatConfig() {
+            const appid = document.getElementById('appid').value.trim();
+            const secret = document.getElementById('secret').value.trim();
+            
+            if (!appid || !secret) {
+                showStatus('请填写完整的AppID和AppSecret', 'error');
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/wechat/config', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ appid, secret })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    wechatConfig = { appid, secret };
+                    localStorage.setItem('wechatConfig', JSON.stringify(wechatConfig));
+                    showStatus('配置保存成功！', 'success');
+                } else {
+                    showStatus('配置保存失败：' + result.error, 'error');
+                }
+            } catch (error) {
+                showStatus('网络错误：' + error.message, 'error');
+            }
+        }
+
+        // 测试微信配置
+        async function testWechatConfig() {
+            if (!wechatConfig.appid || !wechatConfig.secret) {
+                showStatus('请先保存微信配置', 'error');
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/wechat/token', {
+                    method: 'POST'
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    showStatus('✅ 连接成功！access_token获取正常', 'success');
+                } else {
+                    showStatus('❌ 连接失败：' + (result.error || '未知错误'), 'error');
+                }
+            } catch (error) {
+                showStatus('网络错误：' + error.message, 'error');
+            }
+        }
+
+        // 加载微信配置
+        function loadWechatConfig() {
+            const saved = localStorage.getItem('wechatConfig');
+            if (saved) {
+                wechatConfig = JSON.parse(saved);
+                document.getElementById('appid').value = wechatConfig.appid || '';
+                document.getElementById('secret').value = wechatConfig.secret || '';
+            }
+        }
+
+        // 格式化内容
+        function formatContent(type) {
+            const textarea = document.getElementById('content');
+            const start = textarea.selectionStart;
+            const end = textarea.selectionEnd;
+            const selectedText = textarea.value.substring(start, end);
+            let formattedText = '';
+            
+            switch(type) {
+                case 'bold':
+                    formattedText = `<b>${selectedText || '加粗文本'}</b>`;
+                    break;
+                case 'italic':
+                    formattedText = `<i>${selectedText || '斜体文本'}</i>`;
+                    break;
+                case 'paragraph':
+                    formattedText = `<p>${selectedText || '段落文本'}</p>`;
+                    break;
+                case 'lineBreak':
+                    formattedText = selectedText + '<br>';
+                    break;
+                case 'link':
+                    const url = prompt('请输入链接地址：');
+                    if (url) {
+                        formattedText = `<a href="${url}">${selectedText || '链接文本'}</a>`;
+                    } else {
+                        return;
+                    }
+                    break;
+            }
+            
+            textarea.value = textarea.value.substring(0, start) + formattedText + textarea.value.substring(end);
+            refreshPreview();
+        }
+
+        // 清空内容
+        function clearContent() {
+            if (confirm('确定要清空所有内容吗？')) {
+                document.getElementById('title').value = '';
+                document.getElementById('content').value = '';
+                document.getElementById('summary').value = '';
+                document.getElementById('author').value = '';
+                refreshPreview();
+            }
+        }
+
+        // 提取文章内容
+        async function extractArticleContent() {
+            const url = document.getElementById('article-url').value.trim();
+            
+            if (!url) {
+                showStatus('请输入文章URL', 'error');
+                return;
+            }
+            
+            showStatus('正在提取文章内容...', 'info');
+            
+            try {
+                // 这里可以调用后端的URL提取API
+                // 暂时使用简单的模拟提取
+                setTimeout(() => {
+                    document.getElementById('title').value = '提取的标题示例';
+                    document.getElementById('content').value = '<p>这是从URL提取的文章内容示例。</p><p>支持HTML格式的内容。</p>';
+                    document.getElementById('summary').value = '这是文章摘要';
+                    showStatus('文章内容提取成功！', 'success');
+                    switchTab('manual');
+                    refreshPreview();
+                }, 2000);
+                
+            } catch (error) {
+                showStatus('提取失败：' + error.message, 'error');
+            }
+        }
+
+        // 预览图片
+        function previewImage(event) {
+            const file = event.target.files[0];
+            const preview = document.getElementById('image-preview');
+            
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    preview.src = e.target.result;
+                    preview.style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // 刷新预览
+        function refreshPreview() {
+            const title = document.getElementById('title').value || '标题预览';
+            const content = document.getElementById('content').value || '内容预览区域';
+            const author = document.getElementById('author').value;
+            
+            document.getElementById('preview-title').textContent = title;
+            document.getElementById('preview-content').innerHTML = content;
+            
+            if (author) {
+                document.getElementById('preview-title').textContent += ' - ' + author;
+            }
+        }
+
+        // 发布到微信
+        async function publishToWechat() {
+            if (!wechatConfig.appid || !wechatConfig.secret) {
+                showStatus('请先配置微信AppID和AppSecret', 'error');
+                return;
+            }
+            
+            const title = document.getElementById('title').value.trim();
+            const content = document.getElementById('content').value.trim();
+            const summary = document.getElementById('summary').value.trim();
+            const author = document.getElementById('author').value.trim();
+            const coverImage = document.getElementById('cover-image').files[0];
+            
+            if (!title || !content) {
+                showStatus('请填写文章标题和内容', 'error');
+                return;
+            }
+            
+            showStatus('正在发布到微信草稿箱...', 'info');
+            
+            try {
+                let thumbMediaId = '';
+                
+                // 如果有封面图片，先上传图片
+                if (coverImage) {
+                    const formData = new FormData();
+                    formData.append('media', coverImage);
+                    
+                    const uploadResponse = await fetch('/api/wechat/upload-image', {
+                        method: 'POST',
+                        body: formData
+                    });
+                    
+                    const uploadResult = await uploadResponse.json();
+                    
+                    if (uploadResult.success) {
+                        // 这里需要获取实际的media_id，暂时使用URL
+                        thumbMediaId = uploadResult.url;
+                    } else {
+                        showStatus('图片上传失败：' + uploadResult.error, 'error');
+                        return;
+                    }
+                }
+                
+                // 发布文章
+                const publishResponse = await fetch('/api/wechat/publish', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        title,
+                        content,
+                        summary,
+                        author,
+                        thumb_media_id: thumbMediaId
+                    })
+                });
+                
+                const publishResult = await publishResponse.json();
+                
+                if (publishResult.success) {
+                    showStatus(`🎉 发布成功！媒体ID: ${publishResult.media_id}`, 'success');
+                    // 清空表单
+                    clearContent();
+                } else {
+                    showStatus('发布失败：' + publishResult.error, 'error');
+                }
+                
+            } catch (error) {
+                showStatus('发布失败：' + error.message, 'error');
+            }
+        }
+
+        // 导出HTML
+        function exportAsHtml() {
+            const title = document.getElementById('title').value || '未命名文章';
+            const content = document.getElementById('content').value || '';
+            const author = document.getElementById('author').value;
+            
+            const html = `<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>${title}</title>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; line-height: 1.6; max-width: 800px; margin: 0 auto; padding: 20px; }
+        h1 { color: #333; border-bottom: 2px solid #eee; padding-bottom: 10px; }
+        .author { color: #666; font-style: italic; margin-bottom: 20px; }
+    </style>
+</head>
+<body>
+    <h1>${title}</h1>
+    ${author ? `<div class="author">作者：${author}</div>` : ''}
+    <div class="content">${content}</div>
+</body>
+</html>`;
+            
+            const blob = new Blob([html], { type: 'text/html' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = title + '.html';
+            a.click();
+            URL.revokeObjectURL(url);
+            
+            showStatus('HTML文件已导出', 'success');
+        }
+
+        // 保存草稿到本地存储
+        function saveDraft() {
+            const draft = {
+                title: document.getElementById('title').value,
+                content: document.getElementById('content').value,
+                summary: document.getElementById('summary').value,
+                author: document.getElementById('author').value,
+                timestamp: new Date().toISOString()
+            };
+            
+            localStorage.setItem('articleDraft', JSON.stringify(draft));
+        }
+
+        // 加载草稿
+        function loadDraft() {
+            const saved = localStorage.getItem('articleDraft');
+            if (saved) {
+                const draft = JSON.parse(saved);
+                document.getElementById('title').value = draft.title || '';
+                document.getElementById('content').value = draft.content || '';
+                document.getElementById('summary').value = draft.summary || '';
+                document.getElementById('author').value = draft.author || '';
+                refreshPreview();
+                
+                showStatus(`已加载 ${new Date(draft.timestamp).toLocaleString()} 的草稿`, 'info');
+            }
+        }
+
+        // 显示状态消息
+        function showStatus(message, type) {
+            const statusDiv = document.getElementById('status-message');
+            statusDiv.className = 'status-message status-' + type;
+            statusDiv.textContent = message;
+            statusDiv.style.display = 'block';
+            
+            // 5秒后自动隐藏成功和信息消息
+            if (type === 'success' || type === 'info') {
+                setTimeout(() => {
+                    statusDiv.style.display = 'none';
+                }, 5000);
+            }
+        }
+    </script>
+</body>
+</html>

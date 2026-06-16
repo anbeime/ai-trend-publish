@@ -1,0 +1,878 @@
+/* pages/content-creator/content-creator.wxss */
+.page-container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding-bottom: 40rpx;
+}
+
+/* 顶部导航栏 */
+.header-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 30rpx 30rpx 20rpx;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+}
+
+.header-content {
+  display: flex;
+  align-items: center;
+  gap: 20rpx;
+}
+
+.back-btn {
+  width: 60rpx;
+  height: 60rpx;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.back-btn .icon {
+  font-size: 36rpx;
+  color: #fff;
+}
+
+.header-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.page-title {
+  font-size: 36rpx;
+  font-weight: bold;
+  color: #fff;
+}
+
+.page-subtitle {
+  font-size: 24rpx;
+  color: rgba(255, 255, 255, 0.8);
+  margin-top: 4rpx;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 20rpx;
+}
+
+.credits-display {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+  padding: 12rpx 20rpx;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 30rpx;
+}
+
+.credits-icon {
+  font-size: 28rpx;
+}
+
+.credits-value {
+  font-size: 28rpx;
+  font-weight: bold;
+  color: #fff;
+}
+
+/* 流程步骤指示器 */
+.workflow-steps {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40rpx 30rpx;
+  background: rgba(255, 255, 255, 0.1);
+  margin: 0 30rpx;
+  border-radius: 20rpx;
+  margin-top: 20rpx;
+}
+
+.step-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12rpx;
+}
+
+.step-icon {
+  width: 60rpx;
+  height: 60rpx;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.3);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28rpx;
+  font-weight: bold;
+  transition: all 0.3s;
+}
+
+.step-item.active .step-icon {
+  background: #fff;
+  color: #667eea;
+  transform: scale(1.1);
+}
+
+.step-item.completed .step-icon {
+  background: #4caf50;
+  color: #fff;
+}
+
+.step-label {
+  font-size: 24rpx;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.step-item.active .step-label {
+  color: #fff;
+  font-weight: bold;
+}
+
+.step-line {
+  width: 80rpx;
+  height: 4rpx;
+  background: rgba(255, 255, 255, 0.3);
+  margin: 0 20rpx;
+  transition: all 0.3s;
+}
+
+.step-line.active {
+  background: #fff;
+}
+
+/* 步骤内容区域 */
+.step-content {
+  margin: 30rpx;
+  background: #fff;
+  border-radius: 20rpx;
+  padding: 30rpx;
+  min-height: 600rpx;
+  padding-bottom: 160rpx;
+}
+
+/* 区块标题 */
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30rpx;
+}
+
+.section-title {
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #333;
+}
+
+.refresh-btn {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+  padding: 12rpx 20rpx;
+  background: #f5f5f5;
+  border-radius: 30rpx;
+  font-size: 24rpx;
+  color: #666;
+}
+
+.refresh-icon {
+  font-size: 28rpx;
+}
+
+/* 分类标签 */
+.category-tabs {
+  display: flex;
+  gap: 20rpx;
+  margin-bottom: 30rpx;
+  white-space: nowrap;
+}
+
+.category-tab {
+  padding: 16rpx 32rpx;
+  background: #f5f5f5;
+  border-radius: 30rpx;
+  font-size: 28rpx;
+  color: #666;
+  transition: all 0.3s;
+}
+
+.category-tab.active {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: #fff;
+}
+
+/* 热点列表 */
+.hotspot-list {
+  max-height: 60vh;
+  min-height: 400rpx;
+}
+
+.hotspot-card {
+  display: flex;
+  align-items: center;
+  gap: 20rpx;
+  padding: 24rpx;
+  background: #f9f9f9;
+  border-radius: 16rpx;
+  margin-bottom: 20rpx;
+  transition: all 0.3s;
+  position: relative;
+}
+
+.hotspot-card.selected {
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+  border: 2rpx solid #667eea;
+}
+
+.hotspot-rank {
+  width: 48rpx;
+  height: 48rpx;
+  border-radius: 50%;
+  background: #667eea;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24rpx;
+  font-weight: bold;
+  flex-shrink: 0;
+}
+
+.hotspot-content {
+  flex: 1;
+}
+
+.hotspot-title {
+  font-size: 28rpx;
+  color: #333;
+  font-weight: 500;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.hotspot-meta {
+  display: flex;
+  gap: 20rpx;
+  margin-top: 12rpx;
+}
+
+.source-tag {
+  font-size: 22rpx;
+  color: #999;
+  padding: 4rpx 12rpx;
+  background: #f0f0f0;
+  border-radius: 8rpx;
+}
+
+.heat-value {
+  font-size: 22rpx;
+  color: #ff6b6b;
+}
+
+.select-icon {
+  width: 40rpx;
+  height: 40rpx;
+  border-radius: 50%;
+  background: #667eea;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28rpx;
+  font-weight: bold;
+}
+
+/* 加载状态 */
+.loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 80rpx 0;
+  gap: 20rpx;
+}
+
+.loading-icon {
+  font-size: 60rpx;
+}
+
+.loading-text {
+  font-size: 28rpx;
+  color: #999;
+}
+
+/* 步骤操作按钮 */
+.step-actions {
+  display: flex;
+  gap: 20rpx;
+  margin-top: 40rpx;
+}
+
+/* 步骤1的固定底部按钮 */
+.step1-actions {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin: 0;
+  padding: 20rpx 30rpx;
+  padding-bottom: calc(20rpx + env(safe-area-inset-bottom));
+  background: #fff;
+  box-shadow: 0 -4rpx 20rpx rgba(0, 0, 0, 0.08);
+  z-index: 100;
+  display: flex;
+  gap: 20rpx;
+}
+
+.next-btn,
+.generate-btn,
+.publish-btn {
+  flex: 1;
+  height: 88rpx;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: #fff;
+  border-radius: 16rpx;
+  font-size: 28rpx;
+  font-weight: bold;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.next-btn.disabled,
+.generate-btn.disabled,
+.publish-btn.disabled {
+  background: #e0e0e0;
+  color: #999;
+}
+
+.back-btn-secondary {
+  width: 160rpx;
+  height: 88rpx;
+  background: #f5f5f5;
+  color: #666;
+  border-radius: 16rpx;
+  font-size: 28rpx;
+  border: none;
+}
+
+.save-btn {
+  flex: 1;
+  height: 88rpx;
+  background: #fff;
+  color: #667eea;
+  border: 2rpx solid #667eea;
+  border-radius: 16rpx;
+  font-size: 28rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+}
+
+/* 步骤3的按钮布局优化 */
+.step-actions-final {
+  display: flex;
+  flex-direction: column;
+  gap: 20rpx;
+  margin-top: 40rpx;
+}
+
+.main-actions {
+  display: flex;
+  gap: 20rpx;
+}
+
+/* 已选热点卡片 */
+.selected-hotspot-card {
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+  border-radius: 16rpx;
+  padding: 24rpx;
+  margin-bottom: 30rpx;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16rpx;
+}
+
+.card-title {
+  font-size: 28rpx;
+  font-weight: bold;
+  color: #667eea;
+}
+
+.change-btn {
+  font-size: 24rpx;
+  color: #667eea;
+  padding: 8rpx 20rpx;
+  background: rgba(102, 126, 234, 0.1);
+  border-radius: 20rpx;
+}
+
+.card-content .hotspot-title {
+  font-size: 30rpx;
+  color: #333;
+  font-weight: 500;
+  margin-bottom: 12rpx;
+}
+
+.hotspot-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12rpx;
+}
+
+.tag {
+  font-size: 22rpx;
+  color: #667eea;
+  padding: 6rpx 16rpx;
+  background: rgba(102, 126, 234, 0.1);
+  border-radius: 20rpx;
+}
+
+/* 创作类型选择 */
+.creation-type-section {
+  margin-bottom: 30rpx;
+}
+
+.creation-type-section .section-title {
+  font-size: 28rpx;
+  margin-bottom: 20rpx;
+}
+
+.type-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20rpx;
+}
+
+.type-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12rpx;
+  padding: 30rpx 20rpx;
+  background: #f9f9f9;
+  border-radius: 16rpx;
+  transition: all 0.3s;
+}
+
+.type-card.selected {
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+  border: 2rpx solid #667eea;
+}
+
+.type-icon {
+  font-size: 48rpx;
+}
+
+.type-name {
+  font-size: 28rpx;
+  color: #333;
+  font-weight: 500;
+}
+
+.type-desc {
+  font-size: 22rpx;
+  color: #999;
+}
+
+/* 创作参数 */
+.creation-params {
+  margin-bottom: 30rpx;
+}
+
+.param-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24rpx 0;
+  border-bottom: 1rpx solid #f0f0f0;
+}
+
+.param-label-row {
+  display: flex;
+  flex-direction: column;
+  gap: 8rpx;
+}
+
+.param-label {
+  font-size: 28rpx;
+  color: #333;
+}
+
+.platform-tip {
+  font-size: 22rpx;
+  color: #667eea;
+  background: rgba(102, 126, 234, 0.1);
+  padding: 4rpx 12rpx;
+  border-radius: 8rpx;
+}
+
+.picker-value {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+  font-size: 28rpx;
+  color: #667eea;
+}
+
+.picker-arrow {
+  font-size: 20rpx;
+  color: #999;
+}
+
+/* 平台特性展示 */
+.platform-features {
+  margin-top: 20rpx;
+  padding: 20rpx;
+  background: rgba(102, 126, 234, 0.05);
+  border-radius: 12rpx;
+  border-left: 4rpx solid #667eea;
+}
+
+.feature-item {
+  display: inline-block;
+  margin-right: 12rpx;
+  margin-bottom: 12rpx;
+}
+
+.feature-tag {
+  font-size: 22rpx;
+  color: #667eea;
+  padding: 6rpx 16rpx;
+  background: rgba(102, 126, 234, 0.1);
+  border-radius: 20rpx;
+  border: 1rpx solid rgba(102, 126, 234, 0.2);
+}
+
+.platform-tip-text {
+  display: block;
+  font-size: 24rpx;
+  color: #666;
+  line-height: 1.6;
+  margin-top: 12rpx;
+}
+
+/* 额外需求输入 */
+.additional-input {
+  margin-bottom: 30rpx;
+}
+
+.input-label {
+  display: block;
+  font-size: 28rpx;
+  color: #333;
+  margin-bottom: 16rpx;
+}
+
+.input-textarea {
+  width: 100%;
+  min-height: 200rpx;
+  padding: 20rpx;
+  background: #f9f9f9;
+  border-radius: 12rpx;
+  font-size: 28rpx;
+  color: #333;
+  box-sizing: border-box;
+}
+
+.char-count {
+  display: block;
+  text-align: right;
+  font-size: 22rpx;
+  color: #999;
+  margin-top: 8rpx;
+}
+
+/* 生成内容展示 */
+.generated-content-section {
+  margin-bottom: 30rpx;
+}
+
+/* 内容区块 */
+.content-block {
+  background: #f9f9f9;
+  border-radius: 16rpx;
+  padding: 24rpx;
+  margin-bottom: 20rpx;
+}
+
+.block-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16rpx;
+}
+
+.block-title {
+  font-size: 28rpx;
+  font-weight: bold;
+  color: #333;
+}
+
+.copy-btn {
+  font-size: 24rpx;
+  color: #667eea;
+  padding: 8rpx 20rpx;
+  background: rgba(102, 126, 234, 0.1);
+  border-radius: 20rpx;
+}
+
+/* 标题展示 */
+.title-display {
+  background: #fff;
+  padding: 20rpx;
+  border-radius: 12rpx;
+}
+
+.title-text {
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #333;
+  line-height: 1.5;
+}
+
+/* 正文展示 */
+.content-scroll {
+  max-height: 600rpx;
+  background: #fff;
+  padding: 20rpx;
+  border-radius: 12rpx;
+}
+
+.content-text {
+  font-size: 28rpx;
+  color: #333;
+  line-height: 1.8;
+  white-space: pre-wrap;
+}
+
+/* 标签展示 */
+.tags-display {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12rpx;
+}
+
+.tag-item {
+  font-size: 24rpx;
+  color: #667eea;
+  padding: 8rpx 20rpx;
+  background: rgba(102, 126, 234, 0.1);
+  border-radius: 20rpx;
+  border: 1rpx solid rgba(102, 126, 234, 0.2);
+}
+
+/* 建议文本 */
+.suggestion-text {
+  font-size: 26rpx;
+  color: #666;
+  line-height: 1.6;
+  background: #fff;
+  padding: 20rpx;
+  border-radius: 12rpx;
+}
+
+/* 优化建议列表 */
+.tips-list {
+  background: #fff;
+  padding: 20rpx;
+  border-radius: 12rpx;
+}
+
+.tip-item {
+  display: flex;
+  gap: 12rpx;
+  margin-bottom: 16rpx;
+  align-items: flex-start;
+}
+
+.tip-item:last-child {
+  margin-bottom: 0;
+}
+
+.tip-dot {
+  font-size: 28rpx;
+  color: #667eea;
+  line-height: 1.6;
+}
+
+.tip-text {
+  flex: 1;
+  font-size: 26rpx;
+  color: #666;
+  line-height: 1.6;
+}
+
+/* 内容操作按钮 */
+.content-actions {
+  display: flex;
+  gap: 20rpx;
+  margin-top: 20rpx;
+}
+
+.action-btn-secondary {
+  flex: 1;
+  height: 80rpx;
+  background: #f5f5f5;
+  color: #666;
+  border-radius: 12rpx;
+  font-size: 28rpx;
+  border: none;
+}
+
+.action-btn-primary {
+  flex: 1;
+  height: 80rpx;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: #fff;
+  border-radius: 12rpx;
+  font-size: 28rpx;
+  font-weight: bold;
+  border: none;
+}
+
+/* 内容优化 */
+.optimization-section {
+  margin-bottom: 30rpx;
+}
+
+.optimization-section .section-title {
+  font-size: 28rpx;
+  margin-bottom: 20rpx;
+}
+
+.optimization-options {
+  display: flex;
+  gap: 20rpx;
+}
+
+.opt-btn {
+  flex: 1;
+  height: 72rpx;
+  background: #f9f9f9;
+  color: #333;
+  border-radius: 12rpx;
+  font-size: 24rpx;
+  border: none;
+}
+
+/* 发布平台 */
+.publish-section {
+  margin-bottom: 30rpx;
+}
+
+.publish-section .section-title {
+  font-size: 28rpx;
+  margin-bottom: 20rpx;
+}
+
+.platform-options {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20rpx;
+}
+
+.platform-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12rpx;
+  padding: 24rpx;
+  background: #f9f9f9;
+  border-radius: 16rpx;
+  position: relative;
+  transition: all 0.3s;
+}
+
+.platform-card.selected {
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+  border: 2rpx solid #667eea;
+}
+
+.platform-icon {
+  font-size: 48rpx;
+}
+
+.platform-name {
+  font-size: 24rpx;
+  color: #333;
+}
+
+.check-icon {
+  position: absolute;
+  top: 8rpx;
+  right: 8rpx;
+  width: 32rpx;
+  height: 32rpx;
+  border-radius: 50%;
+  background: #667eea;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20rpx;
+}
+
+/* 全局加载遮罩 */
+.loading-mask {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.75);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  backdrop-filter: blur(5px);
+}
+
+.loading-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 30rpx;
+  padding: 80rpx 60rpx;
+  background: #fff;
+  border-radius: 24rpx;
+  box-shadow: 0 8rpx 32rpx rgba(0, 0, 0, 0.2);
+  min-width: 400rpx;
+}
+
+.loading-spinner {
+  width: 100rpx;
+  height: 100rpx;
+  border: 8rpx solid #f3f3f3;
+  border-top: 8rpx solid #667eea;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.loading-content .loading-text {
+  font-size: 32rpx;
+  color: #333;
+  font-weight: 500;
+  text-align: center;
+  line-height: 1.6;
+  max-width: 400rpx;
+}

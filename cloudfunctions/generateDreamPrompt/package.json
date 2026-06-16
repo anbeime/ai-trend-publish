@@ -1,0 +1,12 @@
+{
+  "name": "generateDreamPrompt",
+  "version": "1.0.0",
+  "description": "梦境提示词生成云函数 - 根据用户模糊描述生成详细的即梦提示词",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "~2.6.3",
+    "@cloudbase/node-sdk": "^3.16.0"
+  },
+  "author": "",
+  "license": "ISC"
+}

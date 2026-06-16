@@ -1,0 +1,9 @@
+{
+  "name": "template-manager",
+  "version": "1.0.0",
+  "description": "模板管理云函数 - 管理模板库、热门模板、收藏",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "~2.6.3"
+  }
+}

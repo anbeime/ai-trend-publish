@@ -1,0 +1,9 @@
+{
+  "name": "character-manager",
+  "version": "1.0.0",
+  "description": "角色管理云函数 - 管理角色设定、三视图、角色一致性",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "~2.6.3"
+  }
+}

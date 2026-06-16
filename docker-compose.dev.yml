@@ -1,0 +1,157 @@
+name: ${COMPOSE_PROJECT_NAME:-tiktok-video-lab}
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      POSTGRES_DB: ${POSTGRES_DB:-tiktokgen}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-tiktokgen}"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    command: ["redis-server", "--appendonly", "yes", "--requirepass", "${REDIS_PASSWORD:-change_me_redis_password}"]
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "-a", "${REDIS_PASSWORD:-change_me_redis_password}", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    restart: unless-stopped
+    environment:
+      API_HOST: 0.0.0.0
+      API_PORT: 3001
+      APP_NAME: ${APP_NAME:-TikTokGen}
+      APP_VERSION: ${APP_VERSION:-1.0.0}
+      APP_ENV: ${APP_ENV:-production}
+      DEBUG: ${DEBUG:-false}
+      DATABASE_URL: postgresql+psycopg2://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@postgres:5432/${POSTGRES_DB:-tiktokgen}
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_PASSWORD: ${REDIS_PASSWORD:-change_me_redis_password}
+      REDIS_DB: 0
+      REDIS_URL: redis://:${REDIS_PASSWORD:-change_me_redis_password}@redis:6379/0
+      CELERY_BROKER_URL: redis://:${REDIS_PASSWORD:-change_me_redis_password}@redis:6379/1
+      CELERY_RESULT_BACKEND: redis://:${REDIS_PASSWORD:-change_me_redis_password}@redis:6379/2
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY:-change_me_jwt_secret_at_least_32_chars}
+      GITHUB_CLIENT_ID: ${GITHUB_CLIENT_ID:-}
+      GITHUB_CLIENT_SECRET: ${GITHUB_CLIENT_SECRET:-}
+      GITHUB_REDIRECT_URI: ${GITHUB_REDIRECT_URI:-http://localhost:3000/auth/login/callback}
+      INDEX_TTS_API_KEY: ${INDEX_TTS_API_KEY:-}
+      INDEX_TTS_BASE_URL: ${INDEX_TTS_BASE_URL:-https://api.302.ai}
+      SILICONFLOW_API_KEY: ${SILICONFLOW_API_KEY:-}
+      SILICONFLOW_BASE_URL: ${SILICONFLOW_BASE_URL:-https://api.siliconflow.cn/v1}
+      SILICONFLOW_TTS_MODEL: ${SILICONFLOW_TTS_MODEL:-IndexTeam/IndexTTS-2}
+      GLM_API_KEY: ${GLM_API_KEY:-}
+      GLM_API_URL: ${GLM_API_URL:-https://open.bigmodel.cn/api/paas/v4/chat/completions}
+      GLM_MODEL: ${GLM_MODEL:-glm-4.7}
+      WAVESPEED_API_KEY: ${WAVESPEED_API_KEY:-}
+      WAVESPEED_API_BASE_URL: ${WAVESPEED_API_BASE_URL:-https://api.302.ai/ws/api/v3}
+      ARK_API_KEY: ${ARK_API_KEY:-}
+      ARK_BASE_URL: ${ARK_BASE_URL:-https://ark.cn-beijing.volces.com/api/v3}
+      ARK_SEEDANCE_MODEL: ${ARK_SEEDANCE_MODEL:-doubao-seedance-1-5-pro-251215}
+      BANANA_PRO_API_KEY: ${BANANA_PRO_API_KEY:-}
+      BANANA_PRO_BASE_URL: ${BANANA_PRO_BASE_URL:-https://api.banana.pro/v1}
+      BANANA_PRO_MODEL: ${BANANA_PRO_MODEL:-flux-pro}
+      OSS_ACCESS_KEY_ID: ${OSS_ACCESS_KEY_ID:-}
+      OSS_ACCESS_KEY_SECRET: ${OSS_ACCESS_KEY_SECRET:-}
+      OSS_BUCKET_NAME: ${OSS_BUCKET_NAME:-}
+      OSS_ENDPOINT: ${OSS_ENDPOINT:-oss-cn-beijing.aliyuncs.com}
+      OSS_REGION: ${OSS_REGION:-cn-beijing}
+      OSS_PUBLIC_BASE_URL: ${OSS_PUBLIC_BASE_URL:-}
+      CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:3000,http://localhost:3001}
+      ALLOWED_ORIGINS: ${ALLOWED_ORIGINS:-http://localhost:3000,http://localhost:3001}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    ports:
+      - "${BACKEND_PORT:-3001}:3001"
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost:3001/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 20
+
+  worker:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: postgresql+psycopg2://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@postgres:5432/${POSTGRES_DB:-tiktokgen}
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_PASSWORD: ${REDIS_PASSWORD:-change_me_redis_password}
+      REDIS_DB: 0
+      REDIS_URL: redis://:${REDIS_PASSWORD:-change_me_redis_password}@redis:6379/0
+      CELERY_BROKER_URL: redis://:${REDIS_PASSWORD:-change_me_redis_password}@redis:6379/1
+      CELERY_RESULT_BACKEND: redis://:${REDIS_PASSWORD:-change_me_redis_password}@redis:6379/2
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY:-change_me_jwt_secret_at_least_32_chars}
+      GITHUB_CLIENT_ID: ${GITHUB_CLIENT_ID:-}
+      GITHUB_CLIENT_SECRET: ${GITHUB_CLIENT_SECRET:-}
+      GITHUB_REDIRECT_URI: ${GITHUB_REDIRECT_URI:-http://localhost:3000/auth/login/callback}
+      INDEX_TTS_API_KEY: ${INDEX_TTS_API_KEY:-}
+      INDEX_TTS_BASE_URL: ${INDEX_TTS_BASE_URL:-https://api.302.ai}
+      SILICONFLOW_API_KEY: ${SILICONFLOW_API_KEY:-}
+      SILICONFLOW_BASE_URL: ${SILICONFLOW_BASE_URL:-https://api.siliconflow.cn/v1}
+      SILICONFLOW_TTS_MODEL: ${SILICONFLOW_TTS_MODEL:-IndexTeam/IndexTTS-2}
+      GLM_API_KEY: ${GLM_API_KEY:-}
+      GLM_API_URL: ${GLM_API_URL:-https://open.bigmodel.cn/api/paas/v4/chat/completions}
+      GLM_MODEL: ${GLM_MODEL:-glm-4.7}
+      WAVESPEED_API_KEY: ${WAVESPEED_API_KEY:-}
+      WAVESPEED_API_BASE_URL: ${WAVESPEED_API_BASE_URL:-https://api.302.ai/ws/api/v3}
+      ARK_API_KEY: ${ARK_API_KEY:-}
+      ARK_BASE_URL: ${ARK_BASE_URL:-https://ark.cn-beijing.volces.com/api/v3}
+      ARK_SEEDANCE_MODEL: ${ARK_SEEDANCE_MODEL:-doubao-seedance-1-5-pro-251215}
+      BANANA_PRO_API_KEY: ${BANANA_PRO_API_KEY:-}
+      BANANA_PRO_BASE_URL: ${BANANA_PRO_BASE_URL:-https://api.banana.pro/v1}
+      BANANA_PRO_MODEL: ${BANANA_PRO_MODEL:-flux-pro}
+      OSS_ACCESS_KEY_ID: ${OSS_ACCESS_KEY_ID:-}
+      OSS_ACCESS_KEY_SECRET: ${OSS_ACCESS_KEY_SECRET:-}
+      OSS_BUCKET_NAME: ${OSS_BUCKET_NAME:-}
+      OSS_ENDPOINT: ${OSS_ENDPOINT:-oss-cn-beijing.aliyuncs.com}
+      OSS_REGION: ${OSS_REGION:-cn-beijing}
+      OSS_PUBLIC_BASE_URL: ${OSS_PUBLIC_BASE_URL:-}
+      CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:3000,http://localhost:3001}
+      ALLOWED_ORIGINS: ${ALLOWED_ORIGINS:-http://localhost:3000,http://localhost:3001}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      backend:
+        condition: service_healthy
+    command: celery -A app.tasks worker --loglevel=info --pool=solo
+
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        VITE_API_URL: ${VITE_API_URL:-http://localhost:3001/api/v1}
+    restart: unless-stopped
+    depends_on:
+      backend:
+        condition: service_healthy
+    ports:
+      - "${FRONTEND_PORT:-3000}:80"
+
+volumes:
+  postgres_data:
+  redis_data:

@@ -1,0 +1,22 @@
+{
+  "name": "xiaohongshu-publisher",
+  "version": "1.0.0",
+  "description": "小红书图文笔记发布云函数",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "wx-server-sdk": "~2.6.3",
+    "axios": "^1.6.0",
+    "form-data": "^4.0.0"
+  },
+  "keywords": [
+    "xiaohongshu",
+    "publish",
+    "note",
+    "image"
+  ],
+  "author": "AI Team",
+  "license": "MIT"
+}

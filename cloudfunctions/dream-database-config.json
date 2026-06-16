@@ -1,0 +1,46 @@
+{
+  "collections": [
+    {
+      "name": "dream_records",
+      "description": "梦境和灵感记录表",
+      "indexes": [
+        {
+          "name": "createTime_index",
+          "keys": {
+            "createTime": -1
+          }
+        },
+        {
+          "name": "type_index",
+          "keys": {
+            "type": 1
+          }
+        }
+      ]
+    },
+    {
+      "name": "chat_history",
+      "description": "AI对话历史表",
+      "indexes": [
+        {
+          "name": "createTime_index",
+          "keys": {
+            "createTime": -1
+          }
+        }
+      ]
+    },
+    {
+      "name": "dream_chat_logs",
+      "description": "对话日志表（用于统计分析）",
+      "indexes": [
+        {
+          "name": "timestamp_index",
+          "keys": {
+            "timestamp": -1
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,603 @@
+<!--pages/agents/agents.wxml-->
+<view class="container">
+  <!-- 多智能体状态栏 -->
+  <view class="agent-status-bar">
+    <view class="agent-status-item {{agents.hotspot.status}}" wx:if="{{agents.hotspot.enabled}}" bindtap="onAgentTap" data-agent="hotspot">
+      <view class="agent-icon">🔥</view>
+      <view class="agent-status-icon"></view>
+    </view>
+    <view class="agent-status-item {{agents.script.status}}" wx:if="{{agents.script.enabled}}" bindtap="onAgentTap" data-agent="script">
+      <view class="agent-icon">📝</view>
+      <view class="agent-status-icon"></view>
+    </view>
+    <view class="agent-status-item {{agents.storyboard.status}}" wx:if="{{agents.storyboard.enabled}}" bindtap="onAgentTap" data-agent="storyboard">
+      <view class="agent-icon">🎬</view>
+      <view class="agent-status-icon"></view>
+    </view>
+    <view class="agent-status-item {{agents.video.status}}" wx:if="{{agents.video.enabled}}" bindtap="onAgentTap" data-agent="video">
+      <view class="agent-icon">🎥</view>
+      <view class="agent-status-icon"></view>
+    </view>
+    <view class="agent-status-item {{agents.editor.status}}" wx:if="{{agents.editor.enabled}}" bindtap="onAgentTap" data-agent="editor">
+      <view class="agent-icon">✂️</view>
+      <view class="agent-status-icon"></view>
+    </view>
+    <view class="agent-status-item {{agents.dataAnalysis.status}}" wx:if="{{agents.dataAnalysis.enabled}}" bindtap="onAgentTap" data-agent="dataAnalysis">
+      <view class="agent-icon">📊</view>
+      <view class="agent-status-icon"></view>
+    </view>
+    <view class="agent-status-item {{agents.roleConsistency.status}}" wx:if="{{agents.roleConsistency.enabled}}" bindtap="onAgentTap" data-agent="roleConsistency">
+      <view class="agent-icon">👥</view>
+      <view class="agent-status-icon"></view>
+    </view>
+  </view>
+
+  <!-- 热点卡片（显示已选择的热点） -->
+  <view class="hotspot-card {{hotspotCardCollapsed ? 'hotspot-card-collapsed' : ''}}" wx:if="{{selectedHotspot && hotspotCardVisible}}">
+    <view class="hotspot-card-header" bindtap="toggleHotspotCard">
+      <view class="hotspot-card-title-wrapper">
+        <text class="hotspot-card-collapse-icon">
+          <text wx:if="{{hotspotCardCollapsed}}">▶</text>
+          <text wx:else>▼</text>
+        </text>
+        <text class="hotspot-card-title">🔥 已选择热点: {{selectedHotspot.name}}</text>
+      </view>
+      <text class="hotspot-card-close" bindtap="removeHotspotDisplay" catchtap="stopPropagation">✕</text>
+    </view>
+    <view class="hotspot-card-content" wx:if="{{!hotspotCardCollapsed}}">
+      <text class="hotspot-card-reason">{{selectedHotspot.reason}}</text>
+      <view class="hotspot-card-meta">
+        <text class="hotspot-card-score">热度: {{selectedHotspot.score}}</text>
+        <text class="hotspot-card-source">来源: {{selectedHotspot.source}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 智能体工作区（显示各智能体的工作成果） -->
+  <view class="agent-workspace" wx:if="{{agentWorkspace && agentWorkspace.length > 0}}">
+    <view class="workspace-title">💼 智能体工作区</view>
+    
+         <scroll-view class="workspace-scroll" scroll-y scroll-into-view="{{toViewWorkspace}}" scroll-with-animation="{{true}}">
+           <view class="agent-card" 
+                 wx:for="{{agentWorkspace}}" 
+                 wx:key="key"
+                 id="agent-{{item.key}}"
+                 bindtap="toggleAgentCard"
+                 data-agent="{{item.key}}"
+                 >
+        <!-- 卡片头部（可点击折叠） -->
+        <view class="card-header">
+          <view class="header-left">
+            <text class="agent-icon">{{item.icon}}</text>
+            <text class="agent-name">{{item.name}}</text>
+            <text class="agent-status {{item.status}}">{{item.status}}</text>
+          </view>
+          <view class="header-right">
+            <text class="collapse-icon">{{item.collapsed ? '▶' : '▼'}}</text>
+          </view>
+        </view>
+        
+        <!-- 卡片内容（可折叠） -->
+        <view class="card-content" wx:if="{{!item.collapsed}}">
+          <!-- 显示智能体输出 -->
+          <text class="agent-output" selectable user-select="{{true}}">{{item.output || '暂无输出'}}</text>
+        </view>
+      </view>
+    </scroll-view>
+  </view>
+
+  <!-- 对话记录（显示创作结果） -->
+  <view class="chat-section">
+    <scroll-view class="messages-scroll" scroll-y bindscroll="onContentScroll" scroll-into-view="{{toView}}" scroll-with-animation="{{true}}" scroll-top="{{scrollTop}}" enhanced="{{true}}" show-scrollbar="{{true}}">
+        <!-- 空状态引导页 -->
+        <view class="empty-guide" wx:if="{{messages.length === 0 && !working && !inputValue}}">
+          <view class="guide-icon">🎬</view>
+          <text class="guide-title" user-select="{{true}}">开始您的AI短视频创作之旅！</text>
+          <text class="guide-tip" user-select="{{true}}">在下方输入您的创作需求，或返回首页选择热点</text>
+        <view class="guide-actions">
+          <button class="guide-btn" bindtap="goToIndex">返回首页</button>
+          <button class="guide-btn primary" bindtap="focusInput">开始输入</button>
+        </view>
+      </view>
+
+      <!-- 消息列表 -->
+      <view class="message-item {{item.sender}} {{item.highlighted ? 'highlighted' : ''}}" id="msg-{{index}}" wx:for="{{messages}}" wx:key="id">
+        <view class="message-header">
+          <text class="sender-name">{{agentIcons[item.sender] || item.senderName}}</text>
+          <text class="message-time">{{item.timeStr}}</text>
+        </view>
+        <view class="message-content">
+          <text selectable user-select="{{true}}">{{item.content}}</text>
+
+          <!-- 图片预览 -->
+          <view class="image-gallery" wx:if="{{item.images && item.images.length > 0}}">
+            <view class="storyboard-item" wx:for="{{item.images}}" wx:key="imageUrl" wx:for-item="img">
+              <!-- 分镜编号和提示词 -->
+              <view class="storyboard-header">
+                <text class="storyboard-index">分镜 {{img.index}}</text>
+                <text class="storyboard-prompt" wx:if="{{img.prompt}}" selectable user-select="{{true}}">{{img.prompt.substring(0, 50)}}...</text>
+              </view>
+
+              <!-- GLM生图 -->
+              <view class="model-image-item" wx:if="{{img.glmImageUrl || img.glmError}}">
+                <text class="model-label">GLM生图</text>
+                <image
+                  class="generated-image"
+                  src="{{img.glmImageUrl}}"
+                  mode="aspectFill"
+                  bindtap="previewImage"
+                  data-url="{{img.glmImageUrl}}"
+                  data-urls="{{item.imageUrlArray}}"
+                  wx:if="{{img.glmImageUrl}}"
+                />
+                <text class="error-text" wx:if="{{img.glmError}}">{{img.glmError}}</text>
+                <view class="image-actions" wx:if="{{img.glmImageUrl}}">
+                  <button class="action-btn" size="mini" bindtap="saveImage" data-url="{{img.glmImageUrl}}">保存</button>
+                </view>
+              </view>
+
+              <!-- 混元生图 -->
+              <view class="model-image-item" wx:if="{{img.hunyuanImageUrl || img.hunyuanError}}">
+                <text class="model-label">混元生图</text>
+                <image
+                  class="generated-image"
+                  src="{{img.hunyuanImageUrl}}"
+                  mode="aspectFill"
+                  bindtap="previewImage"
+                  data-url="{{img.hunyuanImageUrl}}"
+                  data-urls="{{item.imageUrlArray}}"
+                  wx:if="{{img.hunyuanImageUrl}}"
+                />
+                <text class="error-text" wx:if="{{img.hunyuanError}}">{{img.hunyuanError}}</text>
+                <view class="image-actions" wx:if="{{img.hunyuanImageUrl}}">
+                  <button class="action-btn" size="mini" bindtap="saveImage" data-url="{{img.hunyuanImageUrl}}">保存</button>
+                </view>
+              </view>
+
+              <!-- 兼容旧格式（单张图片） -->
+              <view class="legacy-image-item" wx:if="{{img.imageUrl && !img.glmImageUrl && !img.hunyuanImageUrl}}">
+                <image
+                  class="generated-image"
+                  src="{{img.imageUrl}}"
+                  mode="aspectFill"
+                  bindtap="previewImage"
+                  data-url="{{img.imageUrl}}"
+                  data-urls="{{item.imageUrlArray}}"
+                />
+                <!-- 提示词显示 -->
+                <view class="image-prompt" wx:if="{{img.prompt}}">
+                  <text class="prompt-label">提示词:</text>
+                  <text class="prompt-text" selectable user-select="{{true}}">{{img.prompt}}</text>
+                </view>
+                <view class="image-actions">
+                  <button class="action-btn" size="mini" bindtap="saveImage" data-url="{{img.imageUrl}}">保存</button>
+                </view>
+              </view>
+            </view>
+          </view>
+        </view>
+
+        <!-- 消息操作按钮（仅智能体消息显示） -->
+        <view class="message-actions" wx:if="{{item.sender !== 'user' && !item.isTyping}}">
+          <button class="action-icon-btn" bindtap="copyMessage" data-index="{{index}}">
+            <text class="action-icon">📋</text>
+            <text class="action-label">复制</text>
+          </button>
+          <button class="action-icon-btn {{item.liked ? 'active' : ''}}" bindtap="likeMessage" data-index="{{index}}">
+            <text class="action-icon">{{item.liked ? '❤️' : '🤍'}}</text>
+            <text class="action-label">{{item.liked ? '已赞' : '点赞'}}</text>
+          </button>
+          <button class="action-icon-btn {{item.disliked ? 'active' : ''}}" bindtap="showFeedbackMenu" data-index="{{index}}">
+            <text class="action-icon">{{item.disliked ? '💔' : '👎'}}</text>
+            <text class="action-label">{{item.disliked ? '反馈' : '不满意'}}</text>
+          </button>
+          <button class="action-icon-btn" bindtap="saveAsTemplate" wx:if="{{index === messages.length - 1}}">
+            <text class="action-icon">⭐</text>
+            <text class="action-label">存模板</text>
+          </button>
+        </view>
+
+        <view class="message-typing" wx:if="{{item.isTyping}}">
+          <text>正在处理...</text>
+        </view>
+      </view>
+    </scroll-view>
+  </view>
+
+  <!-- 输入区域（固定在底部） -->
+  <view class="input-section bottom-input">
+    <!-- 工作流程步骤图标（始终显示，支持点击跳转） -->
+    <view class="workflow-steps-container">
+      <view class="workflow-steps">
+        <view 
+          class="workflow-step {{currentStep >= 1 ? 'completed' : ''}} {{currentStep === 1 ? 'active' : ''}}"
+          bindtap="onWorkflowStepTap"
+          data-step="1"
+          data-agent="trendHunter"
+        >
+          <view class="step-icon">🔥</view>
+          <view class="step-label">热点追踪</view>
+        </view>
+        <view 
+          class="workflow-step {{currentStep >= 2 ? 'completed' : ''}} {{currentStep === 2 ? 'active' : ''}}"
+          bindtap="onWorkflowStepTap"
+          data-step="2"
+          data-agent="scriptWriter"
+        >
+          <view class="step-icon">📝</view>
+          <view class="step-label">脚本创作</view>
+        </view>
+        <view 
+          class="workflow-step {{currentStep >= 3 ? 'completed' : ''}} {{currentStep === 3 ? 'active' : ''}}"
+          bindtap="onWorkflowStepTap"
+          data-step="3"
+          data-agent="storyboard"
+        >
+          <view class="step-icon">🎨</view>
+          <view class="step-label">分镜设计</view>
+        </view>
+        <view 
+          class="workflow-step {{currentStep >= 4 ? 'completed' : ''}} {{currentStep === 4 ? 'active' : ''}}"
+          bindtap="onWorkflowStepTap"
+          data-step="4"
+          data-agent="videoComposer"
+        >
+          <view class="step-icon">🎬</view>
+          <view class="step-label">视频合成</view>
+        </view>
+        <view 
+          class="workflow-step {{currentStep >= 5 ? 'completed' : ''}} {{currentStep === 5 ? 'active' : ''}}"
+          bindtap="onWorkflowStepTap"
+          data-step="5"
+          data-agent="qualityChecker"
+        >
+          <view class="step-icon">✂️</view>
+          <view class="step-label">剪辑优化</view>
+        </view>
+        <view 
+          class="workflow-step {{currentStep >= 6 ? 'completed' : ''}} {{currentStep === 6 ? 'active' : ''}}"
+          bindtap="onWorkflowStepTap"
+          data-step="6"
+          data-agent="platformAdapter"
+        >
+          <view class="step-icon">📊</view>
+          <view class="step-label">数据分析</view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 工作流程进度条 -->
+    <view class="workflow-mini-bar" wx:if="{{working}}">
+      <view class="workflow-mini-progress">
+        <progress percent="{{progressPercent}}" active stroke-width="4" color="#1890ff" />
+        <text class="workflow-mini-text">{{currentStep}}/{{activeAgentCount}} 处理中...</text>
+      </view>
+    </view>
+
+    <!-- 创作选项栏（热点、风格和工作模式选择） -->
+    <view class="creation-options-bar">
+      <!-- 热点入口 -->
+      <view class="option-item trend-option" bindtap="toggleTrendPanel" catchtap="stopPropagation" disabled="{{working}}">
+        <text class="option-label">🔥</text>
+      </view>
+
+      <!-- 设置入口 -->
+      <view class="option-item settings-option" bindtap="toggleSettings" catchtap="stopPropagation">
+        <text class="option-label">⚙️</text>
+      </view>
+
+      <!-- 风格选择 -->
+      <view class="option-item style-option" bindtap="toggleStylePanel" catchtap="stopPropagation">
+        <view class="current-style-mini-display">
+          <text class="style-mini-icon">{{currentStyleIcon}}</text>
+          <text class="style-mini-name">{{currentStyleName}}</text>
+          <text class="style-mini-arrow">▾</text>
+        </view>
+      </view>
+    </view>
+
+    <textarea
+      class="input-area"
+      value="{{inputValue}}"
+      bindinput="onInput"
+      placeholder="输入您的创作需求，例如：帮我制作一个关于AI工具的短视频..."
+      disabled="{{working}}"
+      auto-height
+      maxlength="5000"
+      show-confirm-bar="{{false}}"
+      focus="{{inputFocus}}"
+    />
+    <view class="input-footer">
+      <text class="input-count">{{inputValue.length}}/5000</text>
+      <view class="button-group">
+        <button class="cancel-btn {{working ? '' : 'hidden'}}"
+                bindtap="cancelWorkflow"
+                wx:if="{{working}}">
+          取消任务
+        </button>
+        <button class="send-btn {{working ? 'disabled' : ''}}"
+                bindtap="sendMessage"
+                disabled="{{working || !inputValue}}">
+          {{working ? '处理中...' : '开始创作'}}
+        </button>
+      </view>
+    </view>
+  </view>
+</view>
+
+<!-- 设置面板（弹出层） -->
+<view class="settings-overlay" wx:if="{{!settingsCollapsed}}" bindtap="toggleSettings">
+  <view class="settings-modal" catchtap="noop">
+    <view class="settings-modal-header">
+      <text class="settings-modal-title">⚙️ 配置与设置</text>
+      <text class="settings-modal-close" bindtap="toggleSettings">✕</text>
+    </view>
+    <scroll-view class="settings-modal-content" scroll-y>
+      <!-- 平台选择 -->
+      <view class="platform-selector">
+        <text class="platform-label">发布平台：</text>
+        <view class="platform-tabs">
+          <view class="platform-tab {{selectedPlatform === 'douyin' ? 'active' : ''}}" bindtap="selectPlatform" data-platform="douyin">
+            <text>抖音</text>
+          </view>
+          <view class="platform-tab {{selectedPlatform === 'kuaishou' ? 'active' : ''}}" bindtap="selectPlatform" data-platform="kuaishou">
+            <text>快手</text>
+          </view>
+          <view class="platform-tab {{selectedPlatform === 'youtube' ? 'active' : ''}}" bindtap="selectPlatform" data-platform="youtube">
+            <text>YouTube</text>
+          </view>
+          <view class="platform-tab {{selectedPlatform === 'bilibili' ? 'active' : ''}}" bindtap="selectPlatform" data-platform="bilibili">
+            <text>B站</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- API配置状态 -->
+      <view class="api-status-bar configured">
+        <text class="status-icon"></text>
+        <text class="status-text">GLM默认可用 (glm-4.7-flash)</text>
+      </view>
+
+      <!-- 混元API状态 -->
+      <view class="hunyuan-status-bar {{hunyuanConfig.enabled ? 'enabled' : 'disabled'}}">
+        <text class="status-icon">{{hunyuanConfig.enabled ? '🔄' : '⚪'}}</text>
+        <text class="status-text">混元API:
+          <text wx:if="{{hunyuanConfig.enabled}}">已启用</text>
+          <text wx:else>未启用</text>
+        </text>
+        <button class="config-btn" bindtap="showHunyuanConfigDialog">配置</button>
+      </view>
+
+      <!-- 智能体开关 -->
+      <view class="agents-toggle-section">
+        <text class="agents-toggle-title">智能体开关</text>
+        <view class="agents-toggle-list">
+          <view class="agent-toggle-item" wx:for="{{agentList}}" wx:key="key">
+            <view class="agent-toggle-info">
+              <text class="agent-toggle-icon">{{item.icon}}</text>
+              <text class="agent-toggle-name">{{item.name}}</text>
+            </view>
+            <switch checked="{{item.active}}" disabled="{{working}}" bindtap="toggleAgent" data-key="{{item.key}}" />
+          </view>
+        </view>
+      </view>
+
+      <!-- 测试模式(保留兼容,隐藏) -->
+      <view class="test-mode-bar" style="display: none;">
+        <text class="mode-label">测试模式：</text>
+        <view class="mode-switcher">
+          <view class="mode-option {{testMode === 'workflow' ? 'active' : ''}}" bindtap="switchTestMode" data-mode="workflow">
+            <text>工作流</text>
+          </view>
+          <view class="mode-option {{testMode === 'single' ? 'active' : ''}}" bindtap="switchTestMode" data-mode="single">
+            <text>单智能体</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- 单智能体测试选择 -->
+      <view class="test-agent-selector" wx:if="{{testMode === 'single'}}">
+        <text class="selector-label">选择智能体：</text>
+        <view class="agent-selector">
+          <view class="selector-item {{selectedTestAgent === item.key ? 'active' : ''}}"
+                wx:for="{{agentList}}" wx:key="key" bindtap="selectTestAgent" data-key="{{item.key}}">
+            <text>{{item.icon}} {{item.name}}</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- 创作历史 -->
+      <view class="history-section">
+        <view class="history-section-header">
+          <text class="history-section-title"> 创作历史</text>
+        </view>
+        <view class="history-list" wx:if="{{creationHistory.length > 0}}">
+          <view class="history-item" wx:for="{{creationHistory}}" wx:key="id">
+            <view class="history-info" bindtap="restoreCreation" data-record="{{item}}">
+              <text class="history-title">{{formatTitle(item)}}</text>
+              <text class="history-time">{{formatTime(item.createdAt)}}</text>
+            </view>
+            <view class="history-actions">
+              <text class="history-delete" bindtap="deleteCreation" data-id="{{item.id}}">🗑️</text>
+            </view>
+          </view>
+        </view>
+        <view class="history-footer" wx:if="{{creationHistory.length > 0}}">
+          <button class="history-save-btn" bindtap="saveCurrentCreation" disabled="{{messages.length === 0}}">
+            💾 保存当前创作
+          </button>
+          <button class="history-clear-btn" bindtap="clearHistory">
+            🗑️ 清空历史
+          </button>
+        </view>
+        <view class="history-empty" wx:if="{{creationHistory.length === 0}}">
+          <text>暂无创作历史</text>
+        </view>
+      </view>
+    </scroll-view>
+  </view>
+</view>
+
+<!-- 风格选择面板 -->
+<view class="style-panel-overlay" wx:if="{{showStylePanel}}" bindtap="toggleStylePanel">
+  <view class="style-panel-modal" catchtap="stopPropagation">
+    <view class="style-panel-header">
+      <text class="style-panel-title">选择视频风格</text>
+      <text class="style-panel-close" bindtap="toggleStylePanel" catchtap="stopPropagation">✕</text>
+    </view>
+    <scroll-view class="style-scroll" scroll-y>
+      <view class="style-grid">
+        <view
+          class="style-card {{selectedStyle === item.key ? 'active' : ''}}"
+          wx:for="{{styleArray}}"
+          wx:key="key"
+          bindtap="selectStyle"
+          data-key="{{item.key}}"
+        >
+          <view class="style-card-icon">{{item.value.icon}}</view>
+          <view class="style-card-content">
+            <view class="style-card-name">{{item.value.name}}</view>
+            <view class="style-card-keywords">{{item.value.extendedKeywords}}</view>
+            <view class="style-card-desc">{{item.value.description}}</view>
+          </view>
+          <view class="style-card-badge" wx:if="{{selectedStyle === item.key}}">✓</view>
+          <view class="style-preview-line" style="background-color: {{item.value.previewColor}}"></view>
+        </view>
+      </view>
+
+      <!-- 参数设置按钮 -->
+      <view class="params-section">
+        <view class="params-header">
+          <text class="params-title">⚙️ 参数设置</text>
+          <text class="params-desc">配置创作参数</text>
+        </view>
+        <button class="params-btn" bindtap="openParams">
+          打开参数设置
+        </button>
+      </view>
+
+      <!-- 用户额度显示 -->
+      <view class="credits-section">
+        <view class="credits-header">
+          <text class="credits-title">💰 用户额度</text>
+        </view>
+        <view class="credits-info">
+          <view class="credits-item">
+            <text class="credits-label">剩余金币</text>
+            <text class="credits-value">{{userCredits || 0}}</text>
+          </view>
+          <view class="credits-item">
+            <text class="credits-label">今日已用</text>
+            <text class="credits-value">{{dailyUsed || 0}}</text>
+          </view>
+          <view class="credits-item">
+            <text class="credits-label">每日额度</text>
+            <text class="credits-value">{{dailyQuota || 3}}</text>
+          </view>
+        </view>
+        <button class="refresh-credits-btn" bindtap="loadUserCredits" size="mini">
+          🔄 刷新
+        </button>
+      </view>
+    </scroll-view>
+  </view>
+</view>
+
+<!-- 热点选择面板 -->
+<view class="trend-panel-overlay" wx:if="{{showTrendPanel}}" bindtap="toggleTrendPanel">
+  <view class="style-panel-modal trend-panel-modal" catchtap="stopPropagation">
+    <view class="style-panel-header">
+      <text class="style-panel-title">🔥 选择热点话题</text>
+      <text class="style-panel-close" bindtap="toggleTrendPanel" catchtap="stopPropagation">✕</text>
+    </view>
+    <!-- 数据来源提示 -->
+    <view class="trend-source-info">
+      <text class="source-icon">
+        <text wx:if="{{hotspotDataSource === 'live'}}">🟢</text>
+        <text wx:elif="{{hotspotDataSource === 'cache'}}">💾</text>
+        <text wx:elif="{{hotspotDataSource === 'cache-expired'}}">⚠️</text>
+        <text wx:elif="{{hotspotDataSource === 'mock'}}">🧪</text>
+        <text wx:else>⚪</text>
+      </text>
+      <text class="source-text">
+        <text wx:if="{{hotspotDataSource === 'live'}}">实时数据</text>
+        <text wx:elif="{{hotspotDataSource === 'cache'}}">缓存数据（{{lastHotspotFetch ? formatFetchTime(lastHotspotFetch) : ''}}）</text>
+        <text wx:elif="{{hotspotDataSource === 'cache-expired'}}">缓存已过期，正在刷新...</text>
+        <text wx:elif="{{hotspotDataSource === 'mock'}}">示例数据（网络异常）</text>
+        <text wx:else>未知来源</text>
+      </text>
+      <button class="refresh-trend-mini-btn" bindtap="refreshTrends" size="mini" disabled="{{fetchingTrends}}">
+        <text wx:if="{{fetchingTrends}}">加载中...</text>
+        <text wx:else>🔄</text>
+      </button>
+    </view>
+
+    <!-- 分类标签 -->
+    <view class="trend-categories">
+      <view
+        class="category-tab {{selectedTrendCategory === item ? 'active' : ''}}"
+        wx:for="{{trendCategories}}"
+        wx:key="*this"
+        bindtap="selectTrendCategory"
+        data-category="{{item}}"
+      >
+        <text>{{item}}</text>
+      </view>
+    </view>
+
+    <scroll-view class="style-scroll" scroll-y>
+      <view class="trend-list" wx:if="{{filteredTrends.length > 0}}">
+        <view
+          class="trend-item"
+          wx:for="{{filteredTrends}}"
+          wx:key="id"
+          bindtap="selectTrendByTap"
+          data-trend="{{item}}"
+        >
+          <view class="trend-item-icon">{{item.icon}}</view>
+          <view class="trend-item-content">
+            <view class="trend-item-name">{{item.name}}</view>
+            <view class="trend-item-reason">{{item.reason}}</view>
+            <view class="trend-item-category-tag">{{item.category}}</view>
+          </view>
+          <view class="trend-item-score">热度{{item.score}}</view>
+        </view>
+      </view>
+      <view class="empty-trend" wx:else>
+        <text class="empty-icon">🔍</text>
+        <text class="empty-text">该分类暂无热点数据</text>
+        <button class="refresh-trend-btn" bindtap="refreshTrends">🔄 刷新热点</button>
+      </view>
+    </scroll-view>
+  </view>
+</view>
+
+<!-- 历史记录面板 -->
+<view class="history-panel" wx:if="{{showHistory}}">
+  <view class="history-header">
+    <text class="history-title"> 创作历史</text>
+    <text class="history-close-btn" bindtap="toggleHistoryPanel">✕</text>
+  </view>
+  <scroll-view class="history-list" scroll-y>
+    <view class="history-item" wx:for="{{creationHistory}}" wx:key="id">
+      <view class="history-info" bindtap="restoreCreation" data-id="{{item.id}}">
+        <text class="history-title-text">{{formatTitle(item)}}</text>
+        <text class="history-time">{{formatTime(item.createdAt)}}</text>
+      </view>
+      <view class="history-actions">
+        <text class="history-delete" bindtap="deleteCreation" data-id="{{item.id}}">🗑️</text>
+      </view>
+    </view>
+    <view class="history-empty" wx:if="{{creationHistory.length === 0}}">
+      <text>暂无创作历史</text>
+    </view>
+  </scroll-view>
+  <view class="history-footer" wx:if="{{creationHistory.length > 0}}">
+    <button class="history-save-btn" bindtap="saveCurrentCreation" disabled="{{messages.length === 0}}">
+      💾 保存当前创作
+    </button>
+    <button class="history-clear-btn" bindtap="clearHistory">
+      🗑️ 清空历史
+    </button>
+  </view>
+</view>

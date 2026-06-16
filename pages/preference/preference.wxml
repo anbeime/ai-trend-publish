@@ -1,0 +1,83 @@
+<!--pages/preference/preference.wxml-->
+<view class="container">
+  <view class="header">
+    <text class="title">用户偏好</text>
+    <text class="subtitle">个性化您的创作体验</text>
+  </view>
+
+  <!-- 内容类型偏好 -->
+  <view class="section">
+    <text class="section-title">内容类型</text>
+    <view class="content-types">
+      <view
+        class="type-item {{selectedContentTypes.includes(item.id) ? 'selected' : ''}}"
+        wx:for="{{contentTypes}}"
+        wx:key="id"
+        data-type="{{item.id}}"
+        bindtap="toggleContentType"
+      >
+        <text class="type-icon">{{item.icon}}</text>
+        <text class="type-name">{{item.name}}</text>
+        <text class="check-icon">{{selectedContentTypes.includes(item.id) ? '✓' : ''}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 视频时长 -->
+  <view class="section">
+    <text class="section-title">视频时长（秒）</text>
+    <slider
+      class="duration-slider"
+      min="15"
+      max="180"
+      value="{{videoDuration}}"
+      show-value
+      bindchange="setVideoDuration"
+    />
+  </view>
+
+  <!-- 风格偏好 -->
+  <view class="section">
+    <text class="section-title">风格偏好</text>
+    <picker
+      class="style-picker"
+      range="{{['现代简约', '复古像素', '极简主义', '电影大片']}}"
+      bindchange="setStylePreference"
+    >
+      <view class="picker-value">{{['现代简约', '复古像素', '极简主义', '电影大片'][stylePreference === 'modern' ? 0 : stylePreference === 'retro' ? 1 : stylePreference === 'minimal' ? 2 : 3]}}</view>
+    </picker>
+  </view>
+
+  <!-- 语言偏好 -->
+  <view class="section">
+    <text class="section-title">语言偏好</text>
+    <radio-group class="language-group" bindchange="setLanguagePreference">
+      <label class="radio-item">
+        <radio value="chinese" checked="{{languagePreference === 'chinese'}}"/>
+        <text>纯中文</text>
+      </label>
+      <label class="radio-item">
+        <radio value="bilingual" checked="{{languagePreference === 'bilingual'}}"/>
+        <text>中英双语</text>
+      </label>
+    </radio-group>
+  </view>
+
+  <!-- 自动保存 -->
+  <view class="section">
+    <view class="setting-row" bindtap="toggleAutoSave">
+      <text class="setting-label">自动保存偏好</text>
+      <switch checked="{{autoSave}}"/>
+    </view>
+  </view>
+
+  <!-- 操作按钮 -->
+  <view class="actions">
+    <button class="action-btn save-btn" bindtap="savePreferences">
+      💾 保存偏好
+    </button>
+    <button class="action-btn reset-btn" bindtap="resetPreferences">
+      🔄 重置默认
+    </button>
+  </view>
+</view>

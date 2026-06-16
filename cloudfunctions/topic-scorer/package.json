@@ -1,0 +1,20 @@
+{
+  "name": "topic-scorer",
+  "version": "1.0.0",
+  "description": "智能选题筛选云函数 - 10分制打分系统",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "wx-server-sdk": "~2.6.3"
+  },
+  "keywords": [
+    "topic",
+    "filter",
+    "scorer",
+    "hotspot"
+  ],
+  "author": "AI Team",
+  "license": "MIT"
+}

@@ -1,0 +1,11 @@
+{
+  "name": "wechat-publish-sdk",
+  "version": "1.0.0",
+  "description": "微信草稿发布 - SDK专用版本（云调用）",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "~2.6.3"
+  },
+  "author": "",
+  "license": "MIT"
+}

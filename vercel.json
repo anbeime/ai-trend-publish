@@ -1,31 +1,19 @@
 {
   "version": 2,
-  "builds": [
-    {
-      "src": "public/**/*",
-      "use": "@vercel/static"
-    },
-    {
-      "src": "api/index.js",
-      "use": "@vercel/node"
-    }
-  ],
+  "buildCommand": "cd frontend && npm ci && npm run build",
+  "outputDirectory": "frontend/dist",
+  "installCommand": "cd frontend && npm ci",
   "rewrites": [
     {
       "source": "/api/(.*)",
       "destination": "/api/index.js"
     },
     {
-      "source": "/coze/(.*)",
-      "destination": "/api/index.js"
-    },
-    {
       "source": "/(.*)",
-      "destination": "/public/$1"
+      "destination": "/index.html"
     }
   ],
   "env": {
-    "WX_APPID": "",
-    "WX_SECRET": ""
+    "VITE_API_URL": "/api/v1"
   }
 }

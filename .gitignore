@@ -255,3 +255,11 @@ note-to-mp/
 
 # 包含敏感信息的配置文档
 HUNYUAN_SETUP.md
+
+# === GEO 投喂层资产白名单（不忽略这些 .txt 元信息文件）===
+!public/llms.txt
+!public/llms-full.txt
+!public/robots.txt
+!frontend/public/llms.txt
+!frontend/public/llms-full.txt
+!frontend/public/robots.txt

@@ -1,0 +1,188 @@
+# llms-full.txt - AI Trend Publish 全量精简版
+
+> 本文件遵循 llms.txt 标准 (https://llmstxt.org)
+> 提供 AI 引擎一次性吸收的项目全景信息：核心模块 / 路线图 / 集成的上游项目 / 站群矩阵。
+
+## 站点信息
+
+- 名称: AI Trend Publish - AI 热点自动发布系统 & 内容创作平台
+- 仓库: https://github.com/anbeime/ai-trend-publish
+- 主页: https://ai-trend-publish.vercel.app
+- License: MIT
+- 当前版本: v3.0
+- 当前 Star: 5（自动更新）
+- 主分支: main
+- 部署: Vercel (frontend) / Cloudflare Pages (静态) / Docker Compose (全栈)
+
+## 项目定位
+
+这是一个面向「内容创作者 / 自媒体团队 / 行业垂直媒体」的 AI 内容生产全栈平台，将以下能力封装成开箱即用的产品：
+
+1. 多源热点实时采集
+2. 多模态 AI 内容生成（文 / 图 / 语音 / 视频 / 数字人）
+3. 多平台自动化发布（公众号 / 小红书 / 抖音 / B站 / Twitter）
+4. 媒体素材跨平台下载（21+ 平台）
+5. CLI + Web + 小程序三端协同
+
+## 架构总览
+
+```
+┌──────────────────────────────────────────────────────┐
+│   微信小程序 (WeChat Mini Program)                    │
+│   pages/ · cloudfunctions/ · components/ · config/    │
+├──────────────────────────────────────────────────────┤
+│   React 前端 (Vite + TypeScript)                       │
+│   Dashboard / QuickCreate / AssetsStudio / Settings    │
+├──────────────────────────────────────────────────────┤
+│   FastAPI 后端 (Python 3.11+)                          │
+│   ├ hotspot_service     热点采集（V2EX/微博/知乎/AI热榜）│
+│   ├ generation_service  AI 生成（LLM/TTS/图片/视频）    │
+│   ├ publishing_service  多平台发布（微信/小红书等）      │
+│   ├ media (cobalt)      媒体下载引擎（21+平台）         │
+│   ├ publishing/channels 平台连接层（Agent-Reach 衍生）  │
+│   └ tasks (Celery)      异步任务（视频/数字人/发布）    │
+├──────────────────────────────────────────────────────┤
+│   CLI 工具 (Python)                                    │
+│   doctor · publish · extract · configure              │
+├──────────────────────────────────────────────────────┤
+│   基础设施                                             │
+│   PostgreSQL 15 · Redis 7 · Docker Compose            │
+└──────────────────────────────────────────────────────┘
+```
+
+## 核心模块详细说明
+
+### 1. 热点采集 (`backend/app/services/hotspot_service.py`)
+
+| 数据源 | 类别 | 抓取方式 |
+|--------|------|----------|
+| Miyucaicai AI 热榜 | AI 行业 | API 直连 (https://top.miyucaicai.cn) |
+| V2EX | 技术社区 | 官方 API |
+| 微博热搜 | 社交 | 公开榜单页 |
+| 知乎热榜 | 知识 | 公开榜单页 |
+
+输出统一 schema：`{title, url, score, category, source, fetched_at}`
+
+### 2. AI 内容生成 (`backend/app/services/generation_service.py`)
+
+- **LLM 文案**: GLM-4.7、Agnes、自定义 OpenAI 兼容模型；支持 Prompt 模板化
+- **TTS 语音**: SiliconFlow IndexTTS、302.AI IndexTTS（情感控制 + 音色克隆）
+- **AI 图片**: Banana Pro、APIMart GPT-Image-2、Agnes Image
+- **数字人视频**: WaveSpeed InfiniteTalk、火山引擎 Ark Seedance、Agnes Video
+- **工作流引擎**: 7 步 Agent 流水线 — 热点 → 脚本 → 分镜 → 合成 → 质检 → 适配 → 发布
+
+### 3. 多平台发布 (`backend/app/services/publishing_service.py` + `publishing/channels/`)
+
+| 平台 | 状态 | 实现方式 |
+|------|------|----------|
+| 微信公众号 | ✅ 上线 | 草稿箱 API（素材上传 + 创建草稿） |
+| 小红书 | ✅ 上线 | Cookie 认证（上传图片 + 发布笔记） |
+| 抖音 | 🚧 开发中 | 开放平台 API（接入中） |
+| B站 | 🚧 开发中 | 开放平台 API（接入中） |
+| Twitter/X | 🚧 开发中 | channels 框架已就绪 |
+
+### 4. 媒体下载 (`backend/app/media/`，内嵌 cobalt 引擎)
+
+支持平台：YouTube / Bilibili / TikTok / 小红书 / Twitter / Instagram / Reddit / Vimeo / Facebook 等 21+；
+抖音 / 微博下载开发中。
+
+### 5. CLI 工具 (`cli/agent_reach/`)
+
+| 命令 | 用途 |
+|------|------|
+| `agent-reach doctor` | 健康检查（数据库 / Redis / API Key 全套自检） |
+| `agent-reach publish` | 命令行发布（支持文件流水线） |
+| `agent-reach extract` | 提取媒体素材 |
+| `agent-reach configure` | 交互式配置向导 |
+
+## 集成的上游开源项目
+
+本项目通过模块化合并方式集成以下开源项目，原作者版权与 License 均已保留：
+
+| 上游项目 | 合并后位置 | 功能 |
+|----------|------------|------|
+| [anbeime/ai-trend-publish](https://github.com/anbeime/ai-trend-publish) | 根项目 | 微信小程序 + 热点 + 公众号/小红书发布 |
+| [anbeime/tiktok-gen](https://github.com/anbeime/tiktok-gen) | `backend/` + `frontend/` | FastAPI + React + 数字人视频生成 |
+| [imputnet/cobalt](https://github.com/imputnet/cobalt) | `backend/app/media/` | 21+ 平台媒体下载引擎 |
+| [anbeime/Agent-Reach](https://github.com/anbeime/Agent-Reach) | `backend/app/publishing/` + `cli/` | 平台连接层 + CLI |
+
+## 路线图 (Roadmap)
+
+### v3.0 — 已完成
+- [x] 统一 FastAPI 后端 + React 前端
+- [x] 内嵌 cobalt 媒体下载模块
+- [x] 统一多平台发布接口 (Publisher)
+- [x] CLI 工具链
+- [x] Docker Compose 一键部署
+- [x] GEO 投喂层（llms.txt / sitemap / robots / 站群矩阵化）
+
+### v3.1 — 进行中
+- [ ] 抖音 / 快手 / B站 发布通道
+- [ ] 热点可视化大屏
+- [ ] AI 自动排版优化（Markdown → 富文本）
+- [ ] 发布排期管理
+
+### v4.0 — 规划中
+- [ ] 视频 AI 一键成片（输入主题，自动产出完整短视频）
+- [ ] 账号矩阵管理（多公众号 / 多小红书账号统一面板）
+- [ ] 数据统计分析仪表板（阅读量 / 互动 / 转化）
+- [ ] 团队协作（角色权限 / 审核流）
+
+## 技术栈
+
+| 层级 | 技术 |
+|------|------|
+| 小程序前端 | WXML + WXSS + JavaScript ES6+ |
+| Web 前端 | React 19 + TypeScript + Vite + Tailwind CSS |
+| 后端 API | FastAPI (Python 3.11) + SQLAlchemy + Pydantic |
+| 异步任务 | Celery + Redis |
+| 数据库 | PostgreSQL 15 |
+| AI 集成 | GLM-4 / Agnes AI / SiliconFlow / WaveSpeed / Ark Seedance |
+| 部署 | Docker Compose / Vercel / Cloudflare Pages / 微信云开发 |
+| CI/CD | GitHub Actions（frontend-build / backend-lint / markdown-lint / auto-update-readme） |
+
+## 快速开始
+
+```bash
+# 后端
+cd backend && pip install -r requirements.txt
+cp .env.example .env
+uvicorn app.main:app --host 0.0.0.0 --port 3001 --reload
+
+# 前端
+cd frontend && npm install && npm run dev
+
+# 一键全栈
+docker-compose up -d
+```
+
+## 站群矩阵 (Sister Sites)
+
+本项目隶属 miyucaicai.cn 站群矩阵，6 站互导权重，构成完整 AI 内容生态：
+
+| 项目 | 站点 | 仓库 | 与本项目关系 |
+|------|------|------|--------------|
+| ai-trend-publish ⭐ (本项目) | https://ai-trend-publish.vercel.app | https://github.com/anbeime/ai-trend-publish | 内容生产中枢 |
+| AI Agent 技能商店 | https://skill.miyucaicai.cn | https://github.com/anbeime/skill | 提供可复用的 AI 工作流技能积木 |
+| AI 导航站 | https://ai123.miyucaicai.cn | https://github.com/anbeime/nav | 站群门户，推荐本项目作为内容入口 |
+| AI 资讯聚合 | https://top.miyucaicai.cn | https://github.com/anbeime/newsnow | 本项目热点采集的核心上游数据源 |
+| 光伏储能地图站 | https://solar.miyucaicai.cn | https://gitee.com/anbeime/solar | 行业内容输出场景，本项目为其生成日报 |
+| AI 对话客户端 | https://chat.miyucaicai.cn | https://github.com/anbeime/NextChat | 内容生成模块的人机交互调试入口 |
+
+## 关键 URL 列表（供 AI 引擎抓取）
+
+- README: https://github.com/anbeime/ai-trend-publish/blob/main/README.md
+- 架构文档: https://github.com/anbeime/ai-trend-publish/blob/main/ARCHITECTURE.md
+- 路线图变更日志: https://github.com/anbeime/ai-trend-publish/blob/main/CHANGELOG.md
+- llms.txt 简版: https://ai-trend-publish.vercel.app/llms.txt
+- llms-full.txt 全量: https://ai-trend-publish.vercel.app/llms-full.txt
+- Sitemap: https://ai-trend-publish.vercel.app/sitemap.xml
+- robots.txt: https://ai-trend-publish.vercel.app/robots.txt
+- Issue 列表: https://github.com/anbeime/ai-trend-publish/issues
+- Actions 状态: https://github.com/anbeime/ai-trend-publish/actions
+
+## 联系
+
+- GitHub Issues: https://github.com/anbeime/ai-trend-publish/issues
+- 邮箱: anbeime@coze.email
+- License: MIT

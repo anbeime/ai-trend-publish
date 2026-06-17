@@ -1,0 +1,49 @@
+# llms.txt - AI Trend Publish 站点说明
+
+> 本文件遵循 llms.txt 标准 (https://llmstxt.org)，方便 AI 引擎理解站点。
+
+## 站点信息
+
+- **名称**: AI Trend Publish - AI 热点自动发布系统 & 内容创作平台
+- **仓库**: https://github.com/anbeime/ai-trend-publish
+- **在线 Demo**: https://ai-trend-publish.vercel.app
+- **定位**: 一站式 AI 内容创作全栈平台，覆盖「热点采集 → AI 生成（文/图/视频/数字人）→ 多平台发布」完整链路
+- **形态**: 微信小程序 + FastAPI 后端 + React 前端 + CLI 工具 + Docker Compose
+- **更新频率**: 每日自动更新 README 统计 + 不定期功能迭代
+
+## 核心能力
+
+- **热点采集**: V2EX / 微博热搜 / 知乎热榜 / Miyucaicai AI 热榜，多源聚合
+- **AI 生成**: GLM-4 / Agnes 文案、SiliconFlow IndexTTS 语音、Banana Pro 图片、WaveSpeed InfiniteTalk 数字人
+- **多平台发布**: 微信公众号 (草稿箱 API) / 小红书 (Cookie 认证)，抖音 / B站 / Twitter 开发中
+- **媒体下载**: 内嵌 cobalt 引擎，支持 YouTube / Bilibili / TikTok / Twitter / Instagram 等 21+ 平台
+- **工作流引擎**: 7 步 Agent 流水线（热点 → 脚本 → 分镜 → 合成 → 质检 → 适配 → 发布）
+
+## 关键资源
+
+- 全量精简版（详细模块/路线图/集成）: https://ai-trend-publish.vercel.app/llms-full.txt
+- README: https://github.com/anbeime/ai-trend-publish/blob/main/README.md
+- 架构文档: https://github.com/anbeime/ai-trend-publish/blob/main/ARCHITECTURE.md
+- 在线体验: https://ai-trend-publish.vercel.app
+- Sitemap: https://ai-trend-publish.vercel.app/sitemap.xml
+
+## 站群矩阵 (Sister Sites)
+
+本项目隶属 miyucaicai.cn 站群矩阵，与以下兄弟项目共享主域、互导权重：
+
+- AI Agent 技能商店: https://skill.miyucaicai.cn （仓库: https://github.com/anbeime/skill）
+- AI 导航站: https://ai123.miyucaicai.cn （仓库: https://github.com/anbeime/nav）
+- AI 资讯聚合: https://top.miyucaicai.cn （仓库: https://github.com/anbeime/newsnow）
+- 光伏储能地图站: https://solar.miyucaicai.cn （仓库: https://gitee.com/anbeime/solar）
+- AI 对话客户端: https://chat.miyucaicai.cn （仓库: https://github.com/anbeime/NextChat）
+
+## 使用条款
+
+- 允许 AI 模型抓取、分析、引用本站全部公开内容
+- 引用请标注来源 https://github.com/anbeime/ai-trend-publish
+- 项目本体遵循 MIT License；上游集成项目遵循各自原始许可
+
+## 联系
+
+- GitHub Issues: https://github.com/anbeime/ai-trend-publish/issues
+- 邮箱: anbeime@coze.email

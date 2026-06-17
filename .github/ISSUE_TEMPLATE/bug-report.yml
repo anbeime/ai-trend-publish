@@ -1,0 +1,92 @@
+name: 🐛 Bug Report
+description: 提交一个 Bug，帮助我们改进项目
+title: "[Bug]: "
+labels: ["bug", "needs-triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        感谢提交 Bug 报告！请尽量填写完整信息，方便我们快速复现和定位。
+        在提交前，请先搜索 [已有 Issue](https://github.com/anbeime/ai-trend-publish/issues) 避免重复。
+
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: 问题描述
+      description: 简要描述遇到的问题
+      placeholder: 例如：调用 /api/v1/hotspot 接口返回 500
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: 复现步骤
+      description: 一步步说明如何复现这个问题
+      value: |
+        1. 进入页面 '...'
+        2. 点击 '...'
+        3. 看到错误 '...'
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: 期望行为
+      description: 你期望发生什么？
+    validations:
+      required: true
+
+  - type: dropdown
+    id: module
+    attributes:
+      label: 受影响模块
+      options:
+        - 微信小程序 (pages/cloudfunctions)
+        - FastAPI 后端 (backend)
+        - React 前端 (frontend)
+        - 热点采集 (hotspot_service)
+        - AI 内容生成 (generation_service)
+        - 多平台发布 (publishing)
+        - 媒体下载 (media)
+        - CLI 工具 (cli)
+        - 部署/Docker
+        - 其他
+    validations:
+      required: true
+
+  - type: input
+    id: version
+    attributes:
+      label: 版本
+      description: 项目版本或 commit hash
+      placeholder: v3.0 / commit abc1234
+
+  - type: textarea
+    id: env
+    attributes:
+      label: 运行环境
+      description: 操作系统、Python/Node 版本、浏览器等
+      placeholder: |
+        - OS: Ubuntu 22.04
+        - Python: 3.11.6
+        - Node: 20.10.0
+        - Browser: Chrome 130
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: 日志/截图
+      description: 相关错误日志或截图，将自动以代码块格式呈现
+      render: shell
+
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: 提交确认
+      options:
+        - label: 我已搜索过现有 Issue，确认这是新问题
+          required: true
+        - label: 我已阅读 README 与文档，确认不是配置错误
+          required: true

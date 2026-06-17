@@ -1,0 +1,64 @@
+name: Auto Update README Stats
+
+# 每天 UTC 0:00 (北京时间 08:00) 自动更新 README 中的统计占位符
+# 同步当前 Star 数、最后更新时间，便于 GEO 收录时呈现"活体项目"信号
+on:
+  schedule:
+    - cron: "0 0 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  update-readme:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Fetch repo stats
+        id: stats
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -e
+          REPO="${GITHUB_REPOSITORY}"
+          DATA=$(curl -sSL \
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: Bearer ${GH_TOKEN}" \
+            "https://api.github.com/repos/${REPO}")
+          STARS=$(echo "$DATA" | grep -oE '"stargazers_count": *[0-9]+' | head -1 | grep -oE '[0-9]+')
+          TODAY=$(date -u +%Y-%m-%d)
+          echo "stars=${STARS:-0}" >> $GITHUB_OUTPUT
+          echo "today=${TODAY}" >> $GITHUB_OUTPUT
+          echo "Stars: ${STARS:-0} | Date: ${TODAY}"
+
+      - name: Update README placeholders
+        run: |
+          set -e
+          STARS="${{ steps.stats.outputs.stars }}"
+          TODAY="${{ steps.stats.outputs.today }}"
+
+          # 替换 LAST_UPDATED 占位
+          sed -i -E "s|<!-- LAST_UPDATED -->[^<]*<!-- /LAST_UPDATED -->|<!-- LAST_UPDATED -->${TODAY}<!-- /LAST_UPDATED -->|g" README.md
+          # 替换 STAR_COUNT 占位
+          sed -i -E "s|<!-- STAR_COUNT -->[^<]*<!-- /STAR_COUNT -->|<!-- STAR_COUNT -->${STARS}<!-- /STAR_COUNT -->|g" README.md
+
+          echo "=== README 占位符替换完成 ==="
+          grep -n "LAST_UPDATED\|STAR_COUNT" README.md || true
+
+      - name: Commit & push if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          if git diff --quiet -- README.md; then
+            echo "README 无变化，跳过 commit。"
+            exit 0
+          fi
+          git add README.md
+          git commit -m "chore: auto-update readme stats [skip ci]"
+          git push origin main

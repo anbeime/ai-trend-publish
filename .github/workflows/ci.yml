@@ -1,0 +1,128 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  # ===========================================================
+  # frontend-build: 仅当 frontend/package.json 存在时执行
+  # ===========================================================
+  frontend-build:
+    name: Frontend Build (React + Vite)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Detect frontend
+        id: detect
+        run: |
+          if [ -f frontend/package.json ]; then
+            echo "exists=true" >> $GITHUB_OUTPUT
+          else
+            echo "exists=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Setup Node.js
+        if: steps.detect.outputs.exists == 'true'
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies
+        if: steps.detect.outputs.exists == 'true'
+        working-directory: frontend
+        run: |
+          if [ -f package-lock.json ]; then
+            npm ci || npm install
+          else
+            npm install
+          fi
+
+      - name: Build
+        if: steps.detect.outputs.exists == 'true'
+        working-directory: frontend
+        run: npm run build --if-present
+
+      - name: Skip notice
+        if: steps.detect.outputs.exists != 'true'
+        run: echo "frontend/package.json 不存在，跳过前端构建。"
+
+  # ===========================================================
+  # backend-lint: 仅当 backend/ 存在 Python 源码时执行
+  # ===========================================================
+  backend-lint:
+    name: Backend Lint (Ruff)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Detect backend
+        id: detect
+        run: |
+          if [ -d backend ] && find backend -maxdepth 4 -name "*.py" -print -quit | grep -q .; then
+            echo "exists=true" >> $GITHUB_OUTPUT
+          else
+            echo "exists=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Setup Python
+        if: steps.detect.outputs.exists == 'true'
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install ruff
+        if: steps.detect.outputs.exists == 'true'
+        run: pip install ruff
+
+      - name: Run ruff (non-blocking)
+        if: steps.detect.outputs.exists == 'true'
+        working-directory: backend
+        run: |
+          ruff check . --output-format=github || echo "ruff 报告了 lint 警告，但不阻塞 CI（首次接入软启动）。"
+
+      - name: Skip notice
+        if: steps.detect.outputs.exists != 'true'
+        run: echo "backend/ 下未发现 Python 源码，跳过后端 Lint。"
+
+  # ===========================================================
+  # markdown-lint: 检查 .md 文件的死链 / 基础格式
+  # ===========================================================
+  markdown-lint:
+    name: Markdown Lint (dead-link check)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install markdown-link-check
+        run: npm install -g markdown-link-check@3.12.2
+
+      - name: Check README and key markdown files
+        run: |
+          set +e
+          FAIL=0
+          for md in README.md ARCHITECTURE.md CHANGELOG.md QUICK_START.md DEPLOY_GUIDE.md; do
+            if [ -f "$md" ]; then
+              echo "=== Checking $md ==="
+              # --quiet：仅打印失败链接；非阻塞，软启动避免存量死链卡住 CI
+              markdown-link-check "$md" --quiet --config <(echo '{"timeout":"10s","retryOn429":true,"retryCount":2,"aliveStatusCodes":[200,206,403,429]}') || FAIL=$((FAIL+1))
+            fi
+          done
+          if [ "$FAIL" -gt 0 ]; then
+            echo "::warning::部分 markdown 文件包含可能失效的链接（非阻塞，请人工复核）"
+          fi
+          exit 0

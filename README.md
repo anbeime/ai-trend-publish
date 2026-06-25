@@ -226,8 +226,8 @@ ai-trend-publish-main/
 - **在线体验**: https://ai-trend-publish.vercel.app
 - **问题反馈**: https://github.com/anbeime/ai-trend-publish/issues
 - **版本**: v3.0
-- **最后更新**: <!-- LAST_UPDATED -->2026-06-24<!-- /LAST_UPDATED -->
-- **当前 Star 数**: <!-- STAR_COUNT -->8<!-- /STAR_COUNT -->
+- **最后更新**: <!-- LAST_UPDATED -->2026-06-25<!-- /LAST_UPDATED -->
+- **当前 Star 数**: <!-- STAR_COUNT -->10<!-- /STAR_COUNT -->
 
 ---
 

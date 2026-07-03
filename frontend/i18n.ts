@@ -1,20 +1,45 @@
 export const translations = {
   en: {
     landing: {
-      heroTitle: "AI Digital Humans for Global Growth",
-      heroSubtitle: "Transform your scripts into high-converting videos in 30 seconds. Professional avatars, cloned voices, and perfect lip-sync.",
+      heroTitle: "AI-Powered Content Automation",
+      heroSubtitle: "From trending topics to published articles. Auto-collect hotspots, AI-create content, and publish to 10+ platforms automatically.",
       cta: "Get Started Free",
       watchDemo: "Watch Demo",
       features: {
-        title: "The Future of Content Creation",
-        avatar: "Hyper-Realistic Avatars",
-        avatarDesc: "Upload 4 photos to generate your custom digital identity.",
-        voice: "Neural Voice Cloning",
-        voiceDesc: "Clone any voice with high fidelity and emotional depth.",
-        script: "AI Script Genius",
-        scriptDesc: "Generate viral TikTok scripts based on your product details."
+        title: "All-in-One Content Platform",
+        hotspot: "Real-time Hotspot Collection",
+        hotspotDesc: "Auto-collect trending topics from 50+ sources including Weibo, Zhihu, V2EX. Real-time updates and intelligent deduplication.",
+        ai: "AI Content Analysis",
+        aiDesc: "Multi-agent AI system with 4-layer analysis framework. Deep insight into phenomena, logic, needs, and predictions.",
+        video: "AI Video Generation",
+        videoDesc: "Professional digital human videos in 30 seconds. Hyper-realistic avatars, neural voice cloning, perfect lip-sync.",
+        article: "AI Article Writing",
+        articleDesc: "1000+ words high-quality articles in 1 minute. 85% originality rate, optimized for SEO and social engagement.",
+        publish: "Auto Publishing",
+        publishDesc: "One-click publishing to WeChat Official Account, Weibo, TikTok and 10+ platforms. Real-time status tracking.",
+        auto: "Scheduled Automation",
+        autoDesc: "Set it and forget it. Auto-run workflow at scheduled times. Daily content updates without manual intervention."
       },
-      showcase: "Meet our top performers",
+      workflow: {
+        title: "How It Works",
+        desc: "From hotspot discovery to content publication in 4 simple steps",
+        step1: "Collect Hotspots",
+        step1Desc: "Auto-collect trending topics from multiple platforms in real-time",
+        step2: "AI Analysis",
+        step2Desc: "Deep analysis and insight extraction using multi-agent AI system",
+        step3: "Content Creation",
+        step3Desc: "AI generates articles, scripts, and digital human videos",
+        step4: "Auto Publish",
+        step4Desc: "One-click publishing to multiple platforms simultaneously"
+      },
+      hotspot: {
+        title: "Live Hotspots",
+        desc: "Real-time trending topics from across the internet"
+      },
+      showcase: {
+        title: "What You Can Create",
+        desc: "From articles to videos, everything automated by AI"
+      },
       trust: "Trusted by 10,000+ creators worldwide"
     },
     nav: {
@@ -190,20 +215,45 @@ export const translations = {
   },
   zh: {
     landing: {
-      heroTitle: "赋能全球增长的数字人技术",
-      heroSubtitle: "30秒内将您的文案转化为高转化视频。专业形象、完美音色、极致口型匹配。",
+      heroTitle: "AI驱动的内容自动化平台",
+      heroSubtitle: "从热点发现到内容发布一站式完成。自动采集热点、AI创作内容、一键发布到10+平台。",
       cta: "立即免费开始",
       watchDemo: "观看演示",
       features: {
-        title: "重塑内容创作的未来",
-        avatar: "超写实数字形象",
-        avatarDesc: "上传4张照片即可生成您的专属数字分身。",
-        voice: "神经网络语音克隆",
-        voiceDesc: "高保真克隆任何音色，完美还原情感起伏。",
-        script: "AI 爆款脚本专家",
-        scriptDesc: "基于产品卖点，一键生成符合 TikTok 流量趋势的脚本。"
+        title: "一站式内容创作平台",
+        hotspot: "实时热点采集",
+        hotspotDesc: "自动采集微博、知乎、V2EX等50+平台热点话题。实时更新，智能去重。",
+        ai: "AI内容分析",
+        aiDesc: "多智能体AI系统，四层分析框架。深度洞察现象、逻辑、需求与预测。",
+        video: "AI视频生成",
+        videoDesc: "30秒生成专业数字人口播视频。超写实形象、神经网络语音克隆、完美口型匹配。",
+        article: "AI文章写作",
+        articleDesc: "1分钟生成1000+字高质量文章。85%原创率，SEO优化，社交传播友好。",
+        publish: "一键自动发布",
+        publishDesc: "一键发布到微信公众号、微博、TikTok等10+平台。实时状态追踪。",
+        auto: "定时自动化",
+        autoDesc: "设置后自动运行。定时触发工作流，每日更新内容无需人工干预。"
       },
-      showcase: "探索热门数字人形象",
+      workflow: {
+        title: "工作流程",
+        desc: "从热点发现到内容发布，仅需4步",
+        step1: "采集热点",
+        step1Desc: "实时从多个平台自动采集热点话题",
+        step2: "AI分析",
+        step2Desc: "多智能体AI系统进行深度分析与洞察提取",
+        step3: "内容创作",
+        step3Desc: "AI生成文章、脚本和数字人视频",
+        step4: "自动发布",
+        step4Desc: "一键同步发布到多个平台"
+      },
+      hotspot: {
+        title: "实时热点",
+        desc: "全网实时热点话题"
+      },
+      showcase: {
+        title: "你可以创作什么",
+        desc: "从文章到视频，一切由AI自动化完成"
+      },
       trust: "全球 10,000+ 创作者的共同选择"
     },
     nav: {

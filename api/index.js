@@ -22,10 +22,10 @@ app.get('/api/health', (c) => {
   });
 });
 
-// 微信配置存储（在实际部署中应该使用环境变量或数据库）
+// 微信配置存储（从环境变量读取）
 let wechatConfig = {
-  appid: 'wx8410119dfbb7f756',
-  secret: '3c93e33e087e57b906f5c341aa5223b9'
+  appid: process.env.WECHAT_APPID || '',
+  secret: process.env.WECHAT_SECRET || ''
 };
 
 // 获取微信配置

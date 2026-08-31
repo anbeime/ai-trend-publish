@@ -1,0 +1,7 @@
+{
+  "navigationBarTitleText": "会员订阅",
+  "enablePullDownRefresh": true,
+  "backgroundColorTop": "#667eea",
+  "navigationBarBackgroundColor": "#667eea",
+  "navigationBarTextStyle": "white"
+}

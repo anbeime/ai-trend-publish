@@ -1,0 +1,157 @@
+openapi: 3.0.0
+info:
+  title: 微信文章发布
+  version: 1.0.0
+servers:
+  - url: https://mp.miyucaicai.cn
+paths:
+  /coze/token:
+    get:
+      operationId: getAccessToken
+      parameters:
+        - name: appid
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: secret
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: grant_type
+          in: query
+          required: false
+          schema:
+            type: string
+            default: client_credential
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: object
+                    properties:
+                      access_token:
+                        type: string
+                      expires_in:
+                        type: integer
+  /coze/upload:
+    post:
+      operationId: uploadImage
+      parameters:
+        - name: access_token
+          in: query
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [media]
+              properties:
+                media:
+                  type: string
+                  format: binary
+                type:
+                  type: string
+                  default: thumb
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: object
+                    properties:
+                      media_id:
+                        type: string
+                      url:
+                        type: string
+  /coze/draft:
+    post:
+      operationId: createDraft
+      parameters:
+        - name: access_token
+          in: query
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [articles]
+              properties:
+                articles:
+                  type: array
+                  items:
+                    type: object
+                    required: [title, content, thumb_media_id]
+                    properties:
+                      title:
+                        type: string
+                      content:
+                        type: string
+                      thumb_media_id:
+                        type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: object
+                    properties:
+                      media_id:
+                        type: string
+  /coze/publish:
+    post:
+      operationId: publishArticle
+      parameters:
+        - name: access_token
+          in: query
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [media_id]
+              properties:
+                media_id:
+                  type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: object
+                    properties:
+                      publish_id:
+                        type: string
+                      msg_id:
+                        type: integer

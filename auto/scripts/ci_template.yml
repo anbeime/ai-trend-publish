@@ -1,0 +1,299 @@
+# 微信小程序智能体 - CI/CD 配置模板
+# 适用于 GitHub Actions / GitLab CI / 其他CI平台
+# 复制此文件到 .github/workflows/ci.yml 或相应位置
+
+name: 微信小程序智能体 CI/CD
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:  # 手动触发
+
+env:
+  NODE_VERSION: '16.x'
+  WECHAT_APPID: ${{ secrets.WECHAT_APPID }}
+
+jobs:
+  # ========== 代码质量检查 ==========
+  lint:
+    name: 代码规范检查
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: 检出代码
+      uses: actions/checkout@v3
+      
+    - name: 设置 Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        
+    - name: 安装依赖
+      run: |
+        npm ci
+        
+    - name: 运行 ESLint
+      run: |
+        npm run lint
+        
+    - name: 检查代码格式
+      run: |
+        npm run format:check
+
+  # ========== 单元测试 ==========
+  unit-test:
+    name: 单元测试
+    runs-on: ubuntu-latest
+    needs: lint
+    
+    steps:
+    - name: 检出代码
+      uses: actions/checkout@v3
+      
+    - name: 设置 Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        
+    - name: 安装依赖
+      run: |
+        npm ci
+        
+    - name: 运行单元测试
+      run: |
+        npm run test:unit -- --coverage
+        
+    - name: 上传覆盖率报告
+      uses: actions/upload-artifact@v3
+      with:
+        name: coverage-report
+        path: coverage/
+
+  # ========== 云函数测试 ==========
+  cloud-function-test:
+    name: 云函数测试
+    runs-on: ubuntu-latest
+    needs: lint
+    
+    steps:
+    - name: 检出代码
+      uses: actions/checkout@v3
+      
+    - name: 设置 Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        
+    - name: 安装云函数依赖
+      run: |
+        for dir in cloudfunctions/*/; do
+          cd "$dir"
+          npm ci
+          cd ../..
+        done
+        
+    - name: 验证云函数配置
+      run: |
+        python auto/scripts/deploy_helper.py --validate
+        
+    - name: 运行云函数测试
+      run: |
+        python auto/scripts/test_runner.py --cloud
+
+  # ========== 构建检查 ==========
+  build:
+    name: 构建检查
+    runs-on: ubuntu-latest
+    needs: [unit-test, cloud-function-test]
+    
+    steps:
+    - name: 检出代码
+      uses: actions/checkout@v3
+      
+    - name: 设置 Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        
+    - name: 安装依赖
+      run: |
+        npm ci
+        
+    - name: 构建小程序
+      run: |
+        npm run build
+        
+    - name: 检查构建产物
+      run: |
+        ls -la dist/
+
+  # ========== 集成测试 ==========
+  integration-test:
+    name: 集成测试
+    runs-on: ubuntu-latest
+    needs: build
+    if: github.ref == 'refs/heads/main'
+    
+    steps:
+    - name: 检出代码
+      uses: actions/checkout@v3
+      
+    - name: 设置 Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        
+    - name: 安装依赖
+      run: |
+        npm ci
+        
+    - name: 运行集成测试
+      run: |
+        python auto/scripts/test_runner.py --integration
+
+  # ========== 部署到测试环境 ==========
+  deploy-staging:
+    name: 部署到测试环境
+    runs-on: ubuntu-latest
+    needs: [build, integration-test]
+    if: github.ref == 'refs/heads/develop'
+    environment: staging
+    
+    steps:
+    - name: 检出代码
+      uses: actions/checkout@v3
+      
+    - name: 设置 Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        
+    - name: 安装依赖
+      run: |
+        npm ci
+        
+    - name: 构建测试版本
+      run: |
+        npm run build:staging
+        
+    - name: 生成部署检查清单
+      run: |
+        python auto/scripts/deploy_helper.py --checklist
+        
+    - name: 备份云函数
+      run: |
+        python auto/scripts/deploy_helper.py --backup
+        
+    - name: 上传构建产物
+      uses: actions/upload-artifact@v3
+      with:
+        name: staging-build
+        path: dist/
+
+  # ========== 部署到生产环境 ==========
+  deploy-production:
+    name: 部署到生产环境
+    runs-on: ubuntu-latest
+    needs: [build, integration-test]
+    if: github.ref == 'refs/heads/main'
+    environment: production
+    
+    steps:
+    - name: 检出代码
+      uses: actions/checkout@v3
+      
+    - name: 设置 Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        
+    - name: 安装依赖
+      run: |
+        npm ci
+        
+    - name: 构建生产版本
+      run: |
+        npm run build:production
+        
+    - name: 验证云函数
+      run: |
+        python auto/scripts/deploy_helper.py --validate
+        
+    - name: 生成部署检查清单
+      run: |
+        python auto/scripts/deploy_helper.py --checklist
+        
+    - name: 备份云函数
+      run: |
+        python auto/scripts/deploy_helper.py --backup
+        
+    - name: 创建发布标签
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: v${{ github.run_number }}
+        release_name: Release v${{ github.run_number }}
+        draft: false
+        prerelease: false
+        
+    - name: 上传构建产物
+      uses: actions/upload-artifact@v3
+      with:
+        name: production-build
+        path: dist/
+
+  # ========== 生成测试报告 ==========
+  test-report:
+    name: 生成测试报告
+    runs-on: ubuntu-latest
+    needs: [unit-test, cloud-function-test, integration-test]
+    if: always()
+    
+    steps:
+    - name: 检出代码
+      uses: actions/checkout@v3
+      
+    - name: 设置 Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
+        
+    - name: 生成汇总报告
+      run: |
+        python auto/scripts/test_runner.py --summary
+        
+    - name: 上传测试报告
+      uses: actions/upload-artifact@v3
+      with:
+        name: test-reports
+        path: auto/reports/
+
+# ========== 定时任务 ==========
+schedule:
+  # 每日健康检查
+  health-check:
+    name: 每日健康检查
+    runs-on: ubuntu-latest
+    schedule:
+      - cron: '0 9 * * *'  # 每天上午9点
+    
+    steps:
+    - name: 检出代码
+      uses: actions/checkout@v3
+      
+    - name: 设置 Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
+        
+    - name: 运行健康检查
+      run: |
+        python auto/scripts/test_runner.py --cloud
+        
+    - name: 发送通知（如需要）
+      if: failure()
+      run: |
+        echo "健康检查失败，发送通知..."

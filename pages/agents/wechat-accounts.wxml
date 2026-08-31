@@ -1,0 +1,219 @@
+<!--pages/agents/wechat-accounts.wxml - 公众号管理页面-->
+<view class="accounts-container">
+  <!-- 顶部导航栏 -->
+  <view class="accounts-header">
+    <text class="header-title">公众号管理</text>
+    <view class="header-actions">
+      <button class="add-btn" bindtap="showAddAccountModal" size="mini">
+        <text class="add-icon">+</text>
+        <text class="add-text">添加公众号</text>
+      </button>
+    </view>
+  </view>
+
+  <!-- 当前选中的公众号 -->
+  <view class="current-account-section" wx:if="{{currentAccount}}">
+    <view class="section-title">当前选中的公众号</view>
+    <view class="current-account-card">
+      <view class="account-avatar">
+        <image src="{{currentAccount.avatar || '/images/logo.png'}}" mode="aspectFill"></image>
+      </view>
+      <view class="account-info">
+        <text class="account-name">{{currentAccount.name}}</text>
+        <text class="account-id">AppID: {{currentAccount.app_id}}</text>
+        <text class="account-status active">✓ 已启用</text>
+      </view>
+      <view class="account-actions">
+        <button class="action-btn edit" catchtap="editAccount" data-app-id="{{currentAccount.app_id}}" size="mini">
+          编辑
+        </button>
+      </view>
+    </view>
+    
+    <!-- 返回发布页面按钮 -->
+    <view class="action-bar">
+      <button class="back-to-publish-btn" bindtap="goBackToPublish">
+        返回发布文章
+      </button>
+    </view>
+  </view>
+
+  <!-- 未设置公众号提示 -->
+  <view class="no-account-section" wx:if="{{!currentAccount}}">
+    <view class="no-account-icon">📱</view>
+    <text class="no-account-title">还没有配置公众号</text>
+    <text class="no-account-desc">添加公众号后即可一键发布文章</text>
+    <button class="setup-btn" bindtap="showAddAccountModal">
+      立即添加
+    </button>
+  </view>
+
+  <!-- 公众号列表（切换账号用） -->
+  <view class="accounts-list-section" wx:if="{{accounts.length > 1}}">
+    <view class="section-title">
+      切换公众号（点击选择）
+    </view>
+
+    <scroll-view class="accounts-scroll" scroll-y>
+      <view class="account-item {{currentAccount.app_id === item.app_id ? 'active' : ''}}"
+            wx:for="{{accounts}}"
+            wx:key="app_id"
+            bindtap="selectAccount"
+            data-app-id="{{item.app_id}}">
+        <view class="account-avatar">
+          <image src="{{item.avatar || '/images/logo.png'}}" mode="aspectFill"></image>
+          <view class="active-badge" wx:if="{{currentAccount.app_id === item.app_id}}">
+            <text>当前</text>
+          </view>
+        </view>
+
+        <view class="account-info">
+          <text class="account-name">{{item.name}}</text>
+          <text class="account-id">{{item.app_id}}</text>
+          <text class="account-time">
+            更新: {{item.updateTime ? formatTime(item.updateTime) : '未使用'}}
+          </text>
+        </view>
+
+        <view class="account-actions">
+          <button class="action-btn delete"
+                  catchtap="deleteAccount"
+                  data-app-id="{{item.app_id}}"
+                  size="mini">
+            删除
+          </button>
+        </view>
+      </view>
+    </scroll-view>
+  </view>
+
+  <!-- 单个公众号时的列表（只显示编辑/删除） -->
+  <view class="accounts-list-section" wx:if="{{accounts.length === 1 && currentAccount}}">
+    <view class="section-title">
+      已配置的公众号（1）
+    </view>
+
+    <scroll-view class="accounts-scroll" scroll-y>
+      <view class="account-item active">
+        <view class="account-avatar">
+          <image src="{{accounts[0].avatar || '/images/logo.png'}}" mode="aspectFill"></image>
+          <view class="active-badge">
+            <text>当前</text>
+          </view>
+        </view>
+
+        <view class="account-info">
+          <text class="account-name">{{accounts[0].name}}</text>
+          <text class="account-id">{{accounts[0].app_id}}</text>
+        </view>
+
+        <view class="account-actions">
+          <button class="action-btn edit"
+                  catchtap="editAccount"
+                  data-app-id="{{accounts[0].app_id}}"
+                  size="mini">
+            编辑
+          </button>
+          <button class="action-btn delete"
+                  catchtap="deleteAccount"
+                  data-app-id="{{accounts[0].app_id}}"
+                  size="mini">
+            删除
+          </button>
+        </view>
+      </view>
+    </scroll-view>
+  </view>
+
+  <!-- 空状态 -->
+  <view class="empty-state" wx:if="{{accounts.length === 0}}">
+    <view class="empty-icon">📝</view>
+    <text class="empty-text">还没有添加公众号</text>
+    <button class="empty-btn" bindtap="showAddAccountModal">
+      添加第一个公众号
+    </button>
+  </view>
+</view>
+
+<!-- 添加/编辑公众号弹窗 -->
+<view class="modal-overlay" wx:if="{{showAccountModal}}" bindtap="hideAccountModal">
+  <view class="modal-content" catchtap="stopPropagation">
+    <view class="modal-header">
+      <text class="modal-title">{{editingAccount ? '编辑公众号' : '添加公众号'}}</text>
+      <text class="modal-close" bindtap="hideAccountModal">✕</text>
+    </view>
+
+    <view class="modal-body">
+      <view class="form-group">
+        <text class="form-label">公众号名称 *</text>
+        <input class="form-input"
+               placeholder="例如：我的公众号"
+               value="{{formData.name}}"
+               bindinput="onInputChange"
+               data-field="name"
+               maxlength="50" />
+      </view>
+
+      <view class="form-group">
+        <text class="form-label">AppID *</text>
+        <input class="form-input"
+               placeholder="wx开头的AppID"
+               value="{{formData.app_id}}"
+               bindinput="onInputChange"
+               data-field="app_id"
+               maxlength="50" />
+      </view>
+
+      <view class="form-group">
+        <text class="form-label">AppSecret *</text>
+        <input class="form-input"
+               placeholder="公众号AppSecret"
+               value="{{formData.app_secret}}"
+               bindinput="onInputChange"
+               data-field="app_secret"
+               password="{{true}}"
+               maxlength="100" />
+      </view>
+
+      <view class="form-group">
+        <text class="form-label">头像URL（可选）</text>
+        <input class="form-input"
+               placeholder="公众号头像图片地址"
+               value="{{formData.avatar}}"
+               bindinput="onInputChange"
+               data-field="avatar" />
+      </view>
+
+      <view class="form-tips">
+        <text class="tips-title">📌 获取方式：</text>
+        <text class="tips-text">1. 登录微信公众平台 mp.weixin.qq.com</text>
+        <text class="tips-text">2. 开发 → 基本配置 → 开发者ID</text>
+        <text class="tips-text">3. 获取 AppID 和 AppSecret</text>
+      </view>
+      
+      <view class="ip-whitelist-tip">
+        <text class="ip-title">⚠️ 重要：配置IP白名单</text>
+        <text class="ip-desc">添加公众号前，请先在公众号后台配置IP白名单：</text>
+        <view class="ip-address-box" bindtap="copyServerIP">
+          <text class="ip-label">服务器IP：</text>
+          <text class="ip-value">39.108.254.228</text>
+          <text class="copy-icon">📋</text>
+        </view>
+        <text class="ip-steps">配置路径：设置与开发 → 基本配置 → IP白名单 → 修改</text>
+        <text class="ip-warn">⚠️ 未配置IP白名单将导致发布失败</text>
+      </view>
+    </view>
+
+    <view class="modal-footer">
+      <button class="modal-btn cancel" bindtap="hideAccountModal">取消</button>
+      <button class="modal-btn confirm" bindtap="saveAccount">
+        {{editingAccount ? '更新' : '添加'}}
+      </button>
+    </view>
+  </view>
+</view>
+
+<!-- 底部说明 -->
+<view class="accounts-footer">
+  <text class="footer-text">🔐 数据仅保存在本地，不会上传到云端</text>
+</view>

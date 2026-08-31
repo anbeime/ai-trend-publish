@@ -1,0 +1,71 @@
+{
+  "project": "微信小程序智能体",
+  "type": "miniprogram",
+  "last_updated": "2026-02-17",
+  "current_task": null,
+  "tasks": [
+    {
+      "id": 1,
+      "title": "代码规范检查",
+      "description": "检查代码规范性和潜在问题",
+      "status": "completed",
+      "priority": "high",
+      "estimated_time": "15分钟",
+      "category": "quality"
+    },
+    {
+      "id": 2,
+      "title": "单元测试",
+      "description": "运行单元测试用例",
+      "status": "completed",
+      "priority": "high",
+      "estimated_time": "30分钟",
+      "category": "testing"
+    },
+    {
+      "id": 3,
+      "title": "云函数测试",
+      "description": "测试云函数功能",
+      "status": "completed",
+      "priority": "high",
+      "estimated_time": "45分钟",
+      "category": "testing"
+    },
+    {
+      "id": 4,
+      "title": "小程序页面测试",
+      "description": "测试小程序页面功能",
+      "status": "completed",
+      "priority": "medium",
+      "estimated_time": "30分钟",
+      "category": "testing"
+    },
+    {
+      "id": 5,
+      "title": "集成测试",
+      "description": "端到端集成测试",
+      "status": "completed",
+      "priority": "high",
+      "estimated_time": "60分钟",
+      "category": "testing"
+    },
+    {
+      "id": 6,
+      "title": "测试报告汇总",
+      "description": "汇总所有测试结果",
+      "status": "completed",
+      "priority": "medium",
+      "estimated_time": "15分钟",
+      "category": "reporting"
+    }
+  ],
+  "completed_tasks": [],
+  "notes": [],
+  "metrics": {
+    "total_tasks": 6,
+    "completed": 6,
+    "pending": 0,
+    "in_progress": 0,
+    "pass_rate": "92%"
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "name": "viral-video-parser",
+  "version": "1.0.1",
+  "description": "爆款视频解析云函数 - 分析对标视频并生成复刻方案",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "viral",
+    "video",
+    "analysis",
+    "wechat",
+    "cloud"
+  ],
+  "author": "AI Development Team",
+  "license": "MIT",
+  "dependencies": {
+    "wx-server-sdk": "latest"
+  },
+  "cloudfunction-config": {
+    "memorySize": 512,
+    "timeout": 60
+  }
+}

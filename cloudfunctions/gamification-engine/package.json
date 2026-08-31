@@ -1,0 +1,13 @@
+{
+  "name": "gamification-engine",
+  "version": "1.0.0",
+  "description": "游戏化后端服务",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "~2.1.2"
+  },
+  "cloudfunction-config": {
+    "memorySize": 256,
+    "timeout": 60
+  }
+}

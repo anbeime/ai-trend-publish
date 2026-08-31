@@ -1,0 +1,154 @@
+<!--pages/consistency/consistency.wxml - 一致性检查页-->
+<view class="page-container">
+  <!-- 状态总览卡片 -->
+  <view class="overview-card">
+    <view class="overview-header">
+      <view class="overview-stats">
+        <text class="pass-rate">{{consistencyData.passRate}}%</text>
+        <text class="pass-label">通过率</text>
+      </view>
+      <view class="overview-chart">
+        <!-- 简化的环形进度图表 -->
+        <view class="progress-ring">
+          <view 
+            class="progress-circle good" 
+            style="background: conic-gradient(#8B5CF6 0deg, #8B5CF6 {{consistencyData.passRate * 3.6}}deg, transparent {{consistencyData.passRate * 3.6}}deg);"
+          ></view>
+        </view>
+        <view class="chart-center">
+          <text class="total-count">{{consistencyData.total}}</text>
+          <text class="total-label">检查项</text>
+        </view>
+      </view>
+    </view>
+    
+    <view class="overview-summary">
+      <view class="summary-item warning">
+        <view class="summary-icon">⚠️</view>
+        <text class="summary-count">{{consistencyData.warnings}}</text>
+        <text class="summary-label">警告</text>
+      </view>
+      <view class="summary-item error">
+        <view class="summary-icon"></view>
+        <text class="summary-count">{{consistencyData.errors}}</text>
+        <text class="summary-label">错误</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 筛选 Chips -->
+  <view class="filter-chips">
+    <view 
+      class="chip {{activeFilter === 'all' ? 'active' : ''}}" 
+      bindtap="setFilter" 
+      data-filter="all"
+    >
+      <text class="chip-text">全部</text>
+    </view>
+    <view 
+      class="chip {{activeFilter === 'warning' ? 'active' : ''}}" 
+      bindtap="setFilter" 
+      data-filter="warning"
+    >
+      <text class="chip-text">仅看警告</text>
+    </view>
+    <view 
+      class="chip {{activeFilter === 'error' ? 'active' : ''}}" 
+      bindtap="setFilter" 
+      data-filter="error"
+    >
+      <text class="chip-text">仅看错误</text>
+    </view>
+  </view>
+
+  <!-- 问题列表 -->
+  <scroll-view class="issues-scroll" scroll-y>
+    <view class="issues-list">
+      <!-- 通过项 -->
+      <view 
+        class="issue-item good" 
+        wx:for="{{filteredIssues.good}}" 
+        wx:key="id"
+        wx:for-item="issue"
+      >
+        <view class="issue-status">
+          <view class="status-icon good">✓</view>
+        </view>
+        <view class="issue-content">
+          <text class="issue-title">{{issue.title}}</text>
+          <text class="issue-desc">{{issue.description}}</text>
+        </view>
+        <view class="issue-meta">
+          <text class="issue-time">{{issue.time}}</text>
+        </view>
+      </view>
+
+      <!-- 警告项 -->
+      <view 
+        class="issue-item warning" 
+        wx:for="{{filteredIssues.warning}}" 
+        wx:key="id"
+        wx:for-item="issue"
+      >
+        <view class="issue-status">
+          <view class="status-icon warning">⚠</view>
+        </view>
+        <view class="issue-content">
+          <text class="issue-title">{{issue.title}}</text>
+          <text class="issue-desc">{{issue.description}}</text>
+          <view class="issue-suggestion">
+            <text class="suggestion-label">建议:</text>
+            <text class="suggestion-text">{{issue.suggestion}}</text>
+          </view>
+        </view>
+        <view class="issue-meta">
+          <text class="issue-time">{{issue.time}}</text>
+          <button class="fix-btn" bindtap="applySuggestion" data-issue="{{issue}}">应用建议</button>
+        </view>
+      </view>
+
+      <!-- 错误项 -->
+      <view 
+        class="issue-item error" 
+        wx:for="{{filteredIssues.error}}" 
+        wx:key="id"
+        wx:for-item="issue"
+      >
+        <view class="issue-status">
+          <view class="status-icon error">✕</view>
+        </view>
+        <view class="issue-content">
+          <text class="issue-title">{{issue.title}}</text>
+          <text class="issue-desc">{{issue.description}}</text>
+          <view class="issue-suggestion">
+            <text class="suggestion-label">修复方案:</text>
+            <text class="suggestion-text">{{issue.fix}}</text>
+          </view>
+        </view>
+        <view class="issue-meta">
+          <text class="issue-time">{{issue.time}}</text>
+          <button class="fix-btn primary" bindtap="applyFix" data-issue="{{issue}}">一键修复</button>
+        </view>
+      </view>
+    </view>
+
+    <!-- 空状态 -->
+    <view class="empty-issues" wx:if="{{filteredIssuesLength === 0}}">
+      <view class="empty-icon">🎉</view>
+      <text class="empty-title">没有问题！</text>
+      <text class="empty-desc">所有一致性检查都通过了</text>
+    </view>
+  </scroll-view>
+
+  <!-- 底部批量操作条 -->
+  <view class="batch-actions" wx:if="{{hasWarningsOrErrors}}">
+    <view class="batch-info">
+      <text class="batch-count">{{selectedCount}}个问题</text>
+      <text class="batch-text">已选中</text>
+    </view>
+    <view class="batch-buttons">
+      <button class="batch-btn secondary" bindtap="batchIgnore">全部忽略</button>
+      <button class="batch-btn primary" bindtap="batchFix">批量修复</button>
+    </view>
+  </view>
+</view>

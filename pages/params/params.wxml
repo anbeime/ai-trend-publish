@@ -1,0 +1,137 @@
+<!--pages/params/params.wxml - 参数设置页面-->
+<view class="page-container">
+  <!-- 顶部导航栏 -->
+  <view class="nav-bar">
+    <view class="nav-back" bindtap="goBack">
+      <text class="back-icon">←</text>
+    </view>
+    <text class="nav-title">参数设置</text>
+    <view class="nav-menu">
+      <text class="menu-dots">···</text>
+    </view>
+  </view>
+
+  <!-- 内容滚动区 -->
+  <scroll-view class="content-scroll" scroll-y>
+    <!-- 分享链接解析 -->
+    <view class="param-section">
+      <text class="section-label">分享链接解析</text>
+      <view class="url-input-wrapper">
+        <input
+          class="url-input"
+          placeholder="请输入视频或文章链接"
+          value="{{shareUrl}}"
+          bindinput="onShareUrlInput"
+        />
+        <button class="parse-btn" bindtap="parseShareUrl">解析</button>
+      </view>
+      <text class="input-hint">支持抖音、快手、B站等平台</text>
+    </view>
+
+    <!-- 热点关键词 -->
+    <view class="param-section">
+      <text class="section-label">热点关键词</text>
+      <input 
+        class="text-input" 
+        placeholder="请输入热点关键词（最多15个字符）"
+        value="{{hotspotKeyword}}"
+        bindinput="onKeywordInput"
+        maxlength="15"
+      />
+      <text class="char-count">{{hotspotKeyword.length}}/{{keywordMaxLength}}</text>
+    </view>
+
+    <!-- 参考图片描述 -->
+    <view class="param-section">
+      <text class="section-label">参考图片描述</text>
+      <input 
+        class="text-input" 
+        placeholder="描述参考图片的风格、人物、场景等"
+        value="{{imageDescription}}"
+        bindinput="onImageDescriptionInput"
+      />
+      <text class="input-hint">用于确保生成图片的一致性</text>
+    </view>
+
+    <!-- 分镜数量 -->
+    <view class="param-section">
+      <text class="section-label">分镜数量</text>
+      <view class="counter-wrapper">
+        <view class="counter-btn" bindtap="onSceneCountMinus">-</view>
+        <input 
+          class="counter-input" 
+          type="number"
+          value="{{sceneCount}}"
+          bindinput="onSceneCountChange"
+        />
+        <view class="counter-btn" bindtap="onSceneCountPlus">+</view>
+      </view>
+      <text class="input-hint">3-5个分镜，每个分镜约3-5秒</text>
+    </view>
+
+    <!-- 视频风格 -->
+    <view class="param-section">
+      <text class="section-label">视频风格</text>
+      <view class="style-options">
+        <view 
+          class="style-option {{selectedVideoStyle === item.id ? 'selected' : ''}}" 
+          wx:for="{{videoStyles}}" 
+          wx:key="id"
+          bindtap="selectVideoStyle"
+          data-id="{{item.id}}"
+        >
+          <text class="style-name">{{item.name}}</text>
+        </view>
+      </view>
+      <text class="style-desc" wx:if="{{selectedVideoStyle}}">
+        {{selectedVideoStyleDesc}}
+      </text>
+    </view>
+
+    <!-- 电影风格 -->
+    <view class="param-section">
+      <text class="section-label">电影风格</text>
+      <view class="movie-styles">
+        <view 
+          class="movie-option {{selectedMovieStyle === item.id ? 'selected' : ''}}" 
+          wx:for="{{movieStyles}}" 
+          wx:key="id"
+          bindtap="selectMovieStyle"
+          data-id="{{item.id}}"
+        >
+          <text class="movie-name">{{item.name}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 脚本创作元素 -->
+    <view class="param-section">
+      <text class="section-label">脚本创作元素</text>
+      <view class="element-options">
+        <view 
+          class="element-option {{selectedScriptElements.indexOf(item.id) > -1 ? 'selected' : ''}}" 
+          wx:for="{{scriptElements}}" 
+          wx:key="id"
+          bindtap="toggleScriptElement"
+          data-id="{{item.id}}"
+        >
+          <text class="element-icon">{{item.icon}}</text>
+          <text class="element-name">{{item.name}}</text>
+        </view>
+      </view>
+      <text class="input-hint">选择脚本创作的核心元素</text>
+    </view>
+  </scroll-view>
+
+  <!-- 底部生成按钮 -->
+  <view class="bottom-bar">
+    <button class="save-btn" bindtap="saveAndReturn">
+      <text class="btn-icon">💾</text>
+      <text>保存并返回</text>
+    </button>
+    <button class="generate-btn" bindtap="generateVideo" disabled="{{isGenerating}}">
+      <text class="btn-star">⭐</text>
+      <text>{{isGenerating ? '生成中...' : '一键生成视频'}}</text>
+    </button>
+  </view>
+</view>

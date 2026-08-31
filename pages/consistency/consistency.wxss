@@ -1,0 +1,407 @@
+/* pages/consistency/consistency.wxss - 一致性检查页样式 */
+page {
+  background-color: #F5F5F5;
+}
+
+.page-container {
+  min-height: 100vh;
+  background-color: #F5F5F5;
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 140rpx; /* 为底部操作栏留空间 */
+}
+
+/* ==================== 状态总览卡片 ==================== */
+.overview-card {
+  background: linear-gradient(135deg, #FFFFFF 0%, #FAFAFA 100%);
+  border-radius: 32rpx;
+  margin: 24rpx;
+  padding: 32rpx;
+  box-shadow: 0 12rpx 36rpx rgba(0, 0, 0, 0.1);
+  position: relative;
+  overflow: hidden;
+}
+
+.overview-card::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -20%;
+  width: 300rpx;
+  height: 300rpx;
+  background: radial-gradient(circle, rgba(235, 47, 150, 0.08) 0%, transparent 70%);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.overview-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 32rpx;
+}
+
+.overview-stats {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.pass-rate {
+  font-size: 72rpx;
+  font-weight: 800;
+  color: #8B5CF6;
+  line-height: 1;
+}
+
+.pass-label {
+  font-size: 24rpx;
+  color: #9CA3AF;
+  margin-top: 8rpx;
+}
+
+.overview-chart {
+  position: relative;
+  width: 160rpx;
+  height: 160rpx;
+}
+
+.progress-ring {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+.progress-circle {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  mask: radial-gradient(circle, transparent 70%, white 70%);
+  -webkit-mask: radial-gradient(circle, transparent 70%, white 70%);
+}
+
+.progress-circle.good {
+  background: conic-gradient(#8B5CF6 0deg, #8B5CF6 360deg);
+}
+
+.chart-center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+}
+
+.total-count {
+  font-size: 32rpx;
+  font-weight: 700;
+  color: #333333;
+}
+
+.total-label {
+  font-size: 20rpx;
+  color: #9CA3AF;
+  display: block;
+  margin-top: 4rpx;
+}
+
+.overview-summary {
+  display: flex;
+  justify-content: space-around;
+  gap: 32rpx;
+}
+
+.summary-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 24rpx;
+  border-radius: 16rpx;
+  min-width: 120rpx;
+}
+
+.summary-item.warning {
+  background: rgba(255, 169, 64, 0.1);
+}
+
+.summary-item.error {
+  background: rgba(239, 68, 68, 0.1);
+}
+
+.summary-icon {
+  font-size: 32rpx;
+  margin-bottom: 8rpx;
+}
+
+.summary-count {
+  font-size: 36rpx;
+  font-weight: 700;
+  margin-bottom: 4rpx;
+}
+
+.summary-item.warning .summary-count {
+  color: #FFA940;
+}
+
+.summary-item.error .summary-count {
+  color: #EF4444;
+}
+
+.summary-label {
+  font-size: 22rpx;
+  color: #9CA3AF;
+}
+
+/* ==================== 筛选 Chips ==================== */
+.filter-chips {
+  display: flex;
+  gap: 16rpx;
+  padding: 0 24rpx;
+  margin: 24rpx 0;
+}
+
+.chip {
+  background: white;
+  border-radius: 24rpx;
+  padding: 16rpx 32rpx;
+  transition: all 0.3s ease;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.04);
+}
+
+.chip.active {
+  background: #EB2F96;
+  box-shadow: 0 4rpx 12rpx rgba(235, 47, 150, 0.3);
+}
+
+.chip-text {
+  font-size: 26rpx;
+  font-weight: 600;
+}
+
+.chip:not(.active) .chip-text {
+  color: #9CA3AF;
+}
+
+.chip.active .chip-text {
+  color: white;
+}
+
+/* ==================== 问题列表 ==================== */
+.issues-scroll {
+  flex: 1;
+  padding: 0 24rpx;
+}
+
+.issues-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20rpx;
+  padding-bottom: 24rpx;
+}
+
+.issue-item {
+  display: flex;
+  background: white;
+  border-radius: 24rpx;
+  padding: 24rpx;
+  box-shadow: 0 8rpx 24rpx rgba(0, 0, 0, 0.06);
+  transition: all 0.3s ease;
+}
+
+.issue-item:active {
+  transform: scale(0.98);
+}
+
+.issue-item.warning {
+  border-left: 6rpx solid #FFA940;
+}
+
+.issue-item.error {
+  border-left: 6rpx solid #EF4444;
+}
+
+.issue-status {
+  margin-right: 20rpx;
+  display: flex;
+  align-items: flex-start;
+  padding-top: 4rpx;
+}
+
+.status-icon {
+  width: 48rpx;
+  height: 48rpx;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24rpx;
+  color: white;
+}
+
+.status-icon.good {
+  background: #8B5CF6;
+}
+
+.status-icon.warning {
+  background: #FFA940;
+}
+
+.status-icon.error {
+  background: #EF4444;
+}
+
+.issue-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.issue-title {
+  font-size: 30rpx;
+  font-weight: 700;
+  color: #333333;
+  margin-bottom: 8rpx;
+}
+
+.issue-desc {
+  font-size: 26rpx;
+  color: #6B7280;
+  line-height: 1.5;
+  margin-bottom: 16rpx;
+}
+
+.issue-suggestion {
+  background: #F3F4F6;
+  border-radius: 12rpx;
+  padding: 16rpx;
+}
+
+.suggestion-label {
+  font-size: 24rpx;
+  font-weight: 600;
+  color: #9CA3AF;
+  display: block;
+  margin-bottom: 8rpx;
+}
+
+.suggestion-text {
+  font-size: 26rpx;
+  color: #333333;
+  line-height: 1.5;
+}
+
+.issue-meta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 12rpx;
+}
+
+.issue-time {
+  font-size: 22rpx;
+  color: #9CA3AF;
+}
+
+.fix-btn {
+  padding: 12rpx 24rpx;
+  border-radius: 16rpx;
+  font-size: 24rpx;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.fix-btn:not(.primary) {
+  background: white;
+  color: #EB2F96;
+  border: 1rpx solid #EB2F96;
+}
+
+.fix-btn.primary {
+  background: #EB2F96;
+  color: white;
+  box-shadow: 0 4rpx 12rpx rgba(235, 47, 150, 0.3);
+}
+
+/* ==================== 空状态 ==================== */
+.empty-issues {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 80rpx 40rpx;
+  text-align: center;
+}
+
+.empty-icon {
+  font-size: 80rpx;
+  margin-bottom: 24rpx;
+}
+
+.empty-title {
+  font-size: 32rpx;
+  font-weight: 700;
+  color: #333333;
+  margin-bottom: 12rpx;
+}
+
+.empty-desc {
+  font-size: 26rpx;
+  color: #9CA3AF;
+}
+
+/* ==================== 底部批量操作 ==================== */
+.batch-actions {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: white;
+  box-shadow: 0 -4rpx 12rpx rgba(0, 0, 0, 0.08);
+  padding: 24rpx 32rpx;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  z-index: 100;
+}
+
+.batch-info {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+}
+
+.batch-count {
+  font-size: 28rpx;
+  font-weight: 700;
+  color: #EB2F96;
+}
+
+.batch-text {
+  font-size: 26rpx;
+  color: #9CA3AF;
+}
+
+.batch-buttons {
+  display: flex;
+  gap: 20rpx;
+}
+
+.batch-btn {
+  padding: 16rpx 32rpx;
+  border-radius: 24rpx;
+  font-size: 28rpx;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.batch-btn.secondary {
+  background: white;
+  color: #EB2F96;
+  border: 2rpx solid #EB2F96;
+}
+
+.batch-btn.primary {
+  background: #EB2F96;
+  color: white;
+  box-shadow: 0 8rpx 24rpx rgba(235, 47, 150, 0.3);
+}

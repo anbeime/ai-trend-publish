@@ -1,0 +1,24 @@
+{
+  "name": "video-composer",
+  "version": "1.0.1",
+  "description": "视频合成云函数 - 将分镜图片和视频片段合成为完整视频",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "video",
+    "composition",
+    "wechat",
+    "cloud"
+  ],
+  "author": "AI Development Team",
+  "license": "MIT",
+  "dependencies": {
+    "wx-server-sdk": "latest"
+  },
+  "cloudfunction-config": {
+    "memorySize": 1024,
+    "timeout": 60
+  }
+}

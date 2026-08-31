@@ -1,0 +1,13 @@
+{
+  "name": "scene-orchestrator",
+  "version": "1.0.0",
+  "description": "多智能体场景调度引擎",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "~2.1.2"
+  },
+  "cloudfunction-config": {
+    "memorySize": 512,
+    "timeout": 60
+  }
+}

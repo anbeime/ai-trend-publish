@@ -1,0 +1,272 @@
+# 微信小程序智能体项目 - 技能配置文件
+# 项目：miniprogram-agent
+# 类型：微信小程序 + 云开发 + AI智能体
+# 最后更新：2026-02-17
+
+project:
+  name: "微信小程序智能体"
+  type: "miniprogram"
+  platform: "wechat"
+  description: "基于微信小程序的AI智能体应用，支持多平台内容发布"
+  features:
+    - "AI对话智能体"
+    - "热点内容生成"
+    - "多平台发布（微信公众号、小红书、B站）"
+    - "云开发后端"
+  
+skills:
+  # 系统内置技能
+  builtin:
+    - name: docx
+      description: "Word文档创建"
+      use_cases:
+        - "项目文档"
+        - "API文档"
+        - "使用说明"
+      priority: "high"
+      
+    - name: pptx
+      description: "PPT演示文稿"
+      use_cases:
+        - "项目路演"
+        - "功能演示"
+      priority: "medium"
+      
+    - name: xlsx
+      description: "Excel数据处理"
+      use_cases:
+        - "数据分析"
+        - "配置管理"
+      priority: "medium"
+      
+    - name: python
+      description: "Python脚本开发"
+      use_cases:
+        - "测试脚本"
+        - "数据处理"
+        - "自动化工具"
+      priority: "high"
+      
+    - name: javascript
+      description: "JavaScript/TypeScript开发"
+      use_cases:
+        - "小程序前端"
+        - "云函数"
+        - "API开发"
+      priority: "high"
+      
+    - name: gpt_image_2_pro
+      description: "GPT-Image-2 图片生成技能"
+      use_cases:
+        - "分镜图片生成"
+        - "文章配图"
+        - "封面图生成"
+        - "信息图/海报"
+        - "电商主图"
+        - "品牌视觉"
+      priority: "high"
+      provider: "pollinations.ai"
+      endpoint: "https://image.pollinations.ai/prompt"
+      fallback:
+        - "hunyuan"
+        - "cogview-3-flash"
+
+# 开发任务配置
+development:
+  # 前端开发
+  frontend:
+    framework: "微信小程序原生"
+    languages:
+      - "WXML"
+      - "WXSS"
+      - "JavaScript"
+    components:
+      - "pages/"           # 页面
+      - "components/"      # 组件
+      - "utils/"           # 工具函数
+    
+  # 后端开发
+  backend:
+    platform: "微信云开发"
+    type: "cloudfunctions"
+    functions:
+      - "agentAI"              # AI对话
+      - "content-optimizer"    # 内容优化
+      - "hotspot-collector"    # 热点采集
+      - "wechat-publish-api"   # 微信发布
+      - "xiaohongshu-publisher" # 小红书发布
+      - "glm-api"              # 智谱AI接口
+      
+  # 测试配置
+  testing:
+    unit_test: "jest"
+    e2e_test: "miniprogram-automator"
+    mock_server: true
+
+# 部署配置
+deployment:
+  # 云开发部署
+  cloudbase:
+    env: "自动识别"
+    functions: "cloudfunctions/"
+    database: true
+    storage: true
+    
+  # 外部API
+  external_apis:
+    - name: "GPT-Image-2 (pollinations.ai)"
+      endpoint: "https://image.pollinations.ai/prompt"
+      description: "免费图片生成API，支持结构化提示词，主要生图引擎"
+      priority: "high"
+    - name: "智谱AI"
+      endpoint: "https://open.bigmodel.cn/api/paas/v4/"
+      description: "CogView-3-Flash图片生成，降级生图引擎"
+      priority: "medium"
+    - name: "Coze"
+      endpoint: "https://api.coze.cn/"
+    - name: "微信发布"
+      endpoint: "微信开放平台"
+
+# 自动化任务清单
+tasks:
+  - id: 1
+    title: "代码规范检查"
+    description: "检查代码规范性和潜在问题"
+    status: "pending"
+    priority: "high"
+    command: "npm run lint"
+    
+  - id: 2
+    title: "单元测试"
+    description: "运行单元测试用例"
+    status: "pending"
+    priority: "high"
+    command: "npm run test"
+    
+  - id: 3
+    title: "云函数测试"
+    description: "测试云函数功能"
+    status: "pending"
+    priority: "high"
+    steps:
+      - "本地调试云函数"
+      - "验证API响应"
+      - "检查错误处理"
+      
+  - id: 4
+    title: "小程序预览"
+    description: "生成预览版本"
+    status: "pending"
+    priority: "medium"
+    command: "微信开发者工具预览"
+    
+  - id: 5
+    title: "云函数部署"
+    description: "部署云函数到生产环境"
+    status: "pending"
+    priority: "high"
+    command: "微信开发者工具上传"
+    
+  - id: 6
+    title: "集成测试"
+    description: "端到端集成测试"
+    status: "pending"
+    priority: "medium"
+    steps:
+      - "完整流程测试"
+      - "多平台发布测试"
+      - "性能测试"
+
+# 测试场景配置
+test_scenarios:
+  # AI对话测试
+  ai_chat:
+    - name: "智能体对话"
+      steps:
+        - "打开智能体页面"
+        - "发送测试消息"
+        - "验证AI响应"
+        - "检查上下文记忆"
+        
+  # 热点功能测试
+  hotspot:
+    - name: "热点采集"
+      steps:
+        - "触发热点采集"
+        - "验证数据获取"
+        - "检查内容生成"
+        
+  # 发布功能测试
+  publish:
+    - name: "微信发布"
+      steps:
+        - "准备测试内容"
+        - "调用发布接口"
+        - "验证发布结果"
+    - name: "小红书发布"
+      steps:
+        - "准备测试内容"
+        - "调用发布接口"
+        - "验证发布结果"
+
+# CI/CD配置
+cicd:
+  # 触发条件
+  triggers:
+    - "push to main"
+    - "pull request"
+    - "manual trigger"
+    
+  # 流水线阶段
+  stages:
+    - name: "lint"
+      description: "代码规范检查"
+      
+    - name: "test"
+      description: "运行测试"
+      
+    - name: "build"
+      description: "构建项目"
+      
+    - name: "deploy"
+      description: "部署到环境"
+      
+  # 环境配置
+  environments:
+    - name: "development"
+      description: "开发环境"
+      
+    - name: "staging"
+      description: "测试环境"
+      
+    - name: "production"
+      description: "生产环境"
+
+# 代码质量配置
+quality:
+  lint:
+    tool: "eslint"
+    config: ".eslintrc.js"
+    
+  format:
+    tool: "prettier"
+    config: ".prettierrc"
+    
+  coverage:
+    threshold: 80
+    report_path: "coverage/"
+
+# 资源链接
+resources:
+  wechat:
+    docs: "https://developers.weixin.qq.com/miniprogram/dev/framework/"
+    cloud: "https://developers.weixin.qq.com/miniprogram/dev/wxcloud/basis/getting-started.html"
+  apis:
+    zhipu: "https://open.bigmodel.cn/"
+    coze: "https://www.coze.cn/"
+
+# 开发环境要求
+requirements:
+  node: ">=16.0.0"
+  npm: ">=8.0.0"
+  wechat_devtools: "最新版"

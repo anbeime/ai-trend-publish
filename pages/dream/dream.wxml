@@ -1,0 +1,230 @@
+<view class="dream-container">
+  <!-- 顶部标签切换 -->
+  <view class="tab-container">
+    <view class="tab-item {{activeTab === 'record' ? 'active' : ''}}" bindtap="switchTab" data-tab="record">
+      <text class="tab-icon">✨</text>
+      <text class="tab-text">记录灵感</text>
+    </view>
+    <view class="tab-item {{activeTab === 'dream' ? 'active' : ''}}" bindtap="switchTab" data-tab="dream">
+      <text class="tab-icon">🌙</text>
+      <text class="tab-text">梦境记录</text>
+    </view>
+    <view class="tab-item {{activeTab === 'chat' ? 'active' : ''}}" bindtap="switchTab" data-tab="chat">
+      <text class="tab-icon">💬</text>
+      <text class="tab-text">AI对话</text>
+    </view>
+  </view>
+
+  <!-- 记录灵感面板 -->
+  <view class="panel" wx:if="{{activeTab === 'record'}}">
+    <view class="panel-header">
+      <text class="panel-title">💡 记录你的灵感</text>
+    </view>
+    <view class="form-group">
+      <textarea
+        class="input-textarea"
+        placeholder="在这里写下你的灵感..."
+        value="{{ideaContent}}"
+        bindinput="onIdeaInput"
+        maxlength="500"
+        show-confirm-bar="{{false}}"
+      ></textarea>
+      <text class="char-count">{{ideaContent.length}}/500</text>
+    </view>
+    <view class="tag-selector">
+      <view class="tag-title">选择标签：</view>
+      <scroll-view class="tag-scroll" scroll-x>
+        <view class="tag-item {{tagClasses.chuangyi}}" bindtap="toggleTag" data-tag="创意">创意</view>
+        <view class="tag-item {{tagClasses.wennuan}}" bindtap="toggleTag" data-tag="温暖">温暖</view>
+        <view class="tag-item {{tagClasses.ningjing}}" bindtap="toggleTag" data-tag="宁静">宁静</view>
+        <view class="tag-item {{tagClasses.xiwang}}" bindtap="toggleTag" data-tag="希望">希望</view>
+        <view class="tag-item {{tagClasses.yongqi}}" bindtap="toggleTag" data-tag="勇气">勇气</view>
+        <view class="tag-item {{tagClasses.gandong}}" bindtap="toggleTag" data-tag="感动">感动</view>
+      </scroll-view>
+    </view>
+    <button class="primary-btn" bindtap="saveIdea" disabled="{{saving}}">
+      {{saving ? '保存中...' : '保存灵感'}}
+    </button>
+    <button class="secondary-btn" bindtap="generateIdeaImage" disabled="{{generating}}">
+      {{generating ? '生成中...' : '🎨 生成灵感图片'}}
+    </button>
+  </view>
+
+  <!-- 梦境记录面板 -->
+  <view class="panel" wx:if="{{activeTab === 'dream'}}">
+    <view class="panel-header">
+      <text class="panel-title">🌙 记录你的梦境</text>
+      <text class="panel-subtitle">详细描述你的梦境，AI会为你提供专业解析和可视化</text>
+    </view>
+    <view class="form-group">
+      <textarea
+        class="input-textarea"
+        placeholder="请尽可能详细地描述你的梦境，包括人物、场景、物品、情绪和情节发展..."
+        value="{{dreamContent}}"
+        bindinput="onDreamInput"
+        maxlength="800"
+        show-confirm-bar="{{false}}"
+      ></textarea>
+      <text class="char-count">{{dreamContent.length}}/800</text>
+    </view>
+    <view class="mood-selector">
+      <view class="mood-title">梦境氛围：</view>
+      <scroll-view class="mood-scroll" scroll-x>
+        <view class="mood-item {{selectedMood === '美好' ? 'selected' : ''}}" bindtap="selectMood" data-mood="美好">美好</view>
+        <view class="mood-item {{selectedMood === '奇幻' ? 'selected' : ''}}" bindtap="selectMood" data-mood="奇幻">奇幻</view>
+        <view class="mood-item {{selectedMood === '温暖' ? 'selected' : ''}}" bindtap="selectMood" data-mood="温暖">温暖</view>
+        <view class="mood-item {{selectedMood === '神秘' ? 'selected' : ''}}" bindtap="selectMood" data-mood="神秘">神秘</view>
+        <view class="mood-item {{selectedMood === '宁静' ? 'selected' : ''}}" bindtap="selectMood" data-mood="宁静">宁静</view>
+        <view class="mood-item {{selectedMood === '梦幻' ? 'selected' : ''}}" bindtap="selectMood" data-mood="梦幻">梦幻</view>
+      </scroll-view>
+    </view>
+    <view class="button-group">
+      <button class="primary-btn" bindtap="saveDream" disabled="{{saving}}">
+        {{saving ? '保存中...' : '保存梦境'}}
+      </button>
+      <button class="secondary-btn" bindtap="generateDreamImage" disabled="{{generating}}">
+        {{generating ? '生成中...' : '🎨 生成梦境图片'}}
+      </button>
+      <button class="analysis-btn" bindtap="professionalDreamAnalysis" disabled="{{analyzing || !dreamContent.trim()}}">
+        {{analyzing ? '解析中...' : '🔍 专业梦境解析'}}
+      </button>
+    </view>
+    
+    <!-- 专业解析结果 -->
+    <view class="analysis-panel" wx:if="{{showAnalysisPanel}}" id="analysis-panel">
+      <view class="analysis-header">
+        <text class="analysis-title">✨ 专业梦境解析报告</text>
+        <text class="analysis-close" bindtap="closeAnalysisPanel">✕</text>
+      </view>
+      <view class="analysis-content">
+        <!-- 心理学分析 -->
+        <view class="analysis-section" wx:if="{{professionalAnalysis.psychologicalInsight}}">
+          <view class="section-header">
+            <text class="section-icon">🧠</text>
+            <text class="section-title">心理学分析</text>
+          </view>
+          <view class="section-content">{{professionalAnalysis.psychologicalInsight}}</view>
+        </view>
+        
+        <!-- 象征学解释 -->
+        <view class="analysis-section" wx:if="{{professionalAnalysis.symbolicMeaning}}">
+          <view class="section-header">
+            <text class="section-icon">🔮</text>
+            <text class="section-title">象征学解释</text>
+          </view>
+          <view class="section-content">{{professionalAnalysis.symbolicMeaning}}</view>
+        </view>
+        
+        <!-- 情绪价值 -->
+        <view class="analysis-section" wx:if="{{professionalAnalysis.emotionalSupport}}">
+          <view class="section-header">
+            <text class="section-icon">💖</text>
+            <text class="section-title">情绪支持</text>
+          </view>
+          <view class="section-content">{{professionalAnalysis.emotionalSupport}}</view>
+        </view>
+        
+        <!-- 实用建议 -->
+        <view class="analysis-section" wx:if="{{professionalAnalysis.practicalAdvice}}">
+          <view class="section-header">
+            <text class="section-icon">💡</text>
+            <text class="section-title">实用建议</text>
+          </view>
+          <view class="section-content">{{professionalAnalysis.practicalAdvice}}</view>
+        </view>
+        
+        <!-- 原始AI回复（后备） -->
+        <view class="analysis-section" wx:if="{{professionalAnalysis.rawResponse && !professionalAnalysis.psychologicalInsight}}">
+          <view class="section-header">
+            <text class="section-icon"></text>
+            <text class="section-title">AI解析</text>
+          </view>
+          <view class="section-content">{{professionalAnalysis.rawResponse}}</view>
+        </view>
+      </view>
+      <view class="analysis-footer">
+        <button class="analysis-action-btn" bindtap="saveAnalysis">💾 保存解析报告</button>
+        <button class="analysis-action-btn secondary" bindtap="shareAnalysis">📤 分享解析</button>
+      </view>
+    </view>
+  </view>
+
+  <!-- AI对话面板 -->
+  <view class="panel chat-panel" wx:if="{{activeTab === 'chat'}}">
+    <view class="panel-header">
+      <text class="panel-title">💭 与AI对话</text>
+      <text class="panel-subtitle">分享你的想法，让AI帮你探索更多可能</text>
+    </view>
+    <scroll-view class="chat-messages" scroll-y scroll-into-view="{{scrollToView}}">
+      <view class="message-item" wx:for="{{chatHistory}}" wx:key="id" id="msg-{{item.id}}">
+        <view class="message-content {{item.role === 'user' ? 'user' : 'ai'}}">
+          <view class="message-avatar">
+            <text>{{item.role === 'user' ? '🌟' : '✨'}}</text>
+          </view>
+          <view class="message-text">{{item.content}}</view>
+        </view>
+        <view class="message-time">{{item.time}}</view>
+      </view>
+      <view class="loading-indicator" wx:if="{{chatLoading}}">
+        <text class="loading-dots">AI正在思考中</text>
+      </view>
+    </scroll-view>
+    <view class="chat-input-area">
+      <textarea
+        class="chat-input"
+        placeholder="输入你的想法..."
+        value="{{chatInput}}"
+        bindinput="onChatInput"
+        show-confirm-bar="{{false}}"
+        maxlength="300"
+      ></textarea>
+      <button class="send-btn" bindtap="sendMessage" disabled="{{chatLoading || !chatInput.trim()}}">
+        <text class="send-icon">📤</text>
+      </button>
+    </view>
+  </view>
+
+  <!-- 历史记录面板 -->
+  <view class="history-panel" wx:if="{{showHistory}}">
+    <view class="history-header">
+      <text class="history-title">📚 历史记录</text>
+      <text class="close-btn" bindtap="closeHistory">✕</text>
+    </view>
+    <scroll-view class="history-list" scroll-y>
+      <view class="history-item" wx:for="{{historyList}}" wx:key="id" bindtap="viewHistory" data-item="{{item}}">
+        <view class="history-type">{{item.type === 'idea' ? '✨' : '🌙'}}</view>
+        <view class="history-content">
+          <text class="history-text">{{item.content}}</text>
+          <text class="history-tags">{{item.tags || item.mood}}</text>
+        </view>
+        <view class="history-date">{{item.date}}</view>
+      </view>
+    </scroll-view>
+  </view>
+
+  <!-- 生成的图片预览 -->
+  <view class="image-preview-modal" wx:if="{{showImagePreview}}">
+    <view class="modal-mask" bindtap="closeImagePreview"></view>
+    <view class="modal-content">
+      <view class="modal-header">
+        <text class="modal-title">生成结果</text>
+        <text class="modal-close" bindtap="closeImagePreview">✕</text>
+      </view>
+      <view class="modal-body">
+        <image class="generated-image" src="{{generatedImageUrl}}" mode="aspectFit" wx:if="{{generatedImageUrl}}"></image>
+        <view class="loading-spinner" wx:if="{{generating && !generatedImageUrl}}"></view>
+      </view>
+      <view class="modal-footer">
+        <button class="modal-btn secondary" bindtap="closeImagePreview">关闭</button>
+        <button class="modal-btn primary" bindtap="saveImage" wx:if="{{generatedImageUrl}}">保存图片</button>
+      </view>
+    </view>
+  </view>
+
+  <!-- 查看历史按钮 -->
+  <view class="fab-container">
+    <button class="fab-btn" bindtap="toggleHistory">
+      <text class="fab-icon">📖</text>
+    </button>
+  </view>
+</view>

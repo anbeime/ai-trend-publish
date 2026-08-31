@@ -1,0 +1,236 @@
+<!-- 多平台排版优化组件 -->
+<include src="image-panel.wxml"/>
+
+<!-- 公众号文章JSON预览弹窗 -->
+<view class="modal-mask" wx:if="{{showArticleJSON}}" bindtap="closeModal" data-modal="showArticleJSON">
+  <view class="modal-content json-modal" catchtap="preventBubble">
+    <view class="modal-header">
+      <text class="modal-title">📄 公众号文章JSON</text>
+      <view class="header-actions">
+        <text class="action-btn" bindtap="copyArticleJSON">📋 复制JSON</text>
+        <text class="action-btn primary" bindtap="publishArticle">🚀 推送发布</text>
+        <text class="modal-close" bindtap="closeModal" data-modal="showArticleJSON">×</text>
+      </view>
+    </view>
+    <scroll-view class="modal-body" scroll-y>
+      <view class="json-preview" wx:if="{{articleJSON}}">
+        <view class="json-section">
+          <text class="json-label">标题：</text>
+          <text class="json-value">{{articleJSON.title}}</text>
+        </view>
+        <view class="json-section">
+          <text class="json-label">封面URL：</text>
+          <text class="json-value url">{{articleJSON.cover_url}}</text>
+        </view>
+        <view class="json-section">
+          <text class="json-label">内容长度：</text>
+          <text class="json-value">{{articleJSON.content.length}} 字符</text>
+        </view>
+        <view class="json-section html-preview">
+          <text class="json-label">HTML预览：</text>
+          <view class="html-content-box">
+            <rich-text nodes="{{articleJSON.content}}"></rich-text>
+          </view>
+        </view>
+      </view>
+    </scroll-view>
+  </view>
+</view>
+
+<!-- 排版优化工具栏 -->
+<view class="format-toolbar" wx:if="{{currentStep === 3 && generatedContent}}">
+  <view class="toolbar-title">🎨 排版优化工具</view>
+  
+  <view class="toolbar-buttons">
+    <view class="tool-btn {{showFormatOptions ? 'active' : ''}}" bindtap="toggleFormatOptions">
+      <text class="tool-icon">⚙️</text>
+      <text class="tool-text">排版选项</text>
+    </view>
+    <view class="tool-btn" bindtap="optimizeTitle">
+      <text class="tool-icon">✨</text>
+      <text class="tool-text">标题优化</text>
+    </view>
+    <view class="tool-btn" bindtap="openImagePanel">
+      <text class="tool-icon">🖼️</text>
+      <text class="tool-text">配图工具</text>
+    </view>
+    <view class="tool-btn" bindtap="analyzeContentQuality">
+      <text class="tool-icon">📊</text>
+      <text class="tool-text">质量分析</text>
+    </view>
+    <view class="tool-btn" bindtap="generateMultiPlatformPreview">
+      <text class="tool-icon">🌐</text>
+      <text class="tool-text">多平台预览</text>
+    </view>
+    <view class="tool-btn" bindtap="generateWechatArticleJSON">
+      <text class="tool-icon">📄</text>
+      <text class="tool-text">生成JSON</text>
+    </view>
+  </view>
+
+  <!-- 排版选项面板 -->
+  <view class="format-options-panel" wx:if="{{showFormatOptions}}">
+    <view class="option-item" bindtap="toggleFormatOption" data-option="useHTML">
+      <text class="option-icon">{{formatOptions.useHTML ? '☑️' : '⬜️'}}</text>
+      <text class="option-label">HTML排版（公众号）</text>
+    </view>
+    <view class="option-item" bindtap="toggleFormatOption" data-option="addHighlight">
+      <text class="option-icon">{{formatOptions.addHighlight ? '☑️' : '⬜️'}}</text>
+      <text class="option-label">智能高亮关键词</text>
+    </view>
+    <view class="option-item" bindtap="toggleFormatOption" data-option="addEmoji">
+      <text class="option-icon">{{formatOptions.addEmoji ? '☑️' : '⬜️'}}</text>
+      <text class="option-label">添加Emoji表情</text>
+    </view>
+    <view class="option-item" bindtap="toggleFormatOption" data-option="optimizeTitle">
+      <text class="option-icon">{{formatOptions.optimizeTitle ? '☑️' : '⬜️'}}</text>
+      <text class="option-label">自动优化标题</text>
+    </view>
+    <view class="option-item" bindtap="toggleFormatOption" data-option="addStructure">
+      <text class="option-icon">{{formatOptions.addStructure ? '☑️' : '⬜️'}}</text>
+      <text class="option-label">结构化标记</text>
+    </view>
+  </view>
+</view>
+
+<!-- 标题优化弹窗 -->
+<view class="modal-mask" wx:if="{{showTitleOptimizer}}" bindtap="closeModal" data-modal="showTitleOptimizer">
+  <view class="modal-content" catchtap="preventBubble">
+    <view class="modal-header">
+      <text class="modal-title">✨ 标题优化建议</text>
+      <text class="modal-close" bindtap="closeModal" data-modal="showTitleOptimizer">×</text>
+    </view>
+    <scroll-view class="modal-body" scroll-y>
+      <view class="title-list">
+        <view 
+          class="title-item {{index === selectedTitleIndex ? 'selected' : ''}}"
+          wx:for="{{optimizedTitles}}"
+          wx:key="index"
+          bindtap="selectOptimizedTitle"
+          data-index="{{index}}"
+        >
+          <view class="title-text">{{item.title}}</view>
+          <view class="title-meta">
+            <text class="title-style">{{item.style}}</text>
+            <text class="title-score">评分: {{item.score}}分</text>
+          </view>
+        </view>
+      </view>
+    </scroll-view>
+  </view>
+</view>
+
+<!-- 内容质量分析弹窗 -->
+<view class="modal-mask" wx:if="{{showQualityAnalyzer}}" bindtap="closeModal" data-modal="showQualityAnalyzer">
+  <view class="modal-content quality-modal" catchtap="preventBubble">
+    <view class="modal-header">
+      <text class="modal-title">📊 内容质量分析</text>
+      <text class="modal-close" bindtap="closeModal" data-modal="showQualityAnalyzer">×</text>
+    </view>
+    <scroll-view class="modal-body" scroll-y>
+      <!-- 综合评分 -->
+      <view class="quality-score-section" wx:if="{{contentQuality}}">
+        <view class="score-circle">
+          <text class="score-value">{{contentQuality.score}}</text>
+          <text class="score-label">综合评分</text>
+        </view>
+        <view class="score-details">
+          <view class="score-item">
+            <text class="score-label">字数: {{contentQuality.length}}</text>
+            <text class="score-status {{contentQuality.length >= 500 ? 'good' : 'warning'}}">
+              {{contentQuality.length >= 500 ? '✓' : '!'}}
+            </text>
+          </view>
+          <view class="score-item">
+            <text class="score-label">包含数据: {{contentQuality.hasData ? '是' : '否'}}</text>
+            <text class="score-status {{contentQuality.hasData ? 'good' : 'warning'}}">
+              {{contentQuality.hasData ? '✓' : '!'}}
+            </text>
+          </view>
+          <view class="score-item">
+            <text class="score-label">包含案例: {{contentQuality.hasExamples ? '是' : '否'}}</text>
+            <text class="score-status {{contentQuality.hasExamples ? 'good' : 'warning'}}">
+              {{contentQuality.hasExamples ? '✓' : '!'}}
+            </text>
+          </view>
+          <view class="score-item">
+            <text class="score-label">可读性: {{contentQuality.readability}}分</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- 结构分析 -->
+      <view class="section-block" wx:if="{{contentQuality.structure}}">
+        <view class="section-title">📝 结构分析</view>
+        <view class="structure-info">
+          <text class="info-item">段落数: {{contentQuality.structure.totalParagraphs}}</text>
+          <text class="info-item">平均段落长度: {{contentQuality.structure.avgLength}}字</text>
+          <text class="info-item">有引言: {{contentQuality.structure.hasIntroduction ? '是' : '否'}}</text>
+          <text class="info-item">有结论: {{contentQuality.structure.hasConclusion ? '是' : '否'}}</text>
+          <text class="info-item">有小标题: {{contentQuality.structure.hasSubtitles ? '是' : '否'}}</text>
+        </view>
+        <view class="suggestions" wx:if="{{contentQuality.structure.suggestions.length > 0}}">
+          <view class="suggestion-item" wx:for="{{contentQuality.structure.suggestions}}" wx:key="index">
+            💡 {{item}}
+          </view>
+        </view>
+      </view>
+
+      <!-- SEO建议 -->
+      <view class="section-block" wx:if="{{contentQuality.seo}}">
+        <view class="section-title">🔍 SEO优化建议</view>
+        <view class="seo-list">
+          <view class="seo-item {{item.priority}}" wx:for="{{contentQuality.seo}}" wx:key="index">
+            <text class="seo-type">{{item.type === 'keyword' ? '关键词' : item.type === 'length' ? '长度' : item.type === 'media' ? '媒体' : '链接'}}</text>
+            <text class="seo-message">{{item.message}}</text>
+          </view>
+        </view>
+      </view>
+    </scroll-view>
+  </view>
+</view>
+
+<!-- 多平台预览弹窗 -->
+<view class="modal-mask" wx:if="{{showMultiPlatform}}" bindtap="closeModal" data-modal="showMultiPlatform">
+  <view class="modal-content platform-modal" catchtap="preventBubble">
+    <view class="modal-header">
+      <text class="modal-title">🌐 多平台预览</text>
+      <view class="header-actions">
+        <text class="action-btn" bindtap="copyHTMLCode" wx:if="{{allPlatformContents['微信公众号'].html}}">📋 复制HTML</text>
+        <text class="action-btn" bindtap="exportAllPlatforms">📤 导出全部</text>
+        <text class="modal-close" bindtap="closeModal" data-modal="showMultiPlatform">×</text>
+      </view>
+    </view>
+    <scroll-view class="modal-body platform-body" scroll-y>
+      <view class="platform-tabs">
+        <view 
+          class="platform-tab {{currentPreviewPlatform === platform ? 'active' : ''}}"
+          wx:for="{{platformOptions}}"
+          wx:for-item="platform"
+          wx:key="platform"
+          bindtap="switchPreviewPlatform"
+          data-platform="{{platform}}"
+        >
+          {{platform}}
+        </view>
+      </view>
+      
+      <view class="platform-content" wx:for="{{platformOptions}}" wx:for-item="platform" wx:key="platform" wx:if="{{currentPreviewPlatform === platform}}">
+        <view class="platform-info-bar" wx:if="{{allPlatformContents[platform]}}">
+          <text class="info-item">字数: {{allPlatformContents[platform].text.length}}</text>
+          <text class="info-item {{allPlatformContents[platform].lengthCheck.valid ? 'valid' : 'warning'}}">
+            限制: {{allPlatformContents[platform].lengthCheck.maxLength}}
+          </text>
+          <text class="info-item" wx:if="{{!allPlatformContents[platform].lengthCheck.valid}}">
+            超出: {{allPlatformContents[platform].lengthCheck.length - allPlatformContents[platform].lengthCheck.maxLength}}字
+          </text>
+        </view>
+        
+        <view class="content-preview-box">
+          <rich-text wx:if="{{allPlatformContents[platform].html}}" nodes="{{allPlatformContents[platform].html}}"></rich-text>
+          <text wx:else class="preview-text" selectable>{{allPlatformContents[platform].text}}</text>
+        </view>
+      </view>
+    </scroll-view>
+  </view>
+</view>

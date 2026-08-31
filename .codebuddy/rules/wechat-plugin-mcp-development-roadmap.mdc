@@ -1,0 +1,260 @@
+---
+description: 
+alwaysApply: true
+enabled: true
+updatedAt: 2025-12-28T10:58:02.677Z
+provider: 
+---
+
+# TrendPublish 微信插件 MCP 开发路线图
+
+## 📋 项目概览
+将现有的 ai-trend-publish 项目改造为标准的 Coze MCP 插件，支持完整的微信文章发布功能。
+
+## 🎯 MCP 插件配置信息
+- **插件名称**: TrendPublish WeChat Publisher
+- **插件类型**: MCP 可复用插件模板
+- **认证方式**: 不需要授权（基于 AppID/AppSecret）
+- **调用方式**: HTTP API 调用
+
+### MCP Header 配置（已确认）
+| Key | Value | 说明 |
+|-----|-------|------|
+| User-Agent | Coze/1.0 (MCP Plugin; Wechat Publish) | 标识请求来源 |
+| Content-Type | application/json | POST 接口必需 |
+
+## 🚀 开发阶段规划
+
+### 第一阶段：核心功能扩展 (P0 - 2周)
+
+#### 1.1 多文章草稿保存 (2天)
+- **后端扩展**: 
+  - 在 `src/api/index.ts` 添加 `/api/wechat/batch-draft` 端点
+  - 在 `src/modules/publishers/weixin.publisher.ts` 扩展 `saveMultipleDrafts()` 方法
+- **前端功能**: 添加批量文章编辑界面
+- **API 端点**: `POST /api/wechat/batch-draft`
+
+#### 1.2 群发文章消息 (3天)
+- **后端开发**:
+  - 添加 `/api/wechat/broadcast` 端点
+  - 实现标签选择和全员群发
+  - 添加发送限制检查
+- **前端功能**: 群发配置界面（标签选择、预览）
+- **API 端点**: `POST /api/wechat/broadcast`
+
+#### 1.3 永久素材库管理 (4天)
+- **数据库扩展**: 添加 `media_library` 表
+- **后端开发**: 
+  - `/api/wechat/material/add` - 添加素材
+  - `/api/wechat/material/list` - 获取素材列表
+  - `/api/wechat/material/delete` - 删除素材
+- **前端功能**: 素材管理界面（上传、浏览、删除）
+- **API 端点**: `GET/POST/DELETE /api/wechat/material/*`
+
+#### 1.4 公众号授权流程 (3天)
+- **后端开发**:
+  - `/api/wechat/oauth/authorize` - 授权跳转
+  - `/api/wechat/oauth/callback` - 授权回调
+  - Access Token 自动刷新机制
+- **前端功能**: OAuth 授权界面
+- **API 端点**: `GET /api/wechat/oauth/*`
+
+#### 1.5 草稿预览功能 (2天)
+- **后端开发**: `/api/wechat/preview` 端点
+- **前端功能**: 预览链接生成和显示
+- **API 端点**: `POST /api/wechat/preview`
+
+### 第二阶段：内容增强功能 (P1 - 2周)
+
+#### 2.1 文章URL内容解析 (4天)
+- **后端开发**: `/api/wechat/url-extract` 端点
+- **内容处理**: 支持微信文章链接、网页链接解析
+- **前端功能**: URL输入和解析界面
+- **API 端点**: `POST /api/wechat/url-extract`
+
+#### 2.2 图片消息类型支持 (3天)
+- **后端扩展**: 扩展现有发布接口支持图片消息
+- **前端功能**: 图片消息编辑器
+- **API 端点**: `POST /api/wechat/publish-image`
+
+#### 2.3 前端管理界面完善 (5天)
+- **界面重构**: 基于现有 `public/index.html` 扩展
+- **功能模块**:
+  - 配置管理模块
+  - 素材库管理模块
+  - 草稿管理模块
+  - 发布历史模块
+- **响应式设计**: 移动端适配
+
+#### 2.4 发布历史记录 (2天)
+- **数据库扩展**: 添加 `publish_history` 表
+- **后端开发**: `/api/wechat/history` 端点
+- **前端功能**: 发布历史查看界面
+
+### 第三阶段：高级功能 (P2 - 2周)
+
+#### 3.1 小绿书图文提取 (6天)
+- **内容抓取**: 小红书/小绿书内容解析器
+- **后端开发**: `/api/wechat/xiaohongshu-extract` 端点
+- **前端功能**: 小绿书链接提取界面
+- **图片处理**: 自动下载和优化
+
+#### 3.2 公共素材库 (4天)
+- **权限管理**: 多账号素材共享
+- **后端开发**: `/api/wechat/shared-material/*` 端点
+- **前端功能**: 公共素材库界面
+
+#### 3.3 粉丝管理和互动 (3天)
+- **数据收集**: 粉丝信息和互动数据
+- **后端开发**: `/api/wechat/followers/*` 端点
+- **前端功能**: 粉丝管理界面
+
+#### 3.4 自动回复机制 (1天)
+- **规则引擎**: 关键词自动回复
+- **后端开发**: `/api/wechat/auto-reply` 端点
+
+### 第四阶段：MCP 标准化和发布 (1周)
+
+#### 4.1 API 标准化改造 (2天)
+- **接口规范**: 确保所有接口符合 MCP 标准
+- **错误处理**: 统一错误码和错误信息
+- **文档完善**: API 文档生成
+- **测试覆盖**: 接口测试用例
+
+#### 4.2 MCP 配置优化 (1天)
+- **Header 配置**: 确认最终 Header 列表
+- **参数验证**: 输入参数校验规则
+- **性能优化**: 接口响应时间优化
+
+#### 4.3 部署和测试 (2天)
+- **环境配置**: 生产环境部署
+- **集成测试**: 端到端功能测试
+- **性能测试**: 并发和稳定性测试
+
+#### 4.4 MCP 发布准备 (2天)
+- **资料准备**: 插件描述、使用说明
+- **合规检查**: 确保符合 Coze MCP 规范
+- **发布审核**: 提交 Coze MCP 审核
+
+## 📅 时间节点
+
+| 阶段 | 开始时间 | 结束时间 | 关键里程碑 |
+|------|----------|----------|-----------|
+| 第一阶段 | Day 1 | Day 14 | 核心功能完成 |
+| 第二阶段 | Day 15 | Day 28 | 内容增强完成 |
+| 第三阶段 | Day 29 | Day 42 | 高级功能完成 |
+| 第四阶段 | Day 43 | Day 49 | MCP 发布成功 |
+
+## 🔧 技术实现要点
+
+### MCP 接口设计原则
+1. **统一响应格式**:
+```json
+{
+  "success": true,
+  "data": {},
+  "message": "操作成功",
+  "code": 200
+}
+```
+
+2. **错误处理规范**:
+```json
+{
+  "success": false,
+  "error": {
+    "code": "INVALID_PARAMS",
+    "message": "参数错误",
+    "details": {}
+  }
+}
+```
+
+3. **认证机制**: 基于现有的 AppID/AppSecret 机制，无需额外认证
+
+### 数据库设计扩展
+```sql
+-- 媒体素材表
+CREATE TABLE media_library (
+  id INT PRIMARY KEY AUTO_INCREMENT,
+  media_id VARCHAR(100) NOT NULL,
+  type ENUM('image', 'video', 'voice', 'thumb') NOT NULL,
+  name VARCHAR(255) NOT NULL,
+  url VARCHAR(500),
+  size INT,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  INDEX idx_media_id (media_id),
+  INDEX idx_type (type)
+);
+
+-- 草稿文章表
+CREATE TABLE draft_articles (
+  id INT PRIMARY KEY AUTO_INCREMENT,
+  media_id VARCHAR(100) NOT NULL,
+  title VARCHAR(255) NOT NULL,
+  content TEXT,
+  digest VARCHAR(500),
+  thumb_media_id VARCHAR(100),
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  INDEX idx_media_id (media_id)
+);
+
+-- 发布历史表
+CREATE TABLE publish_history (
+  id INT PRIMARY KEY AUTO_INCREMENT,
+  media_id VARCHAR(100) NOT NULL,
+  publish_type ENUM('draft', 'broadcast') NOT NULL,
+  status ENUM('success', 'failed', 'pending') NOT NULL,
+  error_message TEXT,
+  published_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  INDEX idx_publish_date (published_at)
+);
+```
+
+## 📊 成功指标
+
+### 功能指标
+- [ ] 支持 10+ 微信 API 功能
+- [ ] 响应时间 < 2 秒
+- [ ] 99% 接口成功率
+- [ ] 支持批量操作（最多 50 篇文章）
+
+### MCP 指标
+- [ ] 通过 Coze MCP 审核
+- [ ] 接入 100+ 用户使用
+- [ ] 4.8+ 用户评分
+- [ ] 零安全漏洞
+
+## 🚨 风险控制
+
+### 技术风险
+- **API 限制**: 微信 API 调用频率限制
+- **数据安全**: 敏感信息加密存储
+- **兼容性**: 不同版本 API 兼容性
+
+### 业务风险
+- **合规性**: 确保符合微信平台规范
+- **用户体验**: 简化操作流程
+- **服务稳定性**: 7x24 小时可用性
+
+## 📝 注意事项
+
+1. **开发过程中保持代码同步**: 每个功能模块完成后立即提交
+2. **API 版本管理**: 使用语义化版本控制
+3. **文档同步更新**: 代码变更时同步更新文档
+4. **测试驱动开发**: 每个功能都要有对应测试用例
+5. **定期备份**: 开发过程中定期备份数据库和代码
+
+## 🎯 最终交付物
+
+1. **完整的 MCP 插件**: 符合 Coze 标准的微信文章发布插件
+2. **技术文档**: API 文档、部署文档、使用手册
+3. **测试报告**: 功能测试、性能测试、安全测试报告
+4. **用户指南**: 插件使用教程和常见问题解答
+
+---
+
+**更新日期**: 2025-12-28
+**版本**: v1.0
+**状态**: 开发计划制定完成

@@ -1,0 +1,98 @@
+<!--pages/profile/profile.wxml-->
+<view class="container">
+  <!-- 用户信息 -->
+  <view class="user-section">
+    <view class="user-avatar">
+      <text>{{userInfo.avatarUrl ? '' : '👤'}}</text>
+    </view>
+    <view class="user-info">
+      <view class="user-name">{{userInfo.nickName || '未登录'}}</view>
+      <view class="user-desc">{{projectCount}} 个项目</view>
+    </view>
+  </view>
+
+  <!-- 统计数据 -->
+  <view class="stats-section">
+    <view class="stat-item">
+      <view class="stat-value">{{projectCount}}</view>
+      <view class="stat-label">创作项目</view>
+    </view>
+    <view class="stat-item">
+      <view class="stat-value">{{completedCount}}</view>
+      <view class="stat-label">已完成</view>
+    </view>
+    <view class="stat-item">
+      <view class="stat-value">{{workingCount}}</view>
+      <view class="stat-label">进行中</view>
+    </view>
+  </view>
+
+  <!-- 用户额度 -->
+  <view class="credits-card">
+    <view class="credits-header">
+      <text class="credits-title">💰 创作额度</text>
+      <text class="credits-refresh" bindtap="loadUserCredits">🔄 刷新</text>
+    </view>
+    <view class="credits-stats">
+      <view class="credit-stat">
+        <text class="credit-label">剩余金币</text>
+        <text class="credit-value">{{userCredits}}</text>
+      </view>
+      <view class="credit-divider"></view>
+      <view class="credit-stat">
+        <text class="credit-label">今日已用</text>
+        <text class="credit-value">{{dailyUsed}}</text>
+      </view>
+      <view class="credit-divider"></view>
+      <view class="credit-stat">
+        <text class="credit-label">每日额度</text>
+        <text class="credit-value">{{dailyQuota}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 功能菜单 -->
+  <view class="menu-section">
+    <view class="menu-item" bindtap="viewAllProjects">
+      <view class="menu-icon">📁</view>
+      <view class="menu-text">全部项目</view>
+      <view class="menu-arrow">></view>
+    </view>
+    <view class="menu-item" bindtap="viewTemplates">
+      <view class="menu-icon">📋</view>
+      <view class="menu-text">我的模板</view>
+      <view class="menu-arrow">></view>
+    </view>
+    <view class="menu-item" bindtap="viewHistory">
+      <view class="menu-icon">📜</view>
+      <view class="menu-text">创作历史</view>
+      <view class="menu-arrow">></view>
+    </view>
+  </view>
+
+  <!-- 设置菜单 -->
+  <view class="menu-section">
+    <view class="menu-item" bindtap="openSettings">
+      <view class="menu-icon">⚙️</view>
+      <view class="menu-text">设置</view>
+      <view class="menu-arrow">></view>
+    </view>
+    <view class="menu-item" bindtap="openHelp">
+      <view class="menu-icon">❓</view>
+      <view class="menu-text">帮助与反馈</view>
+      <view class="menu-arrow">></view>
+    </view>
+    <view class="menu-item" bindtap="openAbout">
+      <view class="menu-icon">ℹ️</view>
+      <view class="menu-text">关于</view>
+      <view class="menu-arrow">></view>
+    </view>
+  </view>
+
+  <!-- 登录按钮 -->
+  <view class="login-section" wx:if="{{!userInfo.nickName}}">
+    <button class="login-btn" open-type="getUserInfo" bindgetuserinfo="onGetUserInfo">
+      微信一键登录
+    </button>
+  </view>
+</view>

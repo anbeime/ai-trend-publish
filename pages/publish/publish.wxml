@@ -1,0 +1,220 @@
+<!--pages/publish/publish.wxml-->
+<!-- 微信公众号发布页面 -->
+<view class="container">
+  <!-- 页面标题 -->
+  <view class="page-header">
+    <text class="page-title">发布到公众号</text>
+    <text class="page-subtitle">将内容发布到微信公众号草稿箱</text>
+  </view>
+
+  <!-- 内容预览 -->
+  <view class="section" wx:if="{{generatedContent.content}}">
+    <view class="section-title">
+      <text class="section-title-text">内容预览</text>
+      <button class="copy-btn" bindtap="copyContent">
+        <text>复制内容</text>
+      </button>
+    </view>
+    <view class="content-preview">
+      <text class="preview-title">{{wechatConfig.title || '未设置标题'}}</text>
+      <text class="preview-content">{{generatedContent.content.substring(0, 200)}}...</text>
+    </view>
+  </view>
+
+  <!-- 微信公众号配置 -->
+  <view class="section">
+    <view class="section-title">
+      <text class="section-title-text">公众号配置</text>
+      <button class="guide-btn" bindtap="showWechatGuide">
+        <text>配置指引</text>
+      </button>
+    </view>
+
+    <view class="config-form">
+      <!-- AppID -->
+      <view class="form-item">
+        <text class="form-label">AppID *</text>
+        <input
+          class="form-input"
+          value="{{wechatConfig.appId}}"
+          placeholder="请输入公众号AppID"
+          bindinput="onWechatAppIdInput"
+        />
+      </view>
+
+      <!-- AppSecret -->
+      <view class="form-item">
+        <text class="form-label">AppSecret *</text>
+        <input
+          class="form-input"
+          value="{{wechatConfig.appSecret}}"
+          placeholder="请输入公众号AppSecret"
+          bindinput="onWechatAppSecretInput"
+          type="password"
+        />
+      </view>
+
+      <!-- 文章标题 -->
+      <view class="form-item">
+        <text class="form-label">文章标题 *</text>
+        <input
+          class="form-input"
+          value="{{wechatConfig.title}}"
+          placeholder="请输入文章标题"
+          bindinput="onWechatTitleInput"
+        />
+      </view>
+
+      <!-- 作者 -->
+      <view class="form-item">
+        <text class="form-label">作者</text>
+        <input
+          class="form-input"
+          value="{{wechatConfig.author}}"
+          placeholder="请输入作者名称"
+          bindinput="onWechatAuthorInput"
+        />
+      </view>
+
+      <!-- 摘要 -->
+      <view class="form-item">
+        <text class="form-label">摘要</text>
+        <textarea
+          class="form-textarea"
+          value="{{wechatConfig.digest}}"
+          placeholder="请输入文章摘要（可选）"
+          bindinput="onWechatDigestInput"
+          maxlength="120"
+        />
+      </view>
+
+      <!-- 原文链接 -->
+      <view class="form-item">
+        <text class="form-label">原文链接</text>
+        <input
+          class="form-input"
+          value="{{wechatConfig.contentSourceUrl}}"
+          placeholder="原文链接（可选）"
+          bindinput="onWechatContentSourceUrlInput"
+        />
+      </view>
+    </view>
+  </view>
+
+  <!-- 发布按钮 -->
+  <view class="section">
+    <button
+      class="publish-btn"
+      bindtap="publishToWechat"
+      disabled="{{!wechatConfig.appId || !wechatConfig.appSecret || !wechatConfig.title || publishing}}"
+    >
+      <text wx:if="{{!publishing}}">发布到草稿箱</text>
+      <text wx:else>发布中...</text>
+    </button>
+    
+    <view class="tip-box">
+      <text class="tip-icon">💡</text>
+      <text class="tip-text">文章将发布到公众号草稿箱，请在公众号后台审核后发布</text>
+    </view>
+  </view>
+
+  <!-- 底部操作 -->
+  <view class="footer">
+    <button class="footer-btn" bindtap="goBack">返回</button>
+  </view>
+</view>
+
+<!-- 配置指引弹窗 -->
+<view class="modal-mask" wx:if="{{showWechatGuide}}" bindtap="closeWechatGuide">
+  <view class="modal-container" catchtap="">
+    <view class="modal-header">
+      <text class="modal-title">配置指引</text>
+      <text class="modal-close" bindtap="closeWechatGuide">×</text>
+    </view>
+
+    <scroll-view class="modal-body" scroll-y>
+      <!-- 步骤1 -->
+      <view class="guide-step">
+        <text class="step-num">1</text>
+        <view class="step-info">
+          <text class="step-title">获取开发者信息</text>
+          <text class="step-desc">登录公众号后台 → 设置与开发 → 基本配置 → 复制AppID和AppSecret</text>
+        </view>
+      </view>
+
+      <!-- 步骤2 -->
+      <view class="guide-step">
+        <text class="step-num">2</text>
+        <view class="step-info">
+          <text class="step-title">添加IP白名单</text>
+          <text class="step-desc">在IP白名单中添加服务器IP地址</text>
+        </view>
+        <view class="ip-box" bindtap="copyServerIP">
+          <text class="ip-label">服务器IP（点击复制）：</text>
+          <text class="ip-text">39.108.254.228</text>
+          <text class="copy-icon">📋</text>
+        </view>
+      </view>
+
+      <!-- 步骤3 -->
+      <view class="guide-step">
+        <text class="step-num">3</text>
+        <view class="step-info">
+          <text class="step-title">在小程序中配置</text>
+          <text class="step-desc">在下方表单中填入AppID、AppSecret和文章信息</text>
+        </view>
+      </view>
+
+      <!-- 详细教程链接 -->
+      <view class="guide-divider"></view>
+
+      <view class="guide-tutorial">
+        <text class="tutorial-title">📚 查看详细配置教程</text>
+        <view class="tutorial-buttons">
+          <button class="tutorial-btn" bindtap="openTutorial">
+            <text class="btn-icon">📖</text>
+            <text class="btn-text">微信公众号配置完整教程</text>
+          </button>
+          <button class="tutorial-btn secondary" bindtap="openIPTutorial">
+            <text class="btn-icon">🌐</text>
+            <text class="btn-text">IP白名单配置教程</text>
+          </button>
+        </view>
+      </view>
+
+      <!-- 常见问题 -->
+      <view class="guide-faq">
+        <text class="faq-title">❓ 常见问题</text>
+        <view class="faq-item">
+          <text class="faq-q">Q: AppSecret错误？</text>
+          <text class="faq-a">A: 请确认密码正确，注意大小写，避免异常字符</text>
+        </view>
+        <view class="faq-item">
+          <text class="faq-q">Q: IP不在白名单？</text>
+          <text class="faq-a">A: 添加IP后等待5~10分钟再试</text>
+        </view>
+      </view>
+
+      <!-- 注意事项 -->
+      <view class="guide-notice">
+        <text class="notice-title">⚠️ 注意事项</text>
+        <view class="notice-item">
+          <text class="bullet">•</text>
+          <text class="notice-text">AppSecret只显示一次，请妥善保管</text>
+        </view>
+        <view class="notice-item">
+          <text class="bullet">•</text>
+          <text class="notice-text">IP白名单添加后需要等待5~10分钟生效</text>
+        </view>
+        <view class="notice-item">
+          <text class="bullet">•</text>
+          <text class="notice-text">文章将发布到草稿箱，需手动审核后发布</text>
+        </view>
+      </view>
+    </scroll-view>
+
+    <view class="modal-footer">
+      <button class="modal-btn" bindtap="closeWechatGuide">我知道了</button>
+    </view>
+  </view>
+</view>

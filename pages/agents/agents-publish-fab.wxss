@@ -1,0 +1,49 @@
+/* ========== 推送到公众号浮动按钮 ========== */
+
+.publish-fab {
+  position: fixed;
+  bottom: 120rpx;
+  right: 20rpx;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 20rpx 30rpx;
+  border-radius: 50rpx;
+  box-shadow: 0 4rpx 16rpx rgba(102, 126, 234, 0.4);
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+  z-index: 1000;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.publish-fab:active {
+  transform: scale(0.95);
+  box-shadow: 0 2rpx 8rpx rgba(102, 126, 234, 0.3);
+}
+
+.fab-icon {
+  font-size: 32rpx;
+}
+
+.fab-label {
+  font-size: 28rpx;
+  font-weight: 500;
+}
+
+/* 添加动画效果 */
+@keyframes fabPulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(102, 126, 234, 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 20rpx rgba(102, 126, 234, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(102, 126, 234, 0);
+  }
+}
+
+.publish-fab {
+  animation: fabPulse 2s infinite;
+}

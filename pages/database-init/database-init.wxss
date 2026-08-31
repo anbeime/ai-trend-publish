@@ -1,0 +1,289 @@
+/* pages/database-init/database-init.wxss */
+.container {
+  padding: 20rpx;
+  background-color: #f5f5f5;
+  min-height: 100vh;
+}
+
+/* 标题栏 */
+.header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 30rpx;
+  padding: 20rpx;
+  background: white;
+  border-radius: 16rpx;
+  box-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.05);
+}
+
+.back-btn {
+  display: flex;
+  align-items: center;
+  padding: 10rpx 20rpx;
+  background: #f0f0f0;
+  border-radius: 8rpx;
+  margin-right: 20rpx;
+}
+
+.back-icon {
+  margin-right: 8rpx;
+  font-weight: bold;
+}
+
+.title {
+  font-size: 36rpx;
+  font-weight: bold;
+  color: #333;
+}
+
+/* 状态卡片 */
+.status-card {
+  background: white;
+  border-radius: 16rpx;
+  padding: 30rpx;
+  margin-bottom: 30rpx;
+  box-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.05);
+}
+
+.status-title {
+  display: block;
+  font-size: 28rpx;
+  color: #666;
+  margin-bottom: 10rpx;
+}
+
+.status-text {
+  font-size: 32rpx;
+  color: #1890ff;
+  font-weight: 500;
+}
+
+.loading {
+  margin-top: 20rpx;
+  padding: 10rpx 20rpx;
+  background: #e6f7ff;
+  border-radius: 8rpx;
+  display: inline-block;
+}
+
+/* 分区 */
+.section {
+  background: white;
+  border-radius: 16rpx;
+  padding: 30rpx;
+  margin-bottom: 30rpx;
+  box-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.05);
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20rpx;
+  padding-bottom: 20rpx;
+  border-bottom: 1rpx solid #f0f0f0;
+}
+
+.section-title {
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #333;
+}
+
+.section-actions {
+  display: flex;
+  gap: 10rpx;
+}
+
+/* 集合列表 */
+.collections-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20rpx;
+}
+
+.collection-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20rpx;
+  background: #fafafa;
+  border-radius: 12rpx;
+  border: 1rpx solid #eee;
+}
+
+.collection-info {
+  flex: 1;
+}
+
+.collection-name {
+  display: block;
+  font-size: 28rpx;
+  font-weight: 500;
+  color: #333;
+  margin-bottom: 5rpx;
+}
+
+.collection-desc {
+  font-size: 24rpx;
+  color: #666;
+}
+
+.collection-status {
+  display: flex;
+  align-items: center;
+  gap: 15rpx;
+}
+
+.status-badge {
+  padding: 6rpx 12rpx;
+  border-radius: 6rpx;
+  font-size: 22rpx;
+  font-weight: 500;
+}
+
+.status-badge.exists {
+  background: #d9f7be;
+  color: #389e0d;
+}
+
+.status-badge.missing {
+  background: #fff1f0;
+  color: #cf1322;
+}
+
+.status-badge.created {
+  background: #bae7ff;
+  color: #096dd9;
+}
+
+.status-badge.error {
+  background: #fff2e8;
+  color: #d46b08;
+}
+
+.status-badge.unknown {
+  background: #f6ffed;
+  color: #52c41a;
+}
+
+/* 按钮样式 */
+.btn {
+  padding: 12rpx 24rpx;
+  border-radius: 8rpx;
+  font-size: 26rpx;
+  border: none;
+  transition: all 0.3s;
+}
+
+.btn-small {
+  padding: 8rpx 16rpx;
+  font-size: 24rpx;
+}
+
+.btn-primary {
+  background: #1890ff;
+  color: white;
+}
+
+.btn-success {
+  background: #52c41a;
+  color: white;
+}
+
+.btn-warning {
+  background: #faad14;
+  color: white;
+}
+
+.btn-danger {
+  background: #ff4d4f;
+  color: white;
+}
+
+.btn-info {
+  background: #13c2c2;
+  color: white;
+}
+
+.btn-disabled {
+  background: #d9d9d9;
+  color: #999;
+}
+
+.btn:disabled {
+  opacity: 0.6;
+}
+
+/* 操作按钮组 */
+.action-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20rpx;
+  margin-top: 20rpx;
+}
+
+.action-buttons .btn {
+  flex: 1;
+  min-width: 200rpx;
+}
+
+/* 日志容器 */
+.logs-container {
+  background: #fafafa;
+  border-radius: 12rpx;
+  border: 1rpx solid #eee;
+  height: 400rpx;
+}
+
+.logs-scroll {
+  height: 100%;
+  padding: 20rpx;
+}
+
+.log-item {
+  padding: 10rpx 0;
+  border-bottom: 1rpx solid #f0f0f0;
+}
+
+.log-item:last-child {
+  border-bottom: none;
+}
+
+.log-text {
+  font-size: 24rpx;
+  color: #333;
+  font-family: 'Courier New', monospace;
+  line-height: 1.5;
+}
+
+.empty-logs {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  color: #999;
+  font-size: 28rpx;
+}
+
+/* 使用说明 */
+.instructions {
+  display: flex;
+  flex-direction: column;
+  gap: 15rpx;
+}
+
+.instruction-item {
+  font-size: 26rpx;
+  color: #666;
+  line-height: 1.6;
+  padding-left: 20rpx;
+  position: relative;
+}
+
+.instruction-item::before {
+  content: "•";
+  position: absolute;
+  left: 0;
+  color: #1890ff;
+}

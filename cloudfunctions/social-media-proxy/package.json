@@ -1,0 +1,19 @@
+{
+  "name": "social-media-proxy",
+  "version": "1.0.0",
+  "description": "社交媒体上传代理云函数 - 转发小程序请求到外部上传API服务",
+  "main": "index.js",
+  "scripts": {
+    "test": "node test.js"
+  },
+  "dependencies": {
+    "wx-server-sdk": "~2.6.3",
+    "axios": "^1.6.0"
+  },
+  "author": "",
+  "license": "MIT",
+  "cloudfunction-config": {
+    "memorySize": 512,
+    "timeout": 60
+  }
+}

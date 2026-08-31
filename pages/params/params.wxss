@@ -1,0 +1,315 @@
+/* pages/params/params.wxss - 参数设置页面样式 */
+page {
+  background: linear-gradient(180deg, #FFFAF5 0%, #FFF0F5 100%);
+}
+
+.page-container {
+  min-height: 100vh;
+  background: linear-gradient(180deg, #FFFAF5 0%, #FFF0F5 100%);
+  padding-bottom: 160rpx;
+}
+
+/* 顶部导航栏 */
+.nav-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 40rpx 32rpx 24rpx;
+}
+
+.nav-back {
+  width: 80rpx;
+  height: 80rpx;
+  background: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.08);
+}
+
+.back-icon {
+  font-size: 40rpx;
+  color: #333;
+  font-weight: bold;
+}
+
+.nav-title {
+  font-size: 36rpx;
+  font-weight: bold;
+  color: #333;
+}
+
+.nav-menu {
+  width: 80rpx;
+  height: 80rpx;
+  background: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.08);
+}
+
+.menu-dots {
+  font-size: 40rpx;
+  color: #333;
+  font-weight: bold;
+}
+
+/* 内容滚动区 */
+.content-scroll {
+  flex: 1;
+  padding: 0 32rpx;
+}
+
+/* 参数区块 */
+.param-section {
+  background: white;
+  border-radius: 24rpx;
+  padding: 32rpx;
+  margin-bottom: 20rpx;
+  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.06);
+}
+
+.section-label {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 20rpx;
+  display: block;
+}
+
+/* 输入框样式 */
+.url-input-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+}
+
+.url-input, .text-input {
+  flex: 1;
+  height: 80rpx;
+  background: #F5F5F5;
+  border-radius: 16rpx;
+  padding: 0 24rpx;
+  font-size: 28rpx;
+  border: none;
+}
+
+.url-input-wrapper .url-input {
+  flex: 1;
+}
+
+.parse-btn {
+  background: #3B82F6;
+  color: white;
+  border: none;
+  border-radius: 16rpx;
+  padding: 20rpx 32rpx;
+  font-size: 28rpx;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.char-count {
+  text-align: right;
+  font-size: 24rpx;
+  color: #999;
+  margin-top: 12rpx;
+  display: block;
+}
+
+.input-hint {
+  font-size: 24rpx;
+  color: #999;
+  margin-top: 12rpx;
+  display: block;
+}
+
+/* 分镜数量计数器 */
+.counter-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+}
+
+.counter-btn {
+  width: 80rpx;
+  height: 80rpx;
+  background: #F5F5F5;
+  border-radius: 16rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 40rpx;
+  font-weight: bold;
+  color: #333;
+}
+
+.counter-input {
+  flex: 1;
+  height: 80rpx;
+  background: #F5F5F5;
+  border-radius: 16rpx;
+  text-align: center;
+  font-size: 36rpx;
+  font-weight: bold;
+  color: #333;
+}
+
+/* 视频风格选择 */
+.style-options {
+  display: flex;
+  gap: 16rpx;
+}
+
+.style-option {
+  flex: 1;
+  height: 88rpx;
+  background: #F5F5F5;
+  border-radius: 16rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  border: 2rpx solid transparent;
+}
+
+.style-option.selected {
+  background: linear-gradient(135deg, rgba(235, 47, 150, 0.1) 0%, rgba(196, 29, 127, 0.1) 100%);
+  border-color: #EB2F96;
+}
+
+.style-name {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #333;
+}
+
+.style-option.selected .style-name {
+  color: #EB2F96;
+}
+
+.style-desc {
+  font-size: 26rpx;
+  color: #8B5CF6;
+  margin-top: 16rpx;
+  display: block;
+  background: rgba(139, 92, 246, 0.1);
+  padding: 12rpx 16rpx;
+  border-radius: 12rpx;
+}
+
+/* 电影风格选择 */
+.movie-styles {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12rpx;
+}
+
+.movie-option {
+  height: 88rpx;
+  background: #F5F5F5;
+  border-radius: 16rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  border: 2rpx solid transparent;
+}
+
+.movie-option.selected {
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(37, 99, 235, 0.1) 100%);
+  border-color: #3B82F6;
+}
+
+.movie-name {
+  font-size: 24rpx;
+  font-weight: 600;
+  color: #333;
+}
+
+.movie-option.selected .movie-name {
+  color: #3B82F6;
+}
+
+/* 脚本创作元素 */
+.element-options {
+  display: flex;
+  gap: 12rpx;
+  flex-wrap: wrap;
+}
+
+.element-option {
+  min-width: 180rpx;
+  height: 88rpx;
+  background: #F5F5F5;
+  border-radius: 16rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8rpx;
+  padding: 0 20rpx;
+  transition: all 0.3s ease;
+  border: 2rpx solid transparent;
+}
+
+.element-option.selected {
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.1) 0%, rgba(109, 40, 217, 0.1) 100%);
+  border-color: #8B5CF6;
+}
+
+.element-icon {
+  font-size: 32rpx;
+}
+
+.element-name {
+  font-size: 26rpx;
+  font-weight: 600;
+  color: #333;
+}
+
+.element-option.selected .element-name {
+  color: #8B5CF6;
+}
+
+/* 底部生成按钮 */
+.bottom-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: white;
+  padding: 24rpx 32rpx;
+  box-shadow: 0 -4rpx 16rpx rgba(0, 0, 0, 0.08);
+  z-index: 10;
+}
+
+.generate-btn {
+  width: 100%;
+  height: 96rpx;
+  background: linear-gradient(135deg, #EB2F96 0%, #C41D7F 100%);
+  color: white;
+  border: none;
+  border-radius: 24rpx;
+  font-size: 32rpx;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12rpx;
+  box-shadow: 0 8rpx 24rpx rgba(235, 47, 150, 0.3);
+}
+
+.generate-btn:active {
+  transform: scale(0.98);
+}
+
+.generate-btn[disabled] {
+  opacity: 0.6;
+}
+
+.btn-star {
+  font-size: 32rpx;
+}

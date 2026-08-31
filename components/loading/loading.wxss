@@ -1,0 +1,128 @@
+/* components/loading/loading.wxss */
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.loading-content {
+  background: white;
+  border-radius: 24rpx;
+  padding: 60rpx 40rpx 40rpx;
+  width: 70%;
+  max-width: 500rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.loading-animation {
+  position: relative;
+  width: 120rpx;
+  height: 120rpx;
+  margin-bottom: 32rpx;
+}
+
+.spinner {
+  width: 120rpx;
+  height: 120rpx;
+  border: 6rpx solid #F3F4F6;
+  border-top-color: #A855F7;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.progress-ring {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 80rpx;
+  height: 80rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #A855F7 0%, #EC4899 100%);
+  border-radius: 50%;
+}
+
+.progress-text {
+  font-size: 24rpx;
+  font-weight: bold;
+  color: white;
+}
+
+.loading-message {
+  margin-bottom: 16rpx;
+}
+
+.message-text {
+  font-size: 28rpx;
+  color: #1F2937;
+  font-weight: 500;
+  text-align: center;
+  display: block;
+}
+
+.loading-time {
+  margin-bottom: 24rpx;
+}
+
+.time-text {
+  font-size: 24rpx;
+  color: #6B7280;
+}
+
+.loading-tips {
+  margin-bottom: 24rpx;
+}
+
+.tips-text {
+  font-size: 22rpx;
+  color: #9CA3AF;
+  text-align: center;
+  display: block;
+}
+
+.loading-actions {
+  width: 100%;
+}
+
+.cancel-btn {
+  width: 100%;
+  height: 72rpx;
+  background: #F3F4F6;
+  color: #6B7280;
+  border-radius: 36rpx;
+  font-size: 26rpx;
+  border: none;
+}
+
+.cancel-btn::after {
+  border: none;
+}

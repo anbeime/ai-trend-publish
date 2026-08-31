@@ -1,0 +1,489 @@
+/* pages/agents/wechat-accounts.wxss - 公众号管理页面样式 */
+
+.accounts-container {
+  min-height: 100vh;
+  background: #f5f6f7;
+  padding-bottom: 40rpx;
+}
+
+/* ========== 顶部导航栏 ========== */
+.accounts-header {
+  background: #fff;
+  padding: 30rpx 20rpx;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1rpx solid #e9ecef;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.header-title {
+  font-size: 36rpx;
+  font-weight: 600;
+  color: #1a1a1a;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+}
+
+.add-btn {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: #fff;
+  border: none;
+  border-radius: 40rpx;
+  padding: 12rpx 24rpx;
+  font-size: 26rpx;
+  display: flex;
+  align-items: center;
+  box-shadow: 0 4rpx 12rpx rgba(102, 126, 234, 0.3);
+}
+
+.add-icon {
+  font-size: 32rpx;
+  margin-right: 8rpx;
+}
+
+.add-text {
+  font-size: 26rpx;
+}
+
+/* ========== 当前选中的公众号 ========== */
+.current-account-section {
+  margin: 30rpx 20rpx;
+}
+
+.section-title {
+  font-size: 28rpx;
+  color: #666;
+  margin-bottom: 20rpx;
+  font-weight: 500;
+}
+
+.current-account-card {
+  background: #fff;
+  border-radius: 20rpx;
+  padding: 30rpx;
+  display: flex;
+  align-items: center;
+  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.06);
+  border: 2rpx solid #667eea;
+}
+
+.account-avatar {
+  position: relative;
+  width: 100rpx;
+  height: 100rpx;
+  border-radius: 50%;
+  overflow: hidden;
+  margin-right: 24rpx;
+  border: 3rpx solid #f0f0f0;
+}
+
+.account-avatar image {
+  width: 100%;
+  height: 100%;
+}
+
+.account-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.account-name {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin-bottom: 8rpx;
+}
+
+.account-id {
+  font-size: 24rpx;
+  color: #999;
+  margin-bottom: 8rpx;
+  font-family: monospace;
+}
+
+.account-time {
+  font-size: 22rpx;
+  color: #ccc;
+}
+
+.account-status {
+  font-size: 22rpx;
+  padding: 4rpx 12rpx;
+  border-radius: 20rpx;
+  background: #e6f4ea;
+  color: #188038;
+  display: inline-block;
+  width: fit-content;
+}
+
+.account-status.active {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: #fff;
+}
+
+.active-badge {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  background: #ff4d4f;
+  color: #fff;
+  font-size: 18rpx;
+  padding: 2rpx 8rpx;
+  border-radius: 12rpx;
+}
+
+/* ========== 未设置公众号提示 ========== */
+.no-account-section {
+  margin: 60rpx 20rpx;
+  text-align: center;
+  padding: 80rpx 40rpx;
+  background: #fff;
+  border-radius: 20rpx;
+}
+
+.no-account-icon {
+  font-size: 120rpx;
+  margin-bottom: 30rpx;
+}
+
+.no-account-title {
+  display: block;
+  font-size: 36rpx;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin-bottom: 16rpx;
+}
+
+.no-account-desc {
+  display: block;
+  font-size: 28rpx;
+  color: #999;
+  margin-bottom: 40rpx;
+}
+
+.setup-btn {
+  width: 100%;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: #fff;
+  border: none;
+  border-radius: 40rpx;
+  padding: 24rpx;
+  font-size: 30rpx;
+  font-weight: 500;
+}
+
+/* ========== 公众号列表 ========== */
+.accounts-list-section {
+  margin: 30rpx 20rpx;
+}
+
+.accounts-scroll {
+  max-height: calc(100vh - 400rpx);
+}
+
+.account-item {
+  background: #fff;
+  border-radius: 16rpx;
+  padding: 24rpx;
+  margin-bottom: 20rpx;
+  display: flex;
+  align-items: center;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.04);
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.account-item.active {
+  border: 2rpx solid #667eea;
+  box-shadow: 0 4rpx 16rpx rgba(102, 126, 234, 0.2);
+}
+
+.account-actions {
+  display: flex;
+  gap: 16rpx;
+}
+
+.action-btn {
+  padding: 8rpx 20rpx;
+  font-size: 24rpx;
+  border-radius: 20rpx;
+  border: 1rpx solid #d9d9d9;
+  background: #fff;
+  color: #666;
+}
+
+.action-btn.edit {
+  border-color: #667eea;
+  color: #667eea;
+}
+
+.action-btn.delete {
+  border-color: #ff4d4f;
+  color: #ff4d4f;
+}
+
+/* ========== 空状态 ========== */
+.empty-state {
+  margin: 120rpx 20rpx;
+  text-align: center;
+  padding: 100rpx 40rpx;
+  background: #fff;
+  border-radius: 20rpx;
+}
+
+.empty-icon {
+  font-size: 160rpx;
+  margin-bottom: 30rpx;
+}
+
+.empty-text {
+  display: block;
+  font-size: 30rpx;
+  color: #999;
+  margin-bottom: 40rpx;
+}
+
+.empty-btn {
+  width: 100%;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: #fff;
+  border: none;
+  border-radius: 40rpx;
+  padding: 24rpx;
+  font-size: 30rpx;
+}
+
+/* ========== 添加/编辑弹窗 ========== */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 40rpx;
+}
+
+.modal-content {
+  background: #fff;
+  border-radius: 24rpx;
+  width: 100%;
+  max-width: 600rpx;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 30rpx;
+  border-bottom: 1rpx solid #e9ecef;
+}
+
+.modal-title {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #1a1a1a;
+}
+
+.modal-close {
+  font-size: 40rpx;
+  color: #999;
+  padding: 10rpx;
+  cursor: pointer;
+}
+
+.modal-body {
+  padding: 30rpx;
+}
+
+.form-group {
+  margin-bottom: 30rpx;
+}
+
+.form-label {
+  display: block;
+  font-size: 28rpx;
+  color: #1a1a1a;
+  margin-bottom: 16rpx;
+  font-weight: 500;
+}
+
+.form-input {
+  width: 100%;
+  padding: 20rpx;
+  font-size: 28rpx;
+  border: 1rpx solid #d9d9d9;
+  border-radius: 12rpx;
+  background: #f9f9f9;
+}
+
+.form-input:focus {
+  border-color: #667eea;
+  background: #fff;
+}
+
+.form-tips {
+  background: #f0f7ff;
+  border: 1rpx solid #d6e8ff;
+  border-radius: 12rpx;
+  padding: 20rpx;
+  margin-top: 20rpx;
+}
+
+.tips-title {
+  display: block;
+  font-size: 26rpx;
+  font-weight: 500;
+  color: #1a73e8;
+  margin-bottom: 12rpx;
+}
+
+.tips-text {
+  display: block;
+  font-size: 24rpx;
+  color: #5f6368;
+  margin-bottom: 8rpx;
+  line-height: 1.6;
+}
+
+/* IP白名单提示 */
+.ip-whitelist-tip {
+  background: #fff7e6;
+  border: 1rpx solid #ffd591;
+  border-radius: 12rpx;
+  padding: 24rpx;
+  margin-top: 20rpx;
+}
+
+.ip-title {
+  display: block;
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #d46b08;
+  margin-bottom: 16rpx;
+}
+
+.ip-desc {
+  display: block;
+  font-size: 24rpx;
+  color: #5f6368;
+  margin-bottom: 16rpx;
+}
+
+.ip-address-box {
+  display: flex;
+  align-items: center;
+  background: #fff;
+  border: 2rpx solid #667eea;
+  border-radius: 12rpx;
+  padding: 16rpx 20rpx;
+  margin-bottom: 16rpx;
+}
+
+.ip-label {
+  font-size: 24rpx;
+  color: #666;
+  margin-right: 12rpx;
+}
+
+.ip-value {
+  flex: 1;
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #667eea;
+  font-family: monospace;
+  letter-spacing: 1rpx;
+}
+
+.copy-icon {
+  font-size: 28rpx;
+  margin-left: 12rpx;
+}
+
+.ip-steps {
+  display: block;
+  font-size: 22rpx;
+  color: #8c8c8c;
+  margin-bottom: 12rpx;
+}
+
+.ip-warn {
+  display: block;
+  font-size: 22rpx;
+  color: #ff4d4f;
+  font-weight: 500;
+}
+
+.modal-footer {
+  display: flex;
+  gap: 20rpx;
+  padding: 30rpx;
+  border-top: 1rpx solid #e9ecef;
+}
+
+.modal-btn {
+  flex: 1;
+  padding: 24rpx;
+  border-radius: 12rpx;
+  font-size: 28rpx;
+  font-weight: 500;
+}
+
+.modal-btn.cancel {
+  background: #f5f5f5;
+  color: #666;
+  border: 1rpx solid #d9d9d9;
+}
+
+.modal-btn.confirm {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: #fff;
+  border: none;
+}
+
+/* ========== 底部说明 ========== */
+.accounts-footer {
+  text-align: center;
+  padding: 30rpx 20rpx;
+}
+
+.footer-text {
+  font-size: 24rpx;
+  color: #999;
+}
+
+/* ========== 操作栏（返回按钮） ========== */
+.action-bar {
+  margin-top: 30rpx;
+  padding: 0 20rpx;
+}
+
+.back-to-publish-btn {
+  width: 100%;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: #fff;
+  border: none;
+  border-radius: 40rpx;
+  padding: 28rpx;
+  font-size: 32rpx;
+  font-weight: 500;
+  box-shadow: 0 8rpx 24rpx rgba(102, 126, 234, 0.4);
+}
+
+.back-to-publish-btn:active {
+  transform: scale(0.98);
+  box-shadow: 0 4rpx 12rpx rgba(102, 126, 234, 0.3);
+}

@@ -1,0 +1,33 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/health/health",
+    "pages/agents/agents",
+    "pages/agents/wechat-accounts",
+    "pages/content-creator/content-creator",
+    "pages/templates/templates",
+    "pages/hotspot/hotspot",
+    "pages/dream/dream",
+    "pages/project/project",
+    "pages/profile/profile",
+    "pages/agent-ui/agent-ui",
+    "pages/params/params",
+    "pages/preference/preference",
+    "pages/api-config/api-config",
+    "pages/creation-history/creation-history",
+    "pages/subscription/subscription",
+    "pages/database-init/database-init"
+  ],
+  "window": {
+    "backgroundTextStyle": "light",
+    "navigationBarBackgroundColor": "#9333EA",
+    "navigationBarTitleText": "AI热点自动发布系统",
+    "navigationBarTextStyle": "white",
+    "backgroundColor": "#F8F9FA"
+  },
+  "cloud": true,
+  "style": "v2",
+  "sitemapLocation": "sitemap.json",
+  "lazyCodeLoading": "requiredComponents",
+  "__usePrivacyCheck__": true
+}

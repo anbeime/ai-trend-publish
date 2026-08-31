@@ -1,0 +1,567 @@
+/* pages/index/index.wxss - 符合设计规范的全新样式 */
+page {
+  background-color: #F5F5F5;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+}
+
+/* ==================== 页面容器 ==================== */
+.page-container {
+  min-height: 100vh;
+  background-color: #F5F5F5;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ==================== 顶部导航 Tabs ==================== */
+.main-tabs {
+  display: flex;
+  background: white;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.04);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.tab-item {
+  flex: 1;
+  text-align: center;
+  padding: 32rpx 0;
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.tab-item.active {
+  background: white;
+}
+
+.tab-item.active .tab-text {
+  color: #EB2F96;
+  font-weight: 700;
+}
+
+.tab-item.active .tab-indicator {
+  opacity: 1;
+  transform: scaleX(1);
+}
+
+.tab-text {
+  font-size: 28rpx;
+  color: #9CA3AF;
+  font-weight: 500;
+  letter-spacing: 1rpx;
+}
+
+.tab-indicator {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%) scaleX(0);
+  width: 40rpx;
+  height: 4rpx;
+  background: #EB2F96;
+  border-radius: 2rpx;
+  opacity: 0;
+  transition: all 0.3s ease;
+}
+
+/* ==================== 多智能体导航条 ==================== */
+.agent-navigation {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 24rpx 32rpx;
+  background: white;
+  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.04);
+  position: relative;
+  margin-bottom: 2rpx;
+}
+
+.agent-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+  transition: all 0.3s ease;
+  position: relative;
+  cursor: pointer;
+}
+
+.step-icon {
+  width: 48rpx;
+  height: 48rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24rpx;
+  border-radius: 50%;
+  background: #F3F4F6;
+  color: #9CA3AF;
+  margin-bottom: 8rpx;
+  transition: all 0.3s ease;
+}
+
+.step-label {
+  font-size: 20rpx;
+  color: #9CA3AF;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+.agent-step.completed .step-icon {
+  background: #8B5CF6;
+  color: white;
+}
+
+.agent-step.completed .step-label {
+  color: #8B5CF6;
+  font-weight: 500;
+}
+
+.agent-step.current .step-icon {
+  background: #EB2F96;
+  color: white;
+  box-shadow: 0 4rpx 12rpx rgba(235, 47, 150, 0.3);
+}
+
+.agent-step.current .step-label {
+  color: #EB2F96;
+  font-weight: 700;
+}
+
+.step-active-indicator {
+  position: absolute;
+  bottom: -8rpx;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 6rpx;
+  height: 6rpx;
+  background: #EB2F96;
+  border-radius: 50%;
+}
+
+/* 进度条 */
+.progress-bar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 2rpx;
+  background: #F3F4F6;
+}
+
+.progress-fill {
+  height: 100%;
+  background: #EB2F96;
+  transition: width 0.3s ease;
+}
+
+/* 计数胶囊 */
+.step-counter {
+  position: absolute;
+  right: 32rpx;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(235, 47, 150, 0.1);
+  color: #EB2F96;
+  padding: 8rpx 16rpx;
+  border-radius: 16rpx;
+  font-size: 22rpx;
+  font-weight: 600;
+}
+
+/* ==================== 主内容区 ==================== */
+.main-content {
+  flex: 1;
+  padding-bottom: 40rpx;
+}
+
+/* ==================== 快捷操作区 ==================== */
+.quick-actions-section {
+  padding: 32rpx;
+}
+
+.section-title {
+  font-size: 36rpx;
+  font-weight: 700;
+  color: #333333;
+  margin-bottom: 24rpx;
+}
+
+.quick-actions-grid {
+  display: flex;
+  gap: 24rpx;
+  margin-bottom: 40rpx;
+}
+
+.quick-action-card {
+  flex: 1;
+  background: white;
+  border-radius: 24rpx;
+  padding: 32rpx 24rpx;
+  text-align: center;
+  box-shadow: 0 12rpx 36rpx rgba(0, 0, 0, 0.1);
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.quick-action-card:active {
+  transform: scale(0.96);
+}
+
+.quick-action-card.primary {
+  background: linear-gradient(135deg, #EB2F96 0%, #C41D7F 100%);
+  color: white;
+  box-shadow: 0 12rpx 36rpx rgba(235, 47, 150, 0.25);
+}
+
+.quick-action-card.secondary {
+  background: white;
+  border: 2rpx solid #EB2F96;
+  color: #EB2F96;
+}
+
+.quick-action-card.accent {
+  background: #8B5CF6;
+  color: white;
+  box-shadow: 0 12rpx 36rpx rgba(139, 92, 246, 0.25);
+}
+
+.action-icon {
+  font-size: 48rpx;
+  margin-bottom: 16rpx;
+}
+
+.action-title {
+  font-size: 32rpx;
+  font-weight: 700;
+  margin-bottom: 8rpx;
+  display: block;
+}
+
+.action-subtitle {
+  font-size: 24rpx;
+  opacity: 0.8;
+  display: block;
+}
+
+/* ==================== 分镜列表 ==================== */
+.storyboard-section {
+  padding: 0 32rpx 32rpx;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24rpx;
+}
+
+.view-all-btn {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+  color: #EB2F96;
+  font-size: 26rpx;
+}
+
+.arrow-icon {
+  font-size: 20rpx;
+}
+
+.storyboard-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20rpx;
+}
+
+.storyboard-item {
+  display: flex;
+  background: white;
+  border-radius: 24rpx;
+  padding: 24rpx;
+  box-shadow: 0 12rpx 36rpx rgba(0, 0, 0, 0.08);
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.storyboard-item:active {
+  transform: scale(0.98);
+}
+
+.storyboard-thumbnail {
+  position: relative;
+  width: 180rpx;
+  height: 120rpx;
+  border-radius: 16rpx;
+  overflow: hidden;
+  margin-right: 24rpx;
+  flex-shrink: 0;
+}
+
+.thumbnail-image {
+  width: 100%;
+  height: 100%;
+}
+
+.storyboard-duration {
+  position: absolute;
+  bottom: 8rpx;
+  right: 8rpx;
+  background: rgba(0, 0, 0, 0.6);
+  color: white;
+  padding: 4rpx 8rpx;
+  border-radius: 8rpx;
+  font-size: 20rpx;
+}
+
+.storyboard-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.storyboard-title {
+  font-size: 30rpx;
+  font-weight: 700;
+  color: #333333;
+  margin-bottom: 8rpx;
+}
+
+.storyboard-desc {
+  font-size: 24rpx;
+  color: #9CA3AF;
+  margin-bottom: 12rpx;
+  line-height: 1.4;
+}
+
+.storyboard-tags {
+  display: flex;
+  gap: 8rpx;
+  flex-wrap: wrap;
+}
+
+.tag {
+  background: rgba(235, 47, 150, 0.1);
+  color: #EB2F96;
+  padding: 6rpx 12rpx;
+  border-radius: 12rpx;
+  font-size: 20rpx;
+}
+
+.storyboard-status {
+  position: absolute;
+  top: 24rpx;
+  right: 24rpx;
+}
+
+.status-dot {
+  width: 16rpx;
+  height: 16rpx;
+  border-radius: 50%;
+}
+
+.status-dot.good {
+  background: #8B5CF6;
+  box-shadow: 0 0 0 4rpx rgba(139, 92, 246, 0.2);
+}
+
+.status-dot.warning {
+  background: #FFA940;
+  box-shadow: 0 0 0 4rpx rgba(255, 169, 64, 0.2);
+}
+
+.status-dot.error {
+  background: #EF4444;
+  box-shadow: 0 0 0 4rpx rgba(239, 68, 68, 0.2);
+}
+
+/* ==================== 任务队列 ==================== */
+.task-queue-section {
+  padding: 0 32rpx 32rpx;
+}
+
+.queue-count {
+  background: rgba(235, 47, 150, 0.1);
+  color: #EB2F96;
+  padding: 4rpx 12rpx;
+  border-radius: 12rpx;
+  font-size: 22rpx;
+}
+
+.task-queue {
+  display: flex;
+  flex-direction: column;
+  gap: 16rpx;
+}
+
+.task-item {
+  display: flex;
+  align-items: center;
+  background: white;
+  border-radius: 16rpx;
+  padding: 20rpx;
+  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.04);
+}
+
+.task-icon {
+  width: 48rpx;
+  height: 48rpx;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24rpx;
+  margin-right: 16rpx;
+  color: white;
+}
+
+.task-icon.running {
+  background: #EB2F96;
+}
+
+.task-icon.completed {
+  background: #8B5CF6;
+}
+
+.task-icon.idle {
+  background: #9CA3AF;
+}
+
+.task-icon.blocked {
+  background: #FFA940;
+}
+
+.task-info {
+  flex: 1;
+}
+
+.task-name {
+  font-size: 26rpx;
+  font-weight: 600;
+  color: #333333;
+  display: block;
+  margin-bottom: 4rpx;
+}
+
+.task-status {
+  font-size: 22rpx;
+  color: #9CA3AF;
+  display: block;
+}
+
+.task-progress {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+}
+
+.progress-ring {
+  width: 32rpx;
+  height: 32rpx;
+  position: relative;
+}
+
+.progress-circle {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: conic-gradient(#EB2F96 0deg, transparent 0deg);
+  mask: radial-gradient(circle, transparent 65%, black 65%);
+  -webkit-mask: radial-gradient(circle, transparent 65%, black 65%);
+  transition: transform 0.3s ease;
+}
+
+.progress-text {
+  font-size: 18rpx;
+  color: #9CA3AF;
+  font-weight: 600;
+}
+
+/* ==================== 新手教程 ==================== */
+.tutorial-section {
+  padding: 0 32rpx 32rpx;
+}
+
+.tutorial-card {
+  display: flex;
+  align-items: center;
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.05) 0%, rgba(235, 47, 150, 0.05) 100%);
+  border: 1rpx solid rgba(139, 92, 246, 0.1);
+  border-radius: 24rpx;
+  padding: 24rpx;
+  transition: all 0.3s ease;
+}
+
+.tutorial-card:active {
+  transform: scale(0.98);
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.08) 0%, rgba(235, 47, 150, 0.08) 100%);
+}
+
+.tutorial-content {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+}
+
+.tutorial-icon {
+  width: 64rpx;
+  height: 64rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32rpx;
+  background: rgba(139, 92, 246, 0.1);
+  border-radius: 16rpx;
+}
+
+.tutorial-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.tutorial-title {
+  font-size: 28rpx;
+  font-weight: 700;
+  color: #333333;
+  margin-bottom: 4rpx;
+}
+
+.tutorial-desc {
+  font-size: 24rpx;
+  color: #9CA3AF;
+}
+
+.tutorial-action {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+  color: #EB2F96;
+  font-size: 24rpx;
+  font-weight: 600;
+}
+
+/* ==================== 动画效果 ==================== */
+@keyframes pulse {
+  0% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.05); opacity: 0.8; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.quick-action-card.primary::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+  0% { left: -100%; }
+  100% { left: 100%; }
+}

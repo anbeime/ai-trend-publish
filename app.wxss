@@ -1,0 +1,251 @@
+/**app.wxss**/
+/* ========== 品牌样式变量（使用page代替:root） ========== */
+/* 主色：紫粉渐变 */
+page {
+  --color-primary-start: #9333EA;
+  --color-primary-end: #EC4899;
+  --color-primary-gradient: linear-gradient(135deg, #9333EA 0%, #EC4899 100%);
+
+  /* 背景色 */
+  --color-background: #F8F9FA;
+  --color-background-light: #FFFFFF;
+  --color-background-gray: #F5F7FA;
+
+  /* 文字色 */
+  --color-text-dark: #333333;
+  --color-text-medium: #666666;
+  --color-text-light: #999999;
+  --color-text-white: #FFFFFF;
+
+  /* 辅助色 */
+  --color-orange: #F97316;
+  --color-pink-light: #FCE7F3;
+  --color-purple-light: #F3E8FF;
+
+  /* 圆角 */
+  --border-radius-lg: 32rpx;
+  --border-radius-md: 24rpx;
+  --border-radius-sm: 16rpx;
+
+  /* 内边距 */
+  --padding-md: 24rpx;
+  --padding-sm: 16rpx;
+  --padding-xs: 12rpx;
+
+  /* 字体大小 */
+  --font-size-lg: 32rpx;
+  --font-size-md: 28rpx;
+  --font-size-sm: 24rpx;
+
+  /* 阴影 */
+  --shadow-light: 0 2rpx 8rpx rgba(0, 0, 0, 0.06);
+  --shadow-primary: 0 4rpx 12rpx rgba(147, 51, 234, 0.3);
+
+  background-color: #F8F9FA;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+}
+
+/* 🔒 移除全局 pointer-events，让小程序默认处理 */
+/* button { pointer-events: auto; } */
+
+/* 🔒 确保没有隐藏的遮罩层遮挡 */
+.fixed-mask-hidden {
+  display: none !important;
+  pointer-events: none !important;
+}
+
+.container {
+  min-height: 100vh;
+  background-color: var(--color-background);
+  padding-bottom: 100rpx;
+}
+
+/* ========== 通用样式类 ========== */
+/* 按钮绝对居中 */
+.btn-center {
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+}
+
+/* 紫粉渐变按钮 */
+.btn-primary {
+  background: var(--color-primary-gradient) !important;
+  color: var(--color-text-white) !important;
+  border-radius: var(--border-radius-md) !important;
+  padding: var(--padding-xs) var(--padding-md) !important;
+  font-size: var(--font-size-md) !important;
+  box-shadow: var(--shadow-primary) !important;
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+}
+
+.btn-secondary {
+  background: var(--color-background-light);
+  color: var(--color-primary-start);
+  border: 2rpx solid var(--color-primary-start);
+  border-radius: var(--border-radius-md);
+  padding: var(--padding-xs) var(--padding-md);
+  font-size: var(--font-size-md);
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+}
+
+/* 白色卡片 */
+.card {
+  background: var(--color-background-light) !important;
+  border-radius: var(--border-radius-sm) !important;
+  padding: var(--padding-sm) !important;
+  margin: var(--padding-md) !important;
+  box-shadow: var(--shadow-light) !important;
+}
+
+/* 胶囊标签 */
+.capsule-tag {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 8rpx 20rpx !important;
+  border-radius: 40rpx !important;
+  font-size: var(--font-size-sm) !important;
+}
+
+.capsule-tag.active {
+  background: var(--color-primary-gradient) !important;
+  color: var(--color-text-white) !important;
+}
+
+.capsule-tag.inactive {
+  background: #F3F4F6 !important;
+  color: var(--color-text-medium) !important;
+}
+
+/* 圆形序号 */
+.circle-number {
+  width: 48rpx !important;
+  height: 48rpx !important;
+  border-radius: 50% !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-size: var(--font-size-sm) !important;
+  font-weight: bold !important;
+}
+
+.circle-number.orange {
+  background: var(--color-orange) !important;
+  color: var(--color-text-white) !important;
+}
+
+.circle-number.gray {
+  background: #E5E7EB !important;
+  color: var(--color-text-medium) !important;
+}
+
+/* 进度条 */
+.progress-bar {
+  height: 8rpx !important;
+  border-radius: 4rpx !important;
+  background: #E5E7EB !important;
+  overflow: hidden !important;
+}
+
+.progress-bar-fill {
+  height: 100% !important;
+  border-radius: 4rpx !important;
+}
+
+.progress-bar-fill.orange {
+  background: var(--color-orange) !important;
+}
+
+.progress-bar-fill.purple {
+  background: var(--color-primary-start) !important;
+}
+
+/* 完成状态样式 */
+.btn-completed {
+  background: var(--color-primary-gradient);
+  color: white;
+  border-radius: var(--border-radius-md);
+  padding: var(--padding-xs) var(--padding-md);
+  font-size: var(--font-size-md);
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+}
+
+/* 警告状态样式 */
+.btn-warning {
+  background: var(--color-orange);
+  color: white;
+  border-radius: var(--border-radius-md);
+  padding: var(--padding-xs) var(--padding-md);
+  font-size: var(--font-size-md);
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+}
+
+/* 状态标签 */
+.status-completed {
+  color: #8B5CF6;
+  background: rgba(139, 92, 246, 0.1);
+  padding: 8rpx 16rpx;
+  border-radius: 16rpx;
+  font-size: 24rpx;
+}
+
+.status-warning {
+  color: #FFA940;
+  background: rgba(255, 169, 64, 0.1);
+  padding: 8rpx 16rpx;
+  border-radius: 16rpx;
+  font-size: 24rpx;
+}
+
+.status-idle {
+  color: #9CA3AF;
+  background: rgba(156, 163, 175, 0.1);
+  padding: 8rpx 16rpx;
+  border-radius: 16rpx;
+  font-size: 24rpx;
+}
+
+.section-title {
+  font-size: var(--font-size-lg);
+  font-weight: bold;
+  color: var(--color-text-dark);
+  margin: 30rpx 20rpx 20rpx;
+}
+
+/* 加载中状态 */
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 400rpx;
+}
+
+.loading text {
+  color: #999;
+  font-size: 28rpx;
+}
+
+/* 空状态 */
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 100rpx 40rpx;
+  text-align: center;
+}
+
+.empty text {
+  color: #999;
+  font-size: 28rpx;
+  margin-top: 20rpx;
+}

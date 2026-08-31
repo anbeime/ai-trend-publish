@@ -1,0 +1,104 @@
+<!--pages/agents/agents-detail.wxml - 分镜详情页-->
+<view class="page-container">
+  <!-- 16:9 预览区 Banner -->
+  <view class="preview-banner">
+    <image src="{{storyboard.previewImage}}" mode="aspectFill" class="preview-image" />
+    <view class="play-overlay" bindtap="playPreview">
+      <view class="play-button">
+        <text class="play-icon">▶</text>
+      </view>
+    </view>
+    <!-- 信息栏 -->
+    <view class="preview-info">
+      <text class="duration-text">时长: {{storyboard.duration}}s</text>
+      <view class="consistency-status {{storyboard.consistencyStatus}}">
+        <text class="status-text">{{storyboard.statusText}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 表单编辑区 -->
+  <view class="form-section">
+    <!-- 标题输入 -->
+    <view class="form-group">
+      <text class="form-label">分镜标题</text>
+      <input 
+        class="form-input" 
+        type="text" 
+        value="{{storyboard.title}}" 
+        placeholder="请输入分镜标题"
+        bindinput="onTitleChange"
+      />
+    </view>
+
+    <!-- 描述域 -->
+    <view class="form-group">
+      <text class="form-label">分镜描述</text>
+      <textarea 
+        class="form-textarea" 
+        value="{{storyboard.description}}" 
+        placeholder="详细描述这个分镜的内容..."
+        bindinput="onDescriptionChange"
+        auto-height
+      ></textarea>
+    </view>
+
+    <!-- 场景选择 -->
+    <view class="form-group">
+      <text class="form-label">场景类型</text>
+      <view class="scene-selector" bindtap="showSceneSelector">
+        <text class="selected-scene">{{selectedScene.name}}</text>
+        <text class="selector-arrow">▼</text>
+      </view>
+      <view class="scene-options" wx:if="{{showSceneSelector}}">
+        <view 
+          class="scene-option {{item.id === selectedScene.id ? 'selected' : ''}}" 
+          wx:for="{{sceneOptions}}" 
+          wx:key="id"
+          bindtap="selectScene"
+          data-scene="{{item}}"
+        >
+          <text class="scene-name">{{item.name}}</text>
+          <text class="scene-desc">{{item.desc}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 标签云 -->
+    <view class="form-group">
+      <text class="form-label">分镜标签</text>
+      <view class="tag-cloud">
+        <view 
+          class="tag-chip {{item.selected ? 'selected' : ''}}" 
+          wx:for="{{availableTags}}" 
+          wx:key="id"
+          bindtap="toggleTag"
+          data-tag="{{item}}"
+        >
+          <text class="tag-text">{{item.name}}</text>
+          <text class="tag-icon" wx:if="{{item.selected}}">✓</text>
+        </view>
+        <view class="add-tag-btn" bindtap="addCustomTag">
+          <text class="add-icon">+</text>
+          <text class="add-text">添加标签</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 底部固定操作栏 -->
+  <view class="action-bar">
+    <view class="apply-all-section">
+      <checkbox 
+        class="apply-all-checkbox" 
+        checked="{{applyToAll}}"
+        bindchange="onApplyToAllChange"
+      />
+      <text class="apply-all-text">应用到所有分镜</text>
+    </view>
+    <view class="action-buttons">
+      <button class="action-btn secondary" bindtap="cancelEdit">取消</button>
+      <button class="action-btn primary" bindtap="saveStoryboard">保存</button>
+    </view>
+  </view>
+</view>

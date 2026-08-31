@@ -1,0 +1,22 @@
+/* pages/api-config/api-config.wxss */
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  background: #f5f5f5;
+  padding: 40rpx;
+}
+
+.icon {
+  font-size: 120rpx;
+  margin-bottom: 40rpx;
+}
+
+.message {
+  font-size: 32rpx;
+  color: #333;
+  text-align: center;
+  line-height: 1.6;
+}

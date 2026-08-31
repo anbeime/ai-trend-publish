@@ -1,0 +1,119 @@
+<view class="container">
+  <!-- 标题栏 -->
+  <view class="header">
+    <view class="back-btn" bindtap="goBack">
+      <text class="back-icon">←</text>
+      <text>返回</text>
+    </view>
+    <text class="title">数据库初始化工具</text>
+  </view>
+
+  <!-- 状态显示 -->
+  <view class="status-card">
+    <text class="status-title">当前状态</text>
+    <text class="status-text">{{status}}</text>
+    <view class="loading" wx:if="{{loading}}">
+      <text>加载中...</text>
+    </view>
+  </view>
+
+  <!-- 数据库集合状态 -->
+  <view class="section">
+    <view class="section-header">
+      <text class="section-title">数据库集合状态</text>
+      <view class="section-actions">
+        <button class="btn btn-primary btn-small" bindtap="checkCollections" disabled="{{loading}}">
+          重新检查
+        </button>
+        <button class="btn btn-success btn-small" bindtap="initAllCollections" disabled="{{loading}}">
+          全部初始化
+        </button>
+      </view>
+    </view>
+
+    <view class="collections-list">
+      <view class="collection-item" wx:for="{{collections}}" wx:key="name">
+        <view class="collection-info">
+          <text class="collection-name">{{item.name}}</text>
+          <text class="collection-desc">{{item.description}}</text>
+        </view>
+        <view class="collection-status">
+          <text class="status-badge {{item.status}}">
+            {{item.status === 'exists' ? '已存在' : 
+              item.status === 'missing' ? '不存在' : 
+              item.status === 'created' ? '已创建' : 
+              item.status === 'error' ? '错误' : '未知'}}
+          </text>
+          <button 
+            class="btn btn-small {{item.status === 'exists' ? 'btn-disabled' : 'btn-warning'}}" 
+            bindtap="initCollection" 
+            data-name="{{item.name}}"
+            data-description="{{item.description}}"
+            disabled="{{item.status === 'exists' || loading}}">
+            初始化
+          </button>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 创作历史功能测试 -->
+  <view class="section">
+    <view class="section-header">
+      <text class="section-title">创作历史功能测试</text>
+    </view>
+    
+    <view class="action-buttons">
+      <button class="btn btn-info" bindtap="testCreationHistory" disabled="{{loading}}">
+        测试功能
+      </button>
+      <button class="btn btn-warning" bindtap="migrateLocalHistory" disabled="{{loading}}">
+        迁移本地历史
+      </button>
+      <button class="btn btn-danger" bindtap="clearLocalHistory" disabled="{{loading}}">
+        清空本地历史
+      </button>
+    </view>
+  </view>
+
+  <!-- 操作日志 -->
+  <view class="section">
+    <view class="section-header">
+      <text class="section-title">操作日志</text>
+      <view class="section-actions">
+        <button class="btn btn-small" bindtap="copyLogs" disabled="{{logs.length === 0}}">
+          复制日志
+        </button>
+        <button class="btn btn-small" bindtap="clearLogs" disabled="{{logs.length === 0}}">
+          清空日志
+        </button>
+      </view>
+    </view>
+
+    <view class="logs-container">
+      <scroll-view class="logs-scroll" scroll-y>
+        <view class="log-item" wx:for="{{logs}}" wx:key="index">
+          <text class="log-text">{{item}}</text>
+        </view>
+        <view wx:if="{{logs.length === 0}}" class="empty-logs">
+          <text>暂无日志</text>
+        </view>
+      </scroll-view>
+    </view>
+  </view>
+
+  <!-- 使用说明 -->
+  <view class="section">
+    <view class="section-header">
+      <text class="section-title">使用说明</text>
+    </view>
+    
+    <view class="instructions">
+      <text class="instruction-item">1. 首先点击「重新检查」查看数据库集合状态</text>
+      <text class="instruction-item">2. 如果 creation_history 集合不存在，点击「初始化」按钮</text>
+      <text class="instruction-item">3. 点击「测试功能」验证创作历史功能是否正常</text>
+      <text class="instruction-item">4. 如果有本地历史记录，可以点击「迁移本地历史」</text>
+      <text class="instruction-item">5. 所有操作日志会在下方显示</text>
+    </view>
+  </view>
+</view>

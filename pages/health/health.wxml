@@ -1,0 +1,243 @@
+<!--pages/health/health.wxml - AI健康管家-->
+<view class="page-container">
+  <!-- 场景头部 -->
+  <view class="scene-header" style="background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);">
+    <view class="scene-header-content">
+      <view class="scene-icon-big">HEALTH</view>
+      <view class="scene-header-text">
+        <text class="scene-title">AI健康管家</text>
+        <text class="scene-subtitle">习惯打卡 · 运动挑战 · 健康陪伴</text>
+      </view>
+    </view>
+    <view class="level-bar" wx:if="{{dashboard}}">
+      <view class="level-info">
+        <text class="level-name">{{dashboard.level.current.name}}</text>
+        <text class="level-points">{{dashboard.totalPoints}} {{dashboard.pointName}}</text>
+      </view>
+      <view class="level-progress">
+        <view class="progress-track">
+          <view class="progress-fill" style="width: {{dashboard.level.progress}}%;"></view>
+        </view>
+        <text class="progress-text" wx:if="{{dashboard.level.next}}">距{{dashboard.level.next.name}}还差{{dashboard.level.pointsToNext}}</text>
+        <text class="progress-text" wx:else>已达最高等级</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 连击信息 -->
+  <view class="streak-banner" wx:if="{{dashboard && dashboard.streak > 0}}">
+    <text class="streak-text">连续健康打卡 {{dashboard.streak}} 天</text>
+    <text class="streak-best">最高记录 {{dashboard.bestStreak}} 天</text>
+  </view>
+
+  <!-- Tab切换 -->
+  <view class="tab-bar">
+    <view class="tab-item {{activeTab === 'today' ? 'active' : ''}}" bindtap="switchTab" data-tab="today">
+      <text class="tab-text">今日打卡</text>
+    </view>
+    <view class="tab-item {{activeTab === 'challenge' ? 'active' : ''}}" bindtap="switchTab" data-tab="challenge">
+      <text class="tab-text">运动挑战</text>
+    </view>
+    <view class="tab-item {{activeTab === 'companion' ? 'active' : ''}}" bindtap="switchTab" data-tab="companion">
+      <text class="tab-text">健康陪伴</text>
+    </view>
+  </view>
+
+  <!-- 今日打卡 -->
+  <view class="tab-content" wx:if="{{activeTab === 'today'}}">
+    <view class="habits-container">
+      <view class="habit-card {{habit.completed ? 'completed' : ''}}" wx:for="{{habits}}" wx:key="id" wx:for-item="habit">
+        <view class="habit-header">
+          <view class="habit-icon-box">
+            <text class="habit-icon-text">{{habit.icon}}</text>
+          </view>
+          <view class="habit-info">
+            <text class="habit-name">{{habit.name}}</text>
+            <text class="habit-progress">{{habit.current}}/{{habit.goal}} {{habit.unit}}</text>
+          </view>
+          <view class="habit-check-btn {{habit.completed ? 'done' : ''}}"
+            bindtap="checkHabit"
+            data-id="{{habit.id}}"
+          >
+            <text wx:if="{{habit.completed}}">DONE</text>
+            <text wx:else>+1</text>
+          </view>
+        </view>
+        <view class="habit-bar">
+          <view class="habit-bar-track">
+            <view class="habit-bar-fill" style="width: {{(habit.current / habit.goal) * 100}}%;"></view>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- AI饮食分析 -->
+    <view class="ai-action-card">
+      <view class="action-icon-box" style="background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);">
+        <text class="action-icon-text">FOOD</text>
+      </view>
+      <view class="action-info">
+        <text class="action-title">AI饮食分析</text>
+        <text class="action-desc">拍照分析食物营养与热量</text>
+      </view>
+      <view class="action-btn" bindtap="analyzeMeal">
+        <text>分析</text>
+      </view>
+    </view>
+
+    <!-- 创作健康内容（与内容创作系统打通） -->
+    <view class="create-content-card" bindtap="goToCreateHealthContent">
+      <view class="create-content-left">
+        <view class="create-content-icon" style="background: linear-gradient(135deg, #9333EA 0%, #EC4899 100%);">
+          <text class="create-content-icon-text">WRITE</text>
+        </view>
+        <view class="create-content-info">
+          <text class="create-content-title">创作健康文章</text>
+          <text class="create-content-desc">AI帮你写健康科普，创作可获{{dashboard ? '+' + dashboard.totalPoints : ''}}活力值</text>
+        </view>
+      </view>
+      <view class="create-content-arrow">
+        <text>></text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 运动挑战 -->
+  <view class="tab-content" wx:if="{{activeTab === 'challenge'}}">
+    <view class="challenge-container">
+      <view class="challenge-header">
+        <text class="challenge-title">运动段位</text>
+        <text class="challenge-desc">持续运动，提升段位</text>
+      </view>
+
+      <!-- 运动段位展示 -->
+      <view class="ranks-list">
+        <view class="rank-item" wx:for="{{['散步新手','健走达人','慢跑者','跑步爱好者','马拉松跑者']}}" wx:key="*this" wx:for-index="rIdx">
+          <view class="rank-badge">{{rIdx + 1}}</view>
+          <text class="rank-name">{{item}}</text>
+        </view>
+      </view>
+
+      <!-- 今日步数（微信运动） -->
+      <view class="werun-card" wx:if="{{weRunData}}">
+        <text class="werun-title">微信运动数据已同步</text>
+        <text class="werun-desc">步数将自动转化为运动进度</text>
+      </view>
+      <view class="werun-card no-data" wx:else>
+        <text class="werun-title">未获取到微信运动数据</text>
+        <text class="werun-desc">请授权微信运动以自动记录步数</text>
+      </view>
+
+      <!-- 渐进式挑战 -->
+      <view class="progressive-challenge">
+        <text class="prog-title">本周挑战</text>
+        <view class="prog-card">
+          <view class="prog-info">
+            <text class="prog-name">7天运动连续打卡</text>
+            <text class="prog-reward">奖励：500活力值 + 专属徽章</text>
+          </view>
+          <view class="prog-status">
+            <text class="prog-days">{{dashboard.streak}}/7</text>
+          </view>
+        </view>
+        <view class="prog-card">
+          <view class="prog-info">
+            <text class="prog-name">家庭健康周</text>
+            <text class="prog-reward">奖励：400活力值 + 家庭奖杯</text>
+          </view>
+          <view class="prog-status">
+            <text class="prog-days">邀请家人</text>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 健康陪伴 -->
+  <view class="tab-content" wx:if="{{activeTab === 'companion'}}">
+    <view class="companion-container">
+      <view class="companion-avatar" style="background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);">
+        <text class="companion-emoji">HEALTH</text>
+      </view>
+      <view class="companion-info-box" wx:if="{{companionInfo}}">
+        <text class="companion-name">{{companionInfo.name}}</text>
+        <text class="companion-level">Lv.{{companionInfo.level}}</text>
+        <view class="companion-exp-bar">
+          <view class="exp-track">
+            <view class="exp-fill" style="width: {{(companionInfo.exp / companionInfo.expToNext) * 100}}%;"></view>
+          </view>
+          <text class="exp-text">{{companionInfo.exp}}/{{companionInfo.expToNext}}</text>
+        </view>
+      </view>
+    </view>
+    <view class="companion-message" wx:if="{{companionInfo}}">
+      <text class="message-text">{{companionInfo.message}}</text>
+    </view>
+
+    <!-- AI生成运动总结 -->
+    <view class="ai-action-card">
+      <view class="action-icon-box" style="background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);">
+        <text class="action-icon-text">SUMMARY</text>
+      </view>
+      <view class="action-info">
+        <text class="action-title">AI运动总结</text>
+        <text class="action-desc">生成你的健康蜕变时间轴</text>
+      </view>
+      <view class="action-btn" bindtap="generateWorkoutSummary">
+        <text>生成</text>
+      </view>
+    </view>
+
+    <view class="companion-tips">
+      <view class="tip-card">
+        <text class="tip-title">连击加成</text>
+        <text class="tip-desc">连续打卡3天获得20%积分加成，7天获得50%加成，中断则连击重置</text>
+      </view>
+      <view class="tip-card">
+        <text class="tip-title">家庭健康联赛</text>
+        <text class="tip-desc">绑定家庭成员账号，共同完成每周健康挑战，赢取专属奖杯</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 日常任务 -->
+  <view class="daily-tasks" wx:if="{{dashboard}}">
+    <view class="tasks-header">
+      <text class="tasks-title">今日任务</text>
+      <text class="tasks-count">{{completedTaskCount}}/{{dashboard.dailyTasks.length}}</text>
+    </view>
+    <view class="tasks-list">
+      <view class="task-item {{task.completed ? 'done' : ''}}" wx:for="{{dashboard.dailyTasks}}" wx:key="id">
+        <view class="task-check {{task.completed ? 'checked' : ''}}">
+          <text wx:if="{{task.completed}}">OK</text>
+        </view>
+        <view class="task-info">
+          <text class="task-name">{{task.name}}</text>
+          <text class="task-reward">+{{task.points}} {{dashboard.pointName}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 分享卡片弹窗 -->
+  <view class="share-card-mask" wx:if="{{showShareCard}}" bindtap="closeShareCard">
+    <view class="share-card-content" catchtap="">
+      <view class="share-card-header" style="background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);">
+        <text class="share-card-title">健康运动总结</text>
+      </view>
+      <view class="share-card-body" wx:if="{{shareData}}">
+        <view class="share-level-badge">
+          <text class="share-level-name">{{shareData.level}}</text>
+        </view>
+        <text class="share-points">{{shareData.points}} {{shareData.pointName}}</text>
+        <text class="share-streak">连续{{shareData.streak}}天</text>
+        <text class="share-title-text">{{shareData.title}}</text>
+        <text class="share-desc-text">{{shareData.desc}}</text>
+      </view>
+      <view class="share-card-footer">
+        <text class="share-hint">截图分享给好友</text>
+      </view>
+      <view class="share-close" bindtap="closeShareCard">X</view>
+    </view>
+  </view>
+</view>

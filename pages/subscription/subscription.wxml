@@ -1,0 +1,179 @@
+<!--pages/subscription/subscription.wxml-->
+<view class="container">
+  <!-- 用户状态卡片 -->
+  <view class="user-card">
+    <view class="user-info">
+      <image class="avatar" src="{{userInfo.avatarUrl || '/images/default-avatar.png'}}" mode="aspectFill"></image>
+      <view class="info">
+        <text class="nickname">{{userInfo.nickName || '用户'}}</text>
+        <view class="member-badge {{memberStatus.isMember ? 'active' : ''}}">
+          <text>{{memberStatus.isMember ? memberStatus.benefits.name : '免费用户'}}</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="quota-info" wx:if="{{!memberStatus.isMember}}">
+      <view class="quota-text">
+        <text>今日剩余：</text>
+        <text class="quota-num">{{memberStatus.remainingToday || 0}}</text>
+        <text>次</text>
+      </view>
+      <view class="quota-tip">每日免费3次，开通会员无限使用</view>
+    </view>
+
+    <view class="member-info" wx:if="{{memberStatus.isMember}}">
+      <view class="member-expire">
+        <text>会员到期：</text>
+        <text>{{memberStatus.memberInfo.expireTimeStr || '永久'}}</text>
+      </view>
+      <view class="member-quota">无限使用</view>
+    </view>
+  </view>
+
+  <!-- 会员套餐 -->
+  <view class="section">
+    <view class="section-title">会员套餐</view>
+    <view class="plan-list">
+      <view 
+        class="plan-item {{selectedPlan === item.id ? 'selected' : ''}}"
+        wx:for="{{membershipPlans}}"
+        wx:key="id"
+        bindtap="selectPlan"
+        data-plan="{{item.id}}"
+      >
+        <view class="plan-header">
+          <text class="plan-name">{{item.name}}</text>
+          <view class="plan-badge" wx:if="{{item.id === 'quarterly'}}">推荐</view>
+        </view>
+        <view class="plan-price">
+          <text class="currency">¥</text>
+          <text class="amount">{{item.price}}</text>
+        </view>
+        <view class="plan-features">
+          <view class="feature-item" wx:for="{{item.features}}" wx:for-item="feature" wx:key="*this">
+            <text class="feature-icon">✓</text>
+            <text>{{feature}}</text>
+          </view>
+        </view>
+        <view class="plan-select" wx:if="{{selectedPlan === item.id}}">
+          <text>已选择</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 积分充值 -->
+  <view class="section">
+    <view class="section-title">积分充值</view>
+    <view class="credit-list">
+      <view 
+        class="credit-item {{selectedCredit === item.id ? 'selected' : ''}}"
+        wx:for="{{creditPackages}}"
+        wx:key="id"
+        bindtap="selectCredit"
+        data-credit="{{item.id}}"
+      >
+        <view class="credit-amount">
+          <text class="credit-num">{{item.credits}}</text>
+          <text class="credit-unit">积分</text>
+        </view>
+        <view class="credit-price">¥{{item.price}}</view>
+        <view class="credit-select" wx:if="{{selectedCredit === item.id}}">✓</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 购买按钮 -->
+  <view class="action-bar">
+    <button class="buy-btn" bindtap="handleBuy" loading="{{loading}}">
+      {{buyType === 'membership' ? '开通会员' : '充值积分'}} - ¥{{currentPrice}}
+    </button>
+  </view>
+
+  <!-- 订单记录 -->
+  <view class="section" wx:if="{{orderList.length > 0}}">
+    <view class="section-title">订单记录</view>
+    <view class="order-list">
+      <view class="order-item" wx:for="{{orderList}}" wx:key="orderId">
+        <view class="order-info">
+          <text class="order-name">{{item.planName || item.credits + '积分'}}</text>
+          <text class="order-time">{{item.createTimeStr}}</text>
+        </view>
+        <view class="order-status {{item.status}}">
+          <text>{{item.status === 'paid' ? '已支付' : '待支付'}}</text>
+        </view>
+        <view class="order-amount">¥{{item.amount}}</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 权益说明 -->
+  <view class="section benefits-section">
+    <view class="section-title">会员权益对比</view>
+    <view class="benefits-table">
+      <view class="benefits-header">
+        <text class="benefits-cell">权益</text>
+        <text class="benefits-cell">免费用户</text>
+        <text class="benefits-cell">会员</text>
+      </view>
+      <view class="benefits-row">
+        <text class="benefits-cell">每日生成次数</text>
+        <text class="benefits-cell">3次</text>
+        <text class="benefits-cell highlight">无限</text>
+      </view>
+      <view class="benefits-row">
+        <text class="benefits-cell">内容生成</text>
+        <text class="benefits-cell">✓</text>
+        <text class="benefits-cell">✓</text>
+      </view>
+      <view class="benefits-row">
+        <text class="benefits-cell">TTS配音</text>
+        <text class="benefits-cell">✗</text>
+        <text class="benefits-cell highlight">✓</text>
+      </view>
+      <view class="benefits-row">
+        <text class="benefits-cell">视频生成</text>
+        <text class="benefits-cell">✗</text>
+        <text class="benefits-cell highlight">✓</text>
+      </view>
+      <view class="benefits-row">
+        <text class="benefits-cell">高级模板</text>
+        <text class="benefits-cell">✗</text>
+        <text class="benefits-cell highlight">✓</text>
+      </view>
+      <view class="benefits-row">
+        <text class="benefits-cell">专属素材库</text>
+        <text class="benefits-cell">✗</text>
+        <text class="benefits-cell highlight">✓</text>
+      </view>
+      <view class="benefits-row">
+        <text class="benefits-cell">API接口</text>
+        <text class="benefits-cell">✗</text>
+        <text class="benefits-cell highlight">年卡专享</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 底部说明 -->
+  <view class="footer-tips">
+    <text>· 开通会员后立即生效</text>
+    <text>· 会员权益在有效期内有效</text>
+    <text>· 如有问题请联系客服</text>
+  </view>
+</view>
+
+<!-- 开发测试弹窗 -->
+<view class="dev-modal" wx:if="{{showDevModal}}">
+  <view class="modal-mask" bindtap="closeDevModal"></view>
+  <view class="modal-content">
+    <view class="modal-title">开发测试模式</view>
+    <view class="modal-body">
+      <text>当前为开发测试环境，将模拟支付成功。</text>
+      <text>订单号：{{currentOrderId}}</text>
+    </view>
+    <view class="modal-actions">
+      <button class="modal-btn cancel" bindtap="closeDevModal">取消</button>
+      <button class="modal-btn confirm" bindtap="confirmMockPay">确认支付</button>
+    </view>
+  </view>
+</view>

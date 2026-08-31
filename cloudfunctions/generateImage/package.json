@@ -1,0 +1,16 @@
+{
+  "name": "generateImage",
+  "version": "2.0.0",
+  "description": "AI生图云函数 - 支持 GPT-Image-2(pollinations)、混元、智谱CogView 多模型生图",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "~2.6.3",
+    "request-promise": "~4.2.6"
+  },
+  "author": "",
+  "license": "ISC",
+  "cloudfunction-config": {
+    "memorySize": 512,
+    "timeout": 60
+  }
+}

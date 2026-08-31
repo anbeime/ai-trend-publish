@@ -1,0 +1,207 @@
+<!--pages/hotspot-report/hotspot-report.wxml-->
+<view class="report-container">
+  <!-- 加载状态 -->
+  <view class="loading" wx:if="{{loading}}">
+    <text class="loading-text">加载中...</text>
+  </view>
+
+  <!-- 报告内容 -->
+  <view class="report-content" wx:else>
+    <!-- 标题 -->
+    <view class="report-header">
+      <text class="report-title">{{report.category}}类热点分析报告</text>
+      <text class="report-time">生成时间：{{report.generatedAt}}</text>
+    </view>
+
+    <!-- 核心发现 -->
+    <view class="report-section">
+      <view class="section-title">
+        <text class="title-icon">📈</text>
+        <text class="title-text">核心发现</text>
+      </view>
+      
+      <view class="summary-grid">
+        <view class="summary-card">
+          <text class="summary-label">热点总数</text>
+          <text class="summary-value">{{report.summary.totalHotspots}}</text>
+          <text class="summary-unit">个</text>
+        </view>
+        <view class="summary-card">
+          <text class="summary-label">平均热度</text>
+          <text class="summary-value">{{report.summary.avgHeat}}</text>
+          <text class="summary-unit">万</text>
+        </view>
+      </view>
+      
+      <view class="keywords-cloud">
+        <text class="section-subtitle">热门关键词</text>
+        <view class="keywords-list">
+          <text class="keyword-tag" wx:for="{{report.summary.topKeywords}}" wx:key="*this">
+            #{{item}}
+          </text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 逻辑分析 -->
+    <view class="report-section">
+      <view class="section-title">
+        <text class="title-icon">🔍</text>
+        <text class="title-text">深度洞察</text>
+      </view>
+      
+      <view class="insight-card">
+        <text class="insight-label">为什么会火？</text>
+        <text class="insight-content">{{report.logic.causeAnalysis}}</text>
+      </view>
+      
+      <view class="insight-card">
+        <text class="insight-label">用户心理</text>
+        <text class="insight-content">{{report.logic.userPsychology}}</text>
+      </view>
+      
+      <view class="insight-card">
+        <text class="insight-label">社会背景</text>
+        <text class="insight-content">{{report.logic.socialContext}}</text>
+      </view>
+    </view>
+
+    <!-- 用户需求 -->
+    <view class="report-section">
+      <view class="section-title">
+        <text class="title-icon">💡</text>
+        <text class="title-text">用户需求</text>
+      </view>
+      
+      <view class="needs-list">
+        <view class="need-item" wx:for="{{report.demand.userNeeds}}" wx:key="*this">
+          <text class="need-dot">•</text>
+          <text class="need-text">{{item}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 痛点金字塔 -->
+    <view class="report-section">
+      <view class="section-title">
+        <text class="title-icon">⚠️</text>
+        <text class="title-text">痛点金字塔</text>
+      </view>
+      
+      <view class="painpoint-pyramid">
+        <view class="pyramid-level" wx:for="{{painPointLevels}}" wx:key="level">
+          <view class="level-header" style="background: {{item.color}};">
+            <text class="level-title">{{item.title}}</text>
+          </view>
+          <view class="level-content">
+            <text class="level-point" wx:for="{{item.points}}" wx:key="*this" wx:for-item="point">
+              • {{point}}
+            </text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 趋势预测 -->
+    <view class="report-section">
+      <view class="section-title">
+        <text class="title-icon">🔮</text>
+        <text class="title-text">趋势预测</text>
+      </view>
+      
+      <view class="prediction-tabs">
+        <view 
+          class="tab {{selectedTab === 'short' ? 'active' : ''}}" 
+          bindtap="selectTab" 
+          data-tab="short"
+        >
+          短期（1-3天）
+        </view>
+        <view 
+          class="tab {{selectedTab === 'mid' ? 'active' : ''}}" 
+          bindtap="selectTab" 
+          data-tab="mid"
+        >
+          中期（1-2周）
+        </view>
+        <view 
+          class="tab {{selectedTab === 'long' ? 'active' : ''}}" 
+          bindtap="selectTab" 
+          data-tab="long"
+        >
+          长期（1个月+）
+        </view>
+      </view>
+      
+      <view class="prediction-content">
+        <view class="prediction-block">
+          <text class="prediction-label">📊 趋势预测</text>
+          <view class="prediction-list">
+            <text class="prediction-item" wx:for="{{currentPrediction.trends}}" wx:key="*this">
+              • {{item}}
+            </text>
+          </view>
+        </view>
+        
+        <view class="prediction-block">
+          <text class="prediction-label">💎 内容机会</text>
+          <view class="prediction-list">
+            <text class="prediction-item" wx:for="{{currentPrediction.opportunities}}" wx:key="*this">
+              • {{item}}
+            </text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 战略建议 -->
+    <view class="report-section">
+      <view class="section-title">
+        <text class="title-icon">🎯</text>
+        <text class="title-text">战略建议</text>
+      </view>
+      
+      <view class="recommendation-card">
+        <view class="card-header">
+          <text class="card-icon">✍️</text>
+          <text class="card-title">内容创作者</text>
+        </view>
+        <view class="card-content">
+          <text class="recommendation-item" wx:for="{{report.recommendations.forCreators}}" wx:key="*this">
+            {{index + 1}}. {{item}}
+          </text>
+        </view>
+      </view>
+      
+      <view class="recommendation-card">
+        <view class="card-header">
+          <text class="card-icon">⚙️</text>
+          <text class="card-title">产品运营</text>
+        </view>
+        <view class="card-content">
+          <text class="recommendation-item" wx:for="{{report.recommendations.forOperators}}" wx:key="*this">
+            {{index + 1}}. {{item}}
+          </text>
+        </view>
+      </view>
+      
+      <view class="recommendation-card">
+        <view class="card-header">
+          <text class="card-icon">📢</text>
+          <text class="card-title">品牌营销</text>
+        </view>
+        <view class="card-content">
+          <text class="recommendation-item" wx:for="{{report.recommendations.forMarketers}}" wx:key="*this">
+            {{index + 1}}. {{item}}
+          </text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 底部操作 -->
+    <view class="report-actions">
+      <button class="action-btn secondary" bindtap="goBack">返回</button>
+      <button class="action-btn primary" open-type="share">分享报告</button>
+    </view>
+  </view>
+</view>

@@ -1,0 +1,7 @@
+{
+  "navigationBarTitleText": "API配置",
+  "navigationBarBackgroundColor": "#667eea",
+  "navigationBarTextStyle": "white",
+  "backgroundColor": "#667eea",
+  "enablePullDownRefresh": false
+}

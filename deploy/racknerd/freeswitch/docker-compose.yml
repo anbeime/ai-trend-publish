@@ -1,0 +1,105 @@
+# FreeSwitch Docker Compose 部署配置
+# 基于 github.com/anbeime/api-token (FreeSwitch)
+#
+# 部署位置: /opt/freeswitch/docker-compose.yml
+# 启动命令: cd /opt/freeswitch && docker-compose up -d
+# 日志查看: docker-compose logs -f
+# 重启服务: docker-compose restart
+
+version: "3.8"
+
+services:
+  # ============================================================
+  # FreeSwitch Core - 免费 LLM API 代理 (Express 5, 18个提供商)
+  # ============================================================
+  freeswitch-core:
+    image: node:18-alpine
+    container_name: freeswitch-core
+    restart: always
+    working_dir: /app
+    volumes:
+      - ./packages/core:/app
+      - ./packages/shared:/app/node_modules/@freeswitch/shared
+    ports:
+      - "3071:3071"    # API 端口
+    environment:
+      - NODE_ENV=production
+      - PORT=3071
+      # 以下 API Key 从 .env 文件读取
+      - GOOGLE_API_KEY=${GOOGLE_API_KEY:-}
+      - GROQ_API_KEY=${GROQ_API_KEY:-}
+      - NVIDIA_API_KEY=${NVIDIA_API_KEY:-}
+      - OPENROUTER_API_KEY=${OPENROUTER_API_KEY:-}
+      - SILICONFLOW_API_KEY=${SILICONFLOW_API_KEY:-}
+      - SENSENOVA_API_KEY=${SENSENOVA_API_KEY:-}
+      # MiniMax / 智谱（国内 API 从美国服务器访问）
+      - MINIMAX_API_KEY=${MINIMAX_API_KEY:-}
+      - MINIMAX_GROUP_ID=${MINIMAX_GROUP_ID:-}
+      - ZHIPU_API_KEY=${ZHIPU_API_KEY:-}
+      # Enterprise 模式开关
+      - FREESWITCH_ENTERPRISE=${FREESWITCH_ENTERPRISE:-0}
+      - TOPGO_API_URL=${TOPGO_API_URL:-}
+      - TOPGO_API_KEY=${TOPGO_API_KEY:-}
+    command: sh -c "npm install --production && node src/index.js"
+    mem_limit: 400m
+    memswap_limit: 800m
+
+  # ============================================================
+  # FreeSwitch Dashboard - React 管理面板
+  # ============================================================
+  freeswitch-dashboard:
+    image: node:18-alpine
+    container_name: freeswitch-dashboard
+    restart: always
+    working_dir: /app
+    volumes:
+      - ./packages/dashboard:/app
+      - ./packages/shared:/app/node_modules/@freeswitch/shared
+    ports:
+      - "3072:80"
+    environment:
+      - NODE_ENV=production
+      - REACT_APP_API_URL=http://freeswitch-core:3071
+    command: sh -c "npm install && npm run build && npx serve -s build -l 80"
+    mem_limit: 300m
+    memswap_limit: 600m
+
+  # ============================================================
+  # FreeSwitch Enterprise - 企业计费插件 (TOPGO)
+  # 启用方式: 设置 FREESWITCH_ENTERPRISE=1
+  # ============================================================
+  freeswitch-enterprise:
+    image: node:18-alpine
+    container_name: freeswitch-enterprise
+    restart: always
+    working_dir: /app
+    volumes:
+      - ./packages/enterprise:/app
+      - ./packages/shared:/app/node_modules/@freeswitch/shared
+    ports:
+      - "3073:3073"
+    environment:
+      - NODE_ENV=production
+      - PORT=3073
+      - FREESWITCH_ENTERPRISE=${FREESWITCH_ENTERPRISE:-0}
+      - TOPGO_API_URL=${TOPGO_API_URL:-}
+      - TOPGO_API_KEY=${TOPGO_API_KEY:-}
+      # 数据库 (SQLite，文件存储)
+      - DB_PATH=/data/enterprise.db
+    volumes_from:
+      - freeswitch-core
+    command: sh -c "npm install --production && node src/index.js"
+    mem_limit: 200m
+    memswap_limit: 400m
+
+  # ============================================================
+  # Redis - 用于限流和缓存 (可选，1G 内存可省略)
+  # ============================================================
+  redis:
+    image: redis:7-alpine
+    container_name: freeswitch-redis
+    restart: always
+    ports:
+      - "6379:6379"
+    command: redis-server --maxmemory 64mb --maxmemory-policy allkeys-lru
+    mem_limit: 80m

@@ -1,0 +1,394 @@
+/* 发布页面样式 */
+
+.container {
+  padding: 30rpx;
+  background-color: #f5f5f5;
+  min-height: 100vh;
+}
+
+/* 标题 */
+.header {
+  margin-bottom: 40rpx;
+}
+
+.page-title {
+  font-size: 48rpx;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 10rpx;
+}
+
+.page-subtitle {
+  font-size: 28rpx;
+  color: #999;
+}
+
+/* 分区 */
+.section {
+  background-color: #fff;
+  border-radius: 20rpx;
+  padding: 30rpx;
+  margin-bottom: 30rpx;
+}
+
+.section-title {
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 30rpx;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* 表单 */
+.form-item {
+  margin-bottom: 30rpx;
+}
+
+.form-label {
+  font-size: 28rpx;
+  color: #666;
+  margin-bottom: 10rpx;
+  display: block;
+}
+
+.form-input {
+  width: 100%;
+  height: 80rpx;
+  border: 2rpx solid #e0e0e0;
+  border-radius: 10rpx;
+  padding: 0 20rpx;
+  font-size: 28rpx;
+  background-color: #fafafa;
+}
+
+.form-input:focus {
+  border-color: #667eea;
+  background-color: #fff;
+}
+
+.form-textarea {
+  width: 100%;
+  min-height: 200rpx;
+  border: 2rpx solid #e0e0e0;
+  border-radius: 10rpx;
+  padding: 20rpx;
+  font-size: 28rpx;
+  background-color: #fafafa;
+}
+
+/* 发布按钮 */
+.publish-btn {
+  width: 100%;
+  height: 90rpx;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 45rpx;
+  color: #fff;
+  font-size: 32rpx;
+  font-weight: bold;
+  border: none;
+  margin-top: 20rpx;
+}
+
+.publish-btn[disabled] {
+  opacity: 0.5;
+}
+
+/* 提示框 */
+.tip-box {
+  display: flex;
+  align-items: flex-start;
+  background-color: #fff8e1;
+  padding: 20rpx;
+  border-radius: 10rpx;
+  margin-top: 30rpx;
+}
+
+.tip-icon {
+  font-size: 32rpx;
+  margin-right: 10rpx;
+}
+
+.tip-text {
+  flex: 1;
+  font-size: 26rpx;
+  color: #f57c00;
+  line-height: 1.6;
+}
+
+/* 底部操作 */
+.footer {
+  margin-top: 40rpx;
+}
+
+.footer-btn {
+  width: 100%;
+  height: 80rpx;
+  background-color: #f5f5f5;
+  border-radius: 40rpx;
+  color: #999;
+  font-size: 28rpx;
+  border: none;
+}
+
+/* 弹窗 */
+.modal-mask {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-container {
+  width: 90%;
+  max-height: 80vh;
+  background-color: #fff;
+  border-radius: 20rpx;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.modal-header {
+  padding: 30rpx;
+  border-bottom: 1rpx solid #e0e0e0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.modal-title {
+  font-size: 36rpx;
+  font-weight: bold;
+  color: #333;
+}
+
+.modal-close {
+  font-size: 60rpx;
+  color: #999;
+  line-height: 1;
+  padding: 0 20rpx;
+}
+
+.modal-body {
+  flex: 1;
+  padding: 30rpx;
+  overflow-y: auto;
+}
+
+.modal-footer {
+  padding: 30rpx;
+  border-top: 1rpx solid #e0e0e0;
+}
+
+.modal-btn {
+  width: 100%;
+  height: 80rpx;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 40rpx;
+  color: #fff;
+  font-size: 28rpx;
+  font-weight: bold;
+  border: none;
+}
+
+/* 指引样式 */
+.guide-step {
+  display: flex;
+  margin-bottom: 40rpx;
+  align-items: flex-start;
+}
+
+.step-num {
+  width: 60rpx;
+  height: 60rpx;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 30rpx;
+  color: #fff;
+  font-size: 28rpx;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 20rpx;
+  flex-shrink: 0;
+}
+
+.step-info {
+  flex: 1;
+}
+
+.step-title {
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 10rpx;
+  display: block;
+}
+
+.step-desc {
+  font-size: 28rpx;
+  color: #666;
+  line-height: 1.6;
+  display: block;
+}
+
+/* IP框 */
+.ip-box {
+  background-color: #f5f5f5;
+  border: 2rpx dashed #667eea;
+  border-radius: 10rpx;
+  padding: 20rpx;
+  margin-top: 15rpx;
+  display: flex;
+  align-items: center;
+}
+
+.ip-label {
+  font-size: 26rpx;
+  color: #666;
+  margin-right: 10rpx;
+}
+
+.ip-text {
+  flex: 1;
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #667eea;
+  font-family: monospace;
+}
+
+.copy-icon {
+  font-size: 32rpx;
+  margin-left: 10rpx;
+}
+
+/* 分隔线 */
+.guide-divider {
+  height: 2rpx;
+  background-color: #e0e0e0;
+  margin: 40rpx 0;
+}
+
+/* 教程链接 */
+.guide-tutorial {
+  margin-bottom: 40rpx;
+}
+
+.tutorial-title {
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 20rpx;
+  display: block;
+}
+
+.tutorial-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 15rpx;
+}
+
+.tutorial-btn {
+  width: 100%;
+  height: 90rpx;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 45rpx;
+  color: #fff;
+  font-size: 28rpx;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 30rpx;
+}
+
+.tutorial-btn.secondary {
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+}
+
+.btn-icon {
+  font-size: 32rpx;
+  margin-right: 10rpx;
+}
+
+.btn-text {
+  flex: 1;
+  font-size: 28rpx;
+  font-weight: bold;
+}
+
+/* 常见问题 */
+.guide-faq {
+  margin-bottom: 40rpx;
+}
+
+.faq-title {
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 20rpx;
+  display: block;
+}
+
+.faq-item {
+  background-color: #f9f9f9;
+  border-radius: 10rpx;
+  padding: 20rpx;
+  margin-bottom: 15rpx;
+}
+
+.faq-q {
+  font-size: 28rpx;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 10rpx;
+  display: block;
+}
+
+.faq-a {
+  font-size: 26rpx;
+  color: #666;
+  line-height: 1.6;
+  display: block;
+}
+
+/* 注意事项 */
+.guide-notice {
+  margin-bottom: 40rpx;
+}
+
+.notice-title {
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #ff9800;
+  margin-bottom: 20rpx;
+  display: block;
+}
+
+.notice-item {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 15rpx;
+}
+
+.bullet {
+  font-size: 24rpx;
+  color: #ff9800;
+  margin-right: 10rpx;
+  margin-top: 5rpx;
+}
+
+.notice-text {
+  flex: 1;
+  font-size: 26rpx;
+  color: #666;
+  line-height: 1.6;
+}

@@ -1,0 +1,75 @@
+<!--pages/agent-ui/agent-ui.wxml-->
+<view class="container">
+  <!-- 顶部提示 -->
+  <view class="header-tip">
+    <text class="tip-icon">💡</text>
+    <text class="tip-text">微信官方 Agent-UI 实验功能</text>
+    <button class="config-btn" bindtap="showConfigDialog">配置</button>
+  </view>
+
+  <!-- Agent-UI 组件区域 -->
+  <view class="agent-ui-container">
+    <!-- 注意：实际使用时需要引入微信官方组件 -->
+    <view class="placeholder-content" wx:if="{{!initialized}}">
+      <text class="placeholder-title">Agent-UI 需要配置</text>
+      <text class="placeholder-desc">请点击右上角「配置」按钮设置Bot ID</text>
+    </view>
+
+    <!-- 模拟对话界面 -->
+    <view class="chat-container" wx:if="{{initialized}}">
+      <!-- 消息列表 -->
+      <scroll-view class="message-list" scroll-y scroll-into-view="{{toView}}" scroll-with-animation>
+        <view class="message-item" wx:for="{{messages}}" wx:key="id" id="msg-{{index}}">
+          <view class="message-bubble {{item.role}}" wx:if="{{item.role === 'user'}}">
+            <text class="message-text">{{item.content}}</text>
+          </view>
+          <view class="message-bubble {{item.role}}" wx:if="{{item.role === 'assistant'}}">
+            <text class="message-text">{{item.content}}</text>
+          </view>
+          <view class="message-bubble system" wx:if="{{item.role === 'system'}}">
+            <text class="message-text">{{item.content}}</text>
+          </view>
+        </view>
+
+        <!-- 正在输入状态 -->
+        <view class="typing-indicator" wx:if="{{isTyping}}">
+          <text class="typing-text">AI 正在思考...</text>
+        </view>
+      </scroll-view>
+
+      <!-- 输入框 -->
+      <view class="input-area">
+        <input
+          class="input-box"
+          placeholder="输入你的问题..."
+          value="{{inputValue}}"
+          bindinput="onInputChange"
+          bindconfirm="sendMessage"
+          disabled="{{!initialized}}"
+        />
+        <button
+          class="send-btn {{inputValue.trim() ? 'active' : ''}}"
+          bindtap="sendMessage"
+          disabled="{{!inputValue.trim() || sending || !initialized}}"
+        >
+          发送
+        </button>
+      </view>
+    </view>
+  </view>
+
+  <!-- 底部说明 -->
+  <view class="footer-note">
+    <text class="note-title">说明：</text>
+    <text class="note-content">此页面为微信官方 Agent-UI 测试入口，使用 wx.cloud.extend.AI.bot.sendMessage 接口。</text>
+  </view>
+
+  <view class="config-info">
+    <text class="config-title">当前配置：</text>
+    <text class="config-item">环境ID: {{env || '未配置'}}</text>
+    <text class="config-item">Bot ID: {{botId || '未配置'}}</text>
+    <text class="config-item status {{initialized ? 'success' : 'warning'}}">
+      {{initialized ? ' 已初始化' : '⚠️ 未配置'}}
+    </text>
+  </view>
+</view>

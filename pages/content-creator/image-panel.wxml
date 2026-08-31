@@ -1,0 +1,187 @@
+<!-- 图片搜索与AI生成面板 -->
+<view class="image-panel-mask" wx:if="{{showImagePanel}}" bindtap="closeImagePanel">
+  <view class="image-panel" catchtap="preventBubble">
+    <!-- 面板头部 -->
+    <view class="panel-header">
+      <text class="panel-title">🖼️ 图片工具</text>
+      <text class="panel-close" bindtap="closeImagePanel">×</text>
+    </view>
+
+    <!-- 模式切换 -->
+    <view class="mode-tabs">
+      <view 
+        class="mode-tab {{imageMode === 'search' ? 'active' : ''}}"
+        bindtap="switchImageMode"
+        data-mode="search"
+      >
+        <text class="tab-icon">🔍</text>
+        <text class="tab-text">搜索图片</text>
+      </view>
+      <view 
+        class="mode-tab {{imageMode === 'generate' ? 'active' : ''}}"
+        bindtap="switchImageMode"
+        data-mode="generate"
+      >
+        <text class="tab-icon">✨</text>
+        <text class="tab-text">AI生成</text>
+      </view>
+    </view>
+
+    <!-- 智能配图建议 -->
+    <view class="suggestions-section" wx:if="{{imageSuggestions.length > 0}}">
+      <text class="section-title">💡 智能配图建议</text>
+      <scroll-view class="suggestions-list" scroll-x>
+        <view 
+          class="suggestion-chip"
+          wx:for="{{imageSuggestions}}"
+          wx:key="index"
+          bindtap="useSuggestion"
+          data-keyword="{{item.keyword}}"
+        >
+          <text class="chip-type">{{item.type === 'cover' ? '封面' : '配图'}}</text>
+          <text class="chip-keyword">{{item.keyword}}</text>
+        </view>
+      </scroll-view>
+    </view>
+
+    <!-- 搜索模式 -->
+    <view class="search-section" wx:if="{{imageMode === 'search'}}">
+      <view class="search-input-row">
+        <input 
+          class="search-input"
+          placeholder="输入关键词搜索图片..."
+          value="{{imageSearchQuery}}"
+          bindinput="onImageSearchInput"
+        />
+        <button class="search-btn" bindtap="searchImages" loading="{{imageLoading}}">
+          搜索
+        </button>
+      </view>
+
+      <!-- 搜索结果 -->
+      <scroll-view class="images-scroll" scroll-y wx:if="{{searchedImages.length > 0}}">
+        <view class="images-grid">
+          <view 
+            class="image-item {{item.selected ? 'selected' : ''}}"
+            wx:for="{{searchedImages}}"
+            wx:key="id"
+            bindtap="selectImage"
+            data-image="{{item}}"
+            data-type="search"
+          >
+            <image 
+              class="image-thumb"
+              src="{{item.thumbUrl}}"
+              mode="aspectFill"
+              lazy-load
+            />
+            <view class="image-overlay" wx:if="{{item.selected}}">
+              <text class="check-icon">✓</text>
+            </view>
+            <view class="image-info">
+              <text class="image-source">{{item.source}}</text>
+              <text class="image-size">{{item.ratio}}</text>
+            </view>
+          </view>
+        </view>
+      </scroll-view>
+
+      <!-- 空状态 -->
+      <view class="empty-state" wx:if="{{!imageLoading && searchedImages.length === 0}}">
+        <text class="empty-icon">🖼️</text>
+        <text class="empty-text">输入关键词搜索高质量配图</text>
+      </view>
+    </view>
+
+    <!-- AI生成模式 -->
+    <view class="generate-section" wx:if="{{imageMode === 'generate'}}">
+      <view class="prompt-input-area">
+        <textarea 
+          class="prompt-textarea"
+          placeholder="描述你想要的图片...\n例如：现代科技风格的城市天际线，蓝色调，未来感"
+          value="{{imageGenerationPrompt}}"
+          bindinput="onImagePromptInput"
+          maxlength="200"
+        />
+        <text class="char-count">{{imageGenerationPrompt.length}}/200</text>
+      </view>
+
+      <view class="generate-actions">
+        <button class="generate-btn primary" bindtap="generateImages" loading="{{imageLoading}}">
+          ✨ 生成配图
+        </button>
+        <button class="generate-btn" bindtap="generateCoverImage" loading="{{imageLoading}}">
+          📱 生成封面
+        </button>
+        <button class="generate-btn" bindtap="generateContentImages" loading="{{imageLoading}}">
+          🎨 批量配图
+        </button>
+      </view>
+
+      <!-- 生成结果 -->
+      <scroll-view class="images-scroll" scroll-y wx:if="{{generatedImages.length > 0 || contentImages.length > 0}}">
+        <!-- 封面图 -->
+        <view class="image-category" wx:if="{{coverImage}}">
+          <text class="category-title">封面图</text>
+          <view class="cover-image-item" bindtap="previewImage" data-url="{{coverImage.url}}">
+            <image class="cover-image" src="{{coverImage.url}}" mode="aspectFill"/>
+            <view class="image-actions">
+              <text class="action-icon" bindtap="downloadImage" data-url="{{coverImage.url}}">⬇️</text>
+            </view>
+          </view>
+        </view>
+
+        <!-- AI生成图片 -->
+        <view class="image-category" wx:if="{{generatedImages.length > 0}}">
+          <text class="category-title">AI生成图片</text>
+          <view class="images-grid">
+            <view 
+              class="image-item {{item.selected ? 'selected' : ''}}"
+              wx:for="{{generatedImages}}"
+              wx:key="id"
+              bindtap="selectImage"
+              data-image="{{item}}"
+              data-type="generate"
+            >
+              <image class="image-thumb" src="{{item.url}}" mode="aspectFill" lazy-load/>
+              <view class="image-overlay" wx:if="{{item.selected}}">
+                <text class="check-icon">✓</text>
+              </view>
+            </view>
+          </view>
+        </view>
+
+        <!-- 内容配图 -->
+        <view class="image-category" wx:if="{{contentImages.length > 0}}">
+          <text class="category-title">内容配图</text>
+          <view class="images-grid">
+            <view 
+              class="image-item {{item.selected ? 'selected' : ''}}"
+              wx:for="{{contentImages}}"
+              wx:key="id"
+              bindtap="selectImage"
+              data-image="{{item}}"
+              data-type="content"
+            >
+              <image class="image-thumb" src="{{item.url}}" mode="aspectFill" lazy-load/>
+              <view class="image-info">
+                <text class="image-keyword">{{item.keyword}}</text>
+              </view>
+              <view class="image-overlay" wx:if="{{item.selected}}">
+                <text class="check-icon">✓</text>
+              </view>
+            </view>
+          </view>
+        </view>
+      </scroll-view>
+    </view>
+
+    <!-- 底部操作栏 -->
+    <view class="panel-footer" wx:if="{{selectedImages.length > 0}}">
+      <text class="selected-count">已选择 {{selectedImages.length}} 张</text>
+      <button class="insert-btn" bindtap="insertImagesToContent">
+        插入到内容
+      </button>
+    </view>
+  </view>
+</view>

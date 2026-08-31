@@ -1,0 +1,32 @@
+<!--components/loading/loading.wxml-->
+<view class="loading-overlay" wx:if="{{show}}">
+  <view class="loading-content">
+    <!-- 加载动画 -->
+    <view class="loading-animation">
+      <view class="spinner"></view>
+      <view class="progress-ring" wx:if="{{progress > 0}}">
+        <text class="progress-text">{{progress}}%</text>
+      </view>
+    </view>
+
+    <!-- 加载消息 -->
+    <view class="loading-message">
+      <text class="message-text">{{currentMessage}}</text>
+    </view>
+
+    <!-- 预计时间 -->
+    <view class="loading-time" wx:if="{{estimatedTime}}">
+      <text class="time-text">{{estimatedTime}}</text>
+    </view>
+
+    <!-- 提示信息 -->
+    <view class="loading-tips">
+      <text class="tips-text">💡 生成过程中请勿关闭页面</text>
+    </view>
+
+    <!-- 取消按钮（可选） -->
+    <view class="loading-actions" wx:if="{{type !== 'default'}}">
+      <button class="cancel-btn" size="mini" bindtap="onCancel">取消</button>
+    </view>
+  </view>
+</view>

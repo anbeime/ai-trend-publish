@@ -1,0 +1,390 @@
+<!-- pages/viral-analyzer/viral-analyzer.wxml -->
+<view class="container">
+  <!-- 头部标题 -->
+  <view class="header">
+    <text class="title">🔥 爆款视频分析器</text>
+    <text class="subtitle">输入对标视频链接，获取完整复刻方案</text>
+  </view>
+
+  <!-- 输入区域 -->
+  <view class="input-section">
+    <view class="input-header">
+      <text class="input-label">视频链接</text>
+      <view class="input-actions">
+        <text class="action-btn" bindtap="pasteUrl">粘贴</text>
+        <text class="action-btn" bindtap="clearInput">清空</text>
+      </view>
+    </view>
+    
+    <textarea 
+      class="url-input" 
+      placeholder="请输入抖音、快手、B站、小红书或视频号链接..."
+      value="{{videoUrl}}"
+      bindinput="onUrlInput"
+      maxlength="500"
+    />
+    
+    <!-- 链接示例 -->
+    <view class="examples">
+      <text class="examples-title">支持的平台：</text>
+      <view class="example-tags">
+        <text class="tag" wx:for="{{linkExamples}}" wx:key="platform">
+          {{item.platform}}
+        </text>
+      </view>
+    </view>
+
+    <!-- 错误提示 -->
+    <view class="error-msg" wx:if="{{errorMsg}}">{{errorMsg}}</view>
+
+    <!-- 分析按钮 -->
+    <button 
+      class="analyze-btn {{analyzing ? 'loading' : ''}}" 
+      bindtap="startAnalysis"
+      disabled="{{analyzing || !videoUrl}}"
+    >
+      <text wx:if="{{!analyzing}}">开始分析</text>
+      <text wx:else>分析中...</text>
+    </button>
+  </view>
+
+  <!-- 使用说明 -->
+  <view class="usage-guide" wx:if="{{!analysisComplete && !analyzing}}">
+    <view class="guide-title">📖 使用说明</view>
+    <view class="guide-steps">
+      <view class="guide-step">
+        <text class="step-num">1</text>
+        <text class="step-text">复制抖音/快手/B站/小红书/视频号的视频链接</text>
+      </view>
+      <view class="guide-step">
+        <text class="step-num">2</text>
+        <text class="step-text">粘贴链接，点击"开始分析"</text>
+      </view>
+      <view class="guide-step">
+        <text class="step-num">3</text>
+        <text class="step-text">获取复刻方案（脚本、分镜、差异化建议）</text>
+      </view>
+      <view class="guide-step">
+        <text class="step-num">4</text>
+        <text class="step-text">复制方案，在大平台创作视频</text>
+      </view>
+    </view>
+    <view class="guide-notice">
+      <text class="notice-icon">💡</text>
+      <text class="notice-text">当前为演示模式，提供基于平台特征的复刻模板</text>
+    </view>
+  </view>
+
+  <!-- 分析结果 -->
+  <view class="result-section" wx:if="{{analysisComplete}}">
+    <!-- 结果头部 -->
+    <view class="result-header">
+      <view class="platform-badge">{{platform}}</view>
+      <text class="result-title">分析完成</text>
+      <view class="result-actions">
+        <button class="action-btn-small" bindtap="copyFullPlan">复制方案</button>
+        <button class="action-btn-small" bindtap="saveToLocal">保存</button>
+      </view>
+    </view>
+
+    <!-- 基础信息卡片 -->
+    <view class="info-card" wx:if="{{analysis.basicInfo}}">
+      <view class="info-item">
+        <text class="info-label">标题</text>
+        <text class="info-value">{{analysis.basicInfo.title}}</text>
+      </view>
+      <view class="info-row">
+        <view class="info-item">
+          <text class="info-label">点赞</text>
+          <text class="info-value hot">{{analysis.basicInfo.likes}}</text>
+        </view>
+        <view class="info-item">
+          <text class="info-label">评论</text>
+          <text class="info-value">{{analysis.basicInfo.comments}}</text>
+        </view>
+        <view class="info-item">
+          <text class="info-label">转发</text>
+          <text class="info-value">{{analysis.basicInfo.shares}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 标签导航 -->
+    <view class="tab-nav">
+      <view 
+        class="tab-item {{activeTab === 'analysis' ? 'active' : ''}}"
+        data-tab="analysis"
+        bindtap="switchTab"
+      >
+        爆款分析
+      </view>
+      <view 
+        class="tab-item {{activeTab === 'script' ? 'active' : ''}}"
+        data-tab="script"
+        bindtap="switchTab"
+      >
+        脚本模板
+      </view>
+      <view 
+        class="tab-item {{activeTab === 'storyboard' ? 'active' : ''}}"
+        data-tab="storyboard"
+        bindtap="switchTab"
+      >
+        分镜方案
+      </view>
+      <view 
+        class="tab-item {{activeTab === 'differentiation' ? 'active' : ''}}"
+        data-tab="differentiation"
+        bindtap="switchTab"
+      >
+        差异化
+      </view>
+    </view>
+
+    <!-- 标签内容 -->
+    <view class="tab-content">
+      <!-- 爆款分析 -->
+      <view class="content-panel" wx:if="{{activeTab === 'analysis'}}">
+        <!-- 爆款因素 -->
+        <view class="panel-section" wx:if="{{analysis.viralFactors.length > 0}}">
+          <view class="section-title">🎯 为什么能爆？</view>
+          <view class="factor-list">
+            <view class="factor-item" wx:for="{{analysis.viralFactors}}" wx:key="name">
+              <view class="factor-header">
+                <text class="factor-name">{{item.name}}</text>
+                <text class="factor-score" wx:if="{{item.score}}">{{item.score}}分</text>
+              </view>
+              <text class="factor-desc">{{item.description}}</text>
+              <view class="factor-examples" wx:if="{{item.examples}}">
+                <text class="example-tag" wx:for="{{item.examples}}" wx:for-item="ex">{{ex}}</text>
+              </view>
+            </view>
+          </view>
+        </view>
+
+        <!-- 内容结构 -->
+        <view class="panel-section" wx:if="{{analysis.structure}}">
+          <view class="section-title">📐 内容结构</view>
+          <view class="structure-timeline">
+            <view class="timeline-item">
+              <view class="timeline-dot opening"></view>
+              <view class="timeline-content">
+                <text class="timeline-title">开场 {{analysis.structure.opening.duration}}</text>
+                <text class="timeline-desc">{{analysis.structure.opening.purpose}}</text>
+                <text class="timeline-tech">技巧: {{analysis.structure.opening.technique}}</text>
+              </view>
+            </view>
+            <view class="timeline-item">
+              <view class="timeline-dot setup"></view>
+              <view class="timeline-content">
+                <text class="timeline-title">铺垫 {{analysis.structure.setup.duration}}</text>
+                <text class="timeline-desc">{{analysis.structure.setup.purpose}}</text>
+              </view>
+            </view>
+            <view class="timeline-item">
+              <view class="timeline-dot climax"></view>
+              <view class="timeline-content">
+                <text class="timeline-title">高潮 {{analysis.structure.climax.duration}}</text>
+                <text class="timeline-desc">{{analysis.structure.climax.purpose}}</text>
+              </view>
+            </view>
+            <view class="timeline-item">
+              <view class="timeline-dot ending"></view>
+              <view class="timeline-content">
+                <text class="timeline-title">结尾 {{analysis.structure.ending.duration}}</text>
+                <text class="timeline-desc">{{analysis.structure.ending.purpose}}</text>
+              </view>
+            </view>
+          </view>
+        </view>
+
+        <!-- 情绪曲线 -->
+        <view class="panel-section" wx:if="{{analysis.emotionCurve}}">
+          <view class="section-title">😊 情绪曲线</view>
+          <view class="emotion-list">
+            <view class="emotion-item" wx:for="{{analysis.emotionCurve.curve}}" wx:key="time">
+              <text class="emotion-time">{{item.time}}</text>
+              <text class="emotion-name">{{item.emotion}}</text>
+              <view class="emotion-bar">
+                <view class="emotion-fill" style="width: {{item.intensity}}%"></view>
+              </view>
+              <text class="emotion-value">{{item.intensity}}%</text>
+            </view>
+          </view>
+        </view>
+      </view>
+
+      <!-- 脚本模板 -->
+      <view class="content-panel" wx:if="{{activeTab === 'script'}}">
+        <view class="panel-section" wx:if="{{replicationPlan.scriptTemplate}}">
+          <view class="section-title">📝 复刻脚本模板</view>
+          
+          <!-- 开场 -->
+          <view class="script-section">
+            <view class="script-header">
+              <text class="script-title">开场 {{replicationPlan.scriptTemplate.opening.duration}}</text>
+              <text class="copy-btn" bindtap="copyText" data-text="{{replicationPlan.scriptTemplate.opening.template}}">复制</text>
+            </view>
+            <view class="script-template">{{replicationPlan.scriptTemplate.opening.template}}</view>
+            <view class="script-tips">
+              <text class="tip-item" wx:for="{{replicationPlan.scriptTemplate.opening.tips}}" wx:key="*this">• {{item}}</text>
+            </view>
+          </view>
+
+          <!-- 主体 -->
+          <view class="script-section">
+            <view class="script-header">
+              <text class="script-title">主体 {{replicationPlan.scriptTemplate.body.duration}}</text>
+              <text class="copy-btn" bindtap="copyText" data-text="{{replicationPlan.scriptTemplate.body.template}}">复制</text>
+            </view>
+            <view class="script-template">{{replicationPlan.scriptTemplate.body.template}}</view>
+            <view class="script-tips">
+              <text class="tip-item" wx:for="{{replicationPlan.scriptTemplate.body.tips}}" wx:key="*this">• {{item}}</text>
+            </view>
+          </view>
+
+          <!-- 结尾 -->
+          <view class="script-section">
+            <view class="script-header">
+              <text class="script-title">结尾 {{replicationPlan.scriptTemplate.ending.duration}}</text>
+              <text class="copy-btn" bindtap="copyText" data-text="{{replicationPlan.scriptTemplate.ending.template}}">复制</text>
+            </view>
+            <view class="script-template">{{replicationPlan.scriptTemplate.ending.template}}</view>
+            <view class="script-tips">
+              <text class="tip-item" wx:for="{{replicationPlan.scriptTemplate.ending.tips}}" wx:key="*this">• {{item}}</text>
+            </view>
+          </view>
+        </view>
+
+        <!-- 文案模板 -->
+        <view class="panel-section" wx:if="{{replicationPlan.copyTemplate}}">
+          <view class="section-title">✍️ 文案模板</view>
+          <view class="copy-template">
+            <view class="template-item">
+              <text class="template-label">标题模式</text>
+              <text class="template-value">{{replicationPlan.copyTemplate.title.pattern}}</text>
+            </view>
+            <view class="template-item">
+              <text class="template-label">标题模板</text>
+              <text class="template-value">{{replicationPlan.copyTemplate.title.template}}</text>
+              <text class="copy-btn" bindtap="copyText" data-text="{{replicationPlan.copyTemplate.title.template}}">复制</text>
+            </view>
+          </view>
+        </view>
+      </view>
+
+      <!-- 分镜方案 -->
+      <view class="content-panel" wx:if="{{activeTab === 'storyboard'}}">
+        <view class="panel-section" wx:if="{{replicationPlan.storyboard}}">
+          <view class="section-title">🎬 分镜方案</view>
+          
+          <view class="storyboard-info">
+            <view class="info-row">
+              <text class="info-label">画面风格</text>
+              <text class="info-value">{{replicationPlan.storyboard.style}}</text>
+            </view>
+            <view class="info-row">
+              <text class="info-label">色彩方案</text>
+              <view class="color-palette">
+                <text class="color-tag" wx:for="{{replicationPlan.storyboard.colorPalette}}" wx:key="*this">{{item}}</text>
+              </view>
+            </view>
+          </view>
+
+          <view class="section-subtitle">镜头运用</view>
+          <view class="shot-list">
+            <view class="shot-item" wx:for="{{replicationPlan.storyboard.shots}}" wx:key="*this">
+              <text class="shot-name">{{item}}</text>
+            </view>
+          </view>
+
+          <view class="section-subtitle">字幕样式</view>
+          <view class="subtitle-style">
+            <view class="style-item">
+              <text class="style-label">样式</text>
+              <text class="style-value">{{replicationPlan.storyboard.subtitleStyle.style}}</text>
+            </view>
+            <view class="style-item">
+              <text class="style-label">动画</text>
+              <text class="style-value">{{replicationPlan.storyboard.subtitleStyle.animation}}</text>
+            </view>
+            <view class="style-item">
+              <text class="style-label">位置</text>
+              <text class="style-value">{{replicationPlan.storyboard.subtitleStyle.position}}</text>
+            </view>
+          </view>
+
+          <view class="section-subtitle">特效建议</view>
+          <view class="effect-list">
+            <view class="effect-item" wx:for="{{replicationPlan.storyboard.effects}}" wx:key="*this">
+              <text class="effect-name">{{item}}</text>
+            </view>
+          </view>
+        </view>
+      </view>
+
+      <!-- 差异化 -->
+      <view class="content-panel" wx:if="{{activeTab === 'differentiation'}}">
+        <view class="panel-section" wx:if="{{replicationPlan.differentiation}}">
+          <view class="section-title">💡 差异化建议</view>
+          
+          <view class="diff-section">
+            <view class="diff-title">内容角度差异</view>
+            <view class="diff-list">
+              <view class="diff-item" wx:for="{{replicationPlan.differentiation.contentAngles}}" wx:key="*this">
+                <text class="diff-dot">•</text>
+                <text class="diff-text">{{item}}</text>
+              </view>
+            </view>
+          </view>
+
+          <view class="diff-section">
+            <view class="diff-title">表现形式差异</view>
+            <view class="diff-list">
+              <view class="diff-item" wx:for="{{replicationPlan.differentiation.presentation}}" wx:key="*this">
+                <text class="diff-dot">•</text>
+                <text class="diff-text">{{item}}</text>
+              </view>
+            </view>
+          </view>
+
+          <view class="diff-section">
+            <view class="diff-title">避免同质化</view>
+            <view class="diff-list">
+              <view class="diff-item" wx:for="{{replicationPlan.differentiation.avoidHomogenization}}" wx:key="*this">
+                <text class="diff-dot">•</text>
+                <text class="diff-text">{{item}}</text>
+              </view>
+            </view>
+          </view>
+
+          <view class="diff-section">
+            <view class="diff-title">创新建议</view>
+            <view class="diff-list">
+              <view class="diff-item" wx:for="{{replicationPlan.differentiation.innovation}}" wx:key="*this">
+                <text class="diff-dot">•</text>
+                <text class="diff-text">{{item}}</text>
+              </view>
+            </view>
+          </view>
+        </view>
+
+        <!-- 执行清单 -->
+        <view class="panel-section" wx:if="{{replicationPlan.checklist}}">
+          <view class="section-title">✅ 执行清单</view>
+          <view class="checklist">
+            <view class="checklist-item" wx:for="{{replicationPlan.checklist}}" wx:key="step">
+              <view class="checkbox {{item.done ? 'checked' : ''}}"></view>
+              <text class="checklist-text">{{item.step}}. {{item.task}}</text>
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 复制成功提示 -->
+  <view class="copy-toast" wx:if="{{copySuccess}}">
+    <text>已复制到剪贴板</text>
+  </view>
+</view>

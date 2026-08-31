@@ -294,20 +294,20 @@ class MultiAccountPublisher {
         console.log('云函数代理发布响应:', res.result);
 
         const result = res.result;
-        if (result.success) {
-          // 检查后端API返回的实际结果
-          const apiData = result.data;
-          if (apiData && apiData.success === true) {
+        if (result && result.success) {
+          // cloud-shim 直接返回 draft-api.py 的响应
+          // 成功时: { success: true, media_id: "xxx", message: "..." }
+          if (result.success === true) {
             return {
               success: true,
-              data: apiData,
+              data: result,
               account: account,
-              media_id: apiData.media_id
+              media_id: result.media_id
             };
           } else {
             return {
               success: false,
-              error: apiData?.error || result.error || '发布失败'
+              error: result.error || '发布失败'
             };
           }
         } else {

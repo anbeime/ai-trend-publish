@@ -1,7 +1,7 @@
 {
-  "navigationBarTitleText": "API配置",
-  "navigationBarBackgroundColor": "#667eea",
+  "navigationBarTitleText": "API/模型配置",
+  "navigationBarBackgroundColor": "#9333EA",
   "navigationBarTextStyle": "white",
-  "backgroundColor": "#667eea",
-  "enablePullDownRefresh": false
+  "backgroundColor": "#F8F9FA",
+  "usingComponents": {}
 }

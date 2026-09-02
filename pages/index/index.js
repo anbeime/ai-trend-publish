@@ -1,4 +1,4 @@
-// pages/index/index.js - AI热点自动发布系统首页
+// pages/index/index.js - 点星自媒体助手首页
 const errorHandler = require("../../utils/error-handler.js");
 const gamificationEngine = require("../../utils/gamification-engine.js");
 const aiService = require("../../utils/ai-service.js");
@@ -110,7 +110,7 @@ Page({
   },
 
   onLoad() {
-    console.log("AI热点自动发布系统首页加载");
+    console.log("点星自媒体助手首页加载");
     this.setData({
       showMoreDrawer: false,
       showGuide: false,
@@ -516,14 +516,14 @@ Page({
   // 分享
   onShareAppMessage() {
     return {
-      title: 'AI热点自动发布系统 - 热点采集 智能改写 多平台发布',
+      title: '点星自媒体助手 - 热点采集 AI创作 多平台发布',
       path: '/pages/index/index',
     };
   },
 
   onShareTimeline() {
     return {
-      title: 'AI热点自动发布系统 - 让创作更高效',
+      title: '点星自媒体助手 - 让创作更高效',
     };
   },
 });

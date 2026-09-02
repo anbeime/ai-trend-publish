@@ -1,5 +1,362 @@
 <!-- pages/api-config/api-config.wxml -->
 <view class="container">
-  <view class="icon"></view>
-  <text class="message">{{message}}</text>
+
+  <!-- 顶部状态概览 -->
+  <view class="status-overview">
+    <view class="status-card {{freeswitchConfig.gatewayUrl ? 'active' : 'inactive'}}">
+      <view class="status-card-header">
+        <text class="status-card-title">FreeSwitch 网关</text>
+        <view class="status-badge {{freeswitchConfig.gatewayUrl ? 'badge-on' : 'badge-off'}}">
+          <text>{{freeswitchConfig.gatewayUrl ? '已配置' : '未配置'}}</text>
+        </view>
+      </view>
+      <text class="status-card-value">{{freeswitchConfig.gatewayUrl || '未设置'}}</text>
+    </view>
+  </view>
+
+  <!-- 配置标签页 -->
+  <view class="tab-bar">
+    <view class="tab-item {{activeTab === 'freeswitch' ? 'active' : ''}}" bindtap="switchTab" data-tab="freeswitch">
+      <text>FreeSwitch</text>
+    </view>
+    <view class="tab-item {{activeTab === 'zhipu' ? 'active' : ''}}" bindtap="switchTab" data-tab="zhipu">
+      <text>智谱 GLM</text>
+    </view>
+    <view class="tab-item {{activeTab === 'hunyuan' ? 'active' : ''}}" bindtap="switchTab" data-tab="hunyuan">
+      <text>混元 AI</text>
+    </view>
+    <view class="tab-item {{activeTab === 'minimax' ? 'active' : ''}}" bindtap="switchTab" data-tab="minimax">
+      <text>MiniMax</text>
+    </view>
+    <view class="tab-item {{activeTab === 'models' ? 'active' : ''}}" bindtap="switchTab" data-tab="models">
+      <text>模型选择</text>
+    </view>
+  </view>
+
+  <!-- ====== FreeSwitch 配置 ====== -->
+  <view class="tab-content" wx:if="{{activeTab === 'freeswitch'}}">
+    <view class="config-section">
+      <view class="section-header">
+        <text class="section-title">FreeSwitch API 代理</text>
+        <text class="section-desc">聚合 18+ 免费 LLM 提供商，自动路由</text>
+      </view>
+
+      <view class="form-group">
+        <text class="form-label">网关地址 (gatewayUrl)</text>
+        <input class="form-input" value="{{freeswitchConfig.gatewayUrl}}" placeholder="https://api1.miyucaicai.cn/api/ai" bindinput="onInputFreeswitch" data-field="gatewayUrl" />
+        <text class="form-hint">Nginx 反向代理地址，/api/ai/* 转发到 127.0.0.1:9000/v1/*</text>
+      </view>
+
+      <view class="form-group">
+        <text class="form-label">User Token</text>
+        <view class="input-with-button">
+          <input class="form-input flex-input" value="{{freeswitchConfig.userToken}}" placeholder="freellmapi-xxx..." bindinput="onInputFreeswitch" data-field="userToken" password="{{!showFreeswitchToken}}" />
+          <view class="toggle-eye" bindtap="toggleShowToken" data-field="freeswitch">
+            <text>{{showFreeswitchToken ? '隐藏' : '显示'}}</text>
+          </view>
+        </view>
+        <text class="form-hint">在 Dashboard 注册后获得，Dashboard 地址: http://39.108.254.228:9000</text>
+      </view>
+
+      <view class="form-group">
+        <text class="form-label">主模型 (primaryModel)</text>
+        <input class="form-input" value="{{freeswitchConfig.primaryModel}}" placeholder="auto" bindinput="onInputFreeswitch" data-field="primaryModel" />
+        <text class="form-hint">auto = FreeSwitch 自动路由到可用模型，失败自动切换</text>
+      </view>
+
+      <view class="form-group">
+        <text class="form-label">降级模型 (fallbackModel)</text>
+        <input class="form-input" value="{{freeswitchConfig.fallbackModel}}" placeholder="auto" bindinput="onInputFreeswitch" data-field="fallbackModel" />
+      </view>
+
+      <view class="form-group">
+        <text class="form-label">免费模型 (freeModel)</text>
+        <input class="form-input" value="{{freeswitchConfig.freeModel}}" placeholder="auto" bindinput="onInputFreeswitch" data-field="freeModel" />
+      </view>
+
+      <view class="form-actions">
+        <button class="btn-save" bindtap="saveFreeswitchConfig">保存配置</button>
+        <button class="btn-test" bindtap="testFreeswitch" loading="{{testingFreeswitch}}">测试连接</button>
+      </view>
+
+      <view class="test-result {{freeswitchTestResult.success ? 'result-ok' : (freeswitchTestResult.error ? 'result-fail' : '')}}" wx:if="{{freeswitchTestResult}}">
+        <text class="result-label" wx:if="{{freeswitchTestResult.success}}">连接成功</text>
+        <text class="result-label" wx:if="{{freeswitchTestResult.error}}">连接失败</text>
+        <text class="result-detail">{{freeswitchTestResult.message}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- ====== 智谱 GLM 配置 ====== -->
+  <view class="tab-content" wx:if="{{activeTab === 'zhipu'}}">
+    <view class="config-section">
+      <view class="section-header">
+        <text class="section-title">智谱 AI (GLM) 配置</text>
+        <text class="section-desc">图片生成保留直连，文本对话走 FreeSwitch</text>
+      </view>
+
+      <view class="form-group">
+        <text class="form-label">API Key</text>
+        <view class="input-with-button">
+          <input class="form-input flex-input" value="{{zhipuConfig.apiKey}}" placeholder="4db0d992xxx..." bindinput="onInputZhipu" data-field="apiKey" password="{{!showZhipuKey}}" />
+          <view class="toggle-eye" bindtap="toggleShowToken" data-field="zhipu">
+            <text>{{showZhipuKey ? '隐藏' : '显示'}}</text>
+          </view>
+        </view>
+        <text class="form-hint">获取方式: https://open.bigmodel.cn/ -> 控制台 -> API Key</text>
+      </view>
+
+      <view class="form-group">
+        <text class="form-label">文本模型</text>
+        <view class="model-picker-list">
+          <view class="model-item {{zhipuConfig.glmModel === item.id ? 'selected' : ''}}" wx:for="{{glmModels}}" wx:key="id" bindtap="selectGLMModel" data-model-id="{{item.id}}">
+            <view class="model-item-header">
+              <text class="model-item-name">{{item.name}}</text>
+              <view class="model-tags">
+                <text class="tag tag-free" wx:if="{{item.free}}">免费</text>
+                <text class="tag tag-recommend" wx:if="{{item.recommended}}">推荐</text>
+                <text class="tag tag-multi" wx:if="{{item.multimodal}}">多模态</text>
+              </view>
+            </view>
+            <text class="model-item-desc">{{item.desc}} | 速度: {{item.speed}} | 质量: {{item.quality}}</text>
+          </view>
+        </view>
+      </view>
+
+      <view class="form-group">
+        <text class="form-label">图像生成模型</text>
+        <view class="model-picker-list">
+          <view class="model-item {{zhipuConfig.imageModel === item.id ? 'selected' : ''}}" wx:for="{{imageModels}}" wx:key="id" bindtap="selectImageModel" data-model-id="{{item.id}}">
+            <view class="model-item-header">
+              <text class="model-item-name">{{item.name}}</text>
+              <view class="model-tags">
+                <text class="tag tag-free" wx:if="{{item.free}}">免费</text>
+                <text class="tag tag-recommend" wx:if="{{item.recommended}}">推荐</text>
+              </view>
+            </view>
+            <text class="model-item-desc">{{item.desc}} | 速度: {{item.speed}} | 质量: {{item.quality}}</text>
+          </view>
+        </view>
+      </view>
+
+      <view class="form-actions">
+        <button class="btn-save" bindtap="saveZhipuConfig">保存配置</button>
+        <button class="btn-test" bindtap="testZhipu" loading="{{testingZhipu}}">测试连接</button>
+      </view>
+
+      <view class="test-result {{zhipuTestResult.success ? 'result-ok' : (zhipuTestResult.error ? 'result-fail' : '')}}" wx:if="{{zhipuTestResult}}">
+        <text class="result-label" wx:if="{{zhipuTestResult.success}}">连接成功</text>
+        <text class="result-label" wx:if="{{zhipuTestResult.error}}">连接失败</text>
+        <text class="result-detail">{{zhipuTestResult.message}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- ====== 混元 AI 配置 ====== -->
+  <view class="tab-content" wx:if="{{activeTab === 'hunyuan'}}">
+    <view class="config-section">
+      <view class="section-header">
+        <text class="section-title">腾讯混元 AI 配置</text>
+        <text class="section-desc">图片生成用，保留直连</text>
+      </view>
+
+      <view class="form-group">
+        <text class="form-label">Secret ID</text>
+        <view class="input-with-button">
+          <input class="form-input flex-input" value="{{hunyuanConfig.secretId}}" placeholder="AKIDxxx..." bindinput="onInputHunyuan" data-field="secretId" password="{{!showHunyuanId}}" />
+          <view class="toggle-eye" bindtap="toggleShowToken" data-field="hunyuanId">
+            <text>{{showHunyuanId ? '隐藏' : '显示'}}</text>
+          </view>
+        </view>
+        <text class="form-hint">腾讯云 -> 访问管理 -> API密钥管理</text>
+      </view>
+
+      <view class="form-group">
+        <text class="form-label">Secret Key</text>
+        <view class="input-with-button">
+          <input class="form-input flex-input" value="{{hunyuanConfig.secretKey}}" placeholder="xxx..." bindinput="onInputHunyuan" data-field="secretKey" password="{{!showHunyuanKey}}" />
+          <view class="toggle-eye" bindtap="toggleShowToken" data-field="hunyuanKey">
+            <text>{{showHunyuanKey ? '隐藏' : '显示'}}</text>
+          </view>
+        </view>
+      </view>
+
+      <view class="form-group">
+        <text class="form-label">启用状态</text>
+        <view class="switch-row">
+          <switch checked="{{hunyuanConfig.enabled}}" bindchange="toggleHunyuanEnabled" color="#9333EA" />
+          <text class="switch-label">{{hunyuanConfig.enabled ? '已启用 - 优先使用混元生图' : '已关闭 - 使用智谱生图'}}</text>
+        </view>
+      </view>
+
+      <view class="form-actions">
+        <button class="btn-save" bindtap="saveHunyuanConfig">保存配置</button>
+      </view>
+    </view>
+  </view>
+
+  <!-- ====== MiniMax 降级配置 ====== -->
+  <view class="tab-content" wx:if="{{activeTab === 'minimax'}}">
+    <view class="config-section">
+      <view class="section-header">
+        <text class="section-title">MiniMax 降级配置</text>
+        <text class="section-desc">FreeSwitch 不可用时自动降级直连</text>
+      </view>
+
+      <view class="form-group">
+        <text class="form-label">API Key</text>
+        <view class="input-with-button">
+          <input class="form-input flex-input" value="{{minimaxConfig.apiKey}}" placeholder="sk-cp-xxx..." bindinput="onInputMinimax" data-field="apiKey" password="{{!showMinimaxKey}}" />
+          <view class="toggle-eye" bindtap="toggleShowToken" data-field="minimaxKey">
+            <text>{{showMinimaxKey ? '隐藏' : '显示'}}</text>
+          </view>
+        </view>
+        <text class="form-hint">TokenPlanPlus API Key</text>
+      </view>
+
+      <view class="form-group">
+        <text class="form-label">Group ID</text>
+        <input class="form-input" value="{{minimaxConfig.groupId}}" placeholder="1924304491927048863" bindinput="onInputMinimax" data-field="groupId" />
+      </view>
+
+      <view class="form-group">
+        <text class="form-label">Endpoint</text>
+        <input class="form-input" value="{{minimaxConfig.endpoint}}" placeholder="https://api.minimax.chat/v1/text/chatcompletion_v2" bindinput="onInputMinimax" data-field="endpoint" />
+      </view>
+
+      <view class="form-group">
+        <text class="form-label">模型名称</text>
+        <input class="form-input" value="{{minimaxConfig.model}}" placeholder="MiniMax-Text-01" bindinput="onInputMinimax" data-field="model" />
+      </view>
+
+      <view class="form-row">
+        <view class="form-group half">
+          <text class="form-label">Temperature</text>
+          <input class="form-input" type="digit" value="{{minimaxConfig.temperature}}" bindinput="onInputMinimax" data-field="temperature" />
+        </view>
+        <view class="form-group half">
+          <text class="form-label">Top P</text>
+          <input class="form-input" type="digit" value="{{minimaxConfig.top_p}}" bindinput="onInputMinimax" data-field="top_p" />
+        </view>
+      </view>
+
+      <view class="form-group">
+        <text class="form-label">Max Tokens</text>
+        <input class="form-input" type="number" value="{{minimaxConfig.max_tokens}}" placeholder="8192" bindinput="onInputMinimax" data-field="max_tokens" />
+      </view>
+
+      <view class="form-actions">
+        <button class="btn-save" bindtap="saveMinimaxConfig">保存配置</button>
+        <button class="btn-test" bindtap="testMinimax" loading="{{testingMinimax}}">测试连接</button>
+      </view>
+
+      <view class="test-result {{minimaxTestResult.success ? 'result-ok' : (minimaxTestResult.error ? 'result-fail' : '')}}" wx:if="{{minimaxTestResult}}">
+        <text class="result-label" wx:if="{{minimaxTestResult.success}}">连接成功</text>
+        <text class="result-label" wx:if="{{minimaxTestResult.error}}">连接失败</text>
+        <text class="result-detail">{{minimaxTestResult.message}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- ====== 模型选择 ====== -->
+  <view class="tab-content" wx:if="{{activeTab === 'models'}}">
+    <view class="config-section">
+      <view class="section-header">
+        <text class="section-title">文本模型选择</text>
+        <text class="section-desc">GLM 系列文本生成模型</text>
+      </view>
+      <view class="model-picker-list">
+        <view class="model-item {{zhipuConfig.glmModel === item.id ? 'selected' : ''}}" wx:for="{{glmModels}}" wx:key="id" bindtap="selectGLMModel" data-model-id="{{item.id}}">
+          <view class="model-item-header">
+            <text class="model-item-name">{{item.name}}</text>
+            <view class="model-tags">
+              <text class="tag tag-free" wx:if="{{item.free}}">免费</text>
+              <text class="tag tag-recommend" wx:if="{{item.recommended}}">推荐</text>
+              <text class="tag tag-multi" wx:if="{{item.multimodal}}">多模态</text>
+            </view>
+          </view>
+          <text class="model-item-desc">{{item.desc}}</text>
+          <view class="model-meta">
+            <text>速度: {{item.speed}}</text>
+            <text>质量: {{item.quality}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <view class="config-section">
+      <view class="section-header">
+        <text class="section-title">图像生成模型</text>
+        <text class="section-desc">智谱 CogView 系列</text>
+      </view>
+      <view class="model-picker-list">
+        <view class="model-item {{zhipuConfig.imageModel === item.id ? 'selected' : ''}}" wx:for="{{imageModels}}" wx:key="id" bindtap="selectImageModel" data-model-id="{{item.id}}">
+          <view class="model-item-header">
+            <text class="model-item-name">{{item.name}}</text>
+            <view class="model-tags">
+              <text class="tag tag-free" wx:if="{{item.free}}">免费</text>
+              <text class="tag tag-recommend" wx:if="{{item.recommended}}">推荐</text>
+            </view>
+          </view>
+          <text class="model-item-desc">{{item.desc}}</text>
+          <view class="model-meta">
+            <text>速度: {{item.speed}}</text>
+            <text>质量: {{item.quality}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <view class="config-section">
+      <view class="section-header">
+        <text class="section-title">视频生成模型</text>
+        <text class="section-desc">阿里云通义万相系列</text>
+      </view>
+      <view class="model-picker-list">
+        <view class="model-item {{qwenConfig.videoModel === item.id ? 'selected' : ''}}" wx:for="{{videoModels}}" wx:key="id" bindtap="selectVideoModel" data-model-id="{{item.id}}">
+          <view class="model-item-header">
+            <text class="model-item-name">{{item.name}}</text>
+            <view class="model-tags">
+              <text class="tag tag-recommend" wx:if="{{item.recommended}}">推荐</text>
+            </view>
+          </view>
+          <text class="model-item-desc">{{item.desc}}</text>
+          <view class="model-meta">
+            <text>支持图片: {{item.supportsImage ? '是' : '否'}}</text>
+            <text>支持音频: {{item.supportsAudio ? '是' : '否'}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <view class="config-section">
+      <view class="section-header">
+        <text class="section-title">TTS 配音音色</text>
+        <text class="section-desc">CosyVoice 语音合成</text>
+      </view>
+      <view class="voice-picker-list">
+        <view class="voice-item {{qwenConfig.ttsVoice === item.id ? 'selected' : ''}}" wx:for="{{ttsVoices}}" wx:key="id" bindtap="selectTTSVoice" data-voice-id="{{item.id}}">
+          <view class="voice-item-header">
+            <text class="voice-item-name">{{item.name}}</text>
+            <view class="model-tags">
+              <text class="tag tag-recommend" wx:if="{{item.recommended}}">推荐</text>
+              <text class="tag tag-gender">{{item.gender === 'female' ? '女' : (item.gender === 'male' ? '男' : '中')}}</text>
+            </view>
+          </view>
+          <text class="voice-item-desc">{{item.desc}}</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="form-actions">
+      <button class="btn-save" bindtap="saveAllModels">保存所有模型选择</button>
+    </view>
+  </view>
+
+  <!-- 底部操作区 -->
+  <view class="bottom-actions">
+    <button class="btn-export" bindtap="exportConfig">导出配置</button>
+    <button class="btn-reset" bindtap="resetConfig">恢复默认</button>
+  </view>
+
 </view>

@@ -27,15 +27,23 @@ function loadSecrets() {
 
 /**
  * 获取 FreeSwitch 配置
+ * 优先级：本地存储（管理员页面配置）> secrets.js 默认值
  */
 function getFreeSwitchConfig() {
   const s = loadSecrets();
+  // 尝试读取本地存储的配置（管理员通过 API 配置页面保存）
+  let localConfig = {};
+  try {
+    localConfig = wx.getStorageSync('freeswitch_config') || {};
+  } catch (e) {
+    // 非 wx 环境忽略
+  }
   return {
-    gatewayUrl: s.freeswitch?.gatewayUrl || '',
-    primaryModel: s.freeswitch?.primaryModel || 'minimax',
-    fallbackModel: s.freeswitch?.fallbackModel || 'glm-4.7-flash',
-    freeModel: s.freeswitch?.freeModel || 'google-gemini',
-    userToken: s.freeswitch?.userToken || '',
+    gatewayUrl: localConfig.gatewayUrl || s.freeswitch?.gatewayUrl || '',
+    primaryModel: localConfig.primaryModel || s.freeswitch?.primaryModel || 'auto',
+    fallbackModel: localConfig.fallbackModel || s.freeswitch?.fallbackModel || 'auto',
+    freeModel: localConfig.freeModel || s.freeswitch?.freeModel || 'auto',
+    userToken: localConfig.userToken || s.freeswitch?.userToken || '',
   };
 }
 
@@ -119,29 +127,40 @@ async function callFreeSwitch(prompt, options = {}) {
 
 /**
  * 获取 MiniMax 配置
+ * 优先级：本地存储（管理员页面配置）> secrets.js 默认值
  */
 function getMinimaxConfig() {
   const s = loadSecrets();
+  let localConfig = {};
+  try {
+    localConfig = wx.getStorageSync('minimax_config') || {};
+  } catch (e) {}
   return {
-    apiKey: s.minimax?.apiKey || '',
-    groupId: s.minimax?.groupId || '',
-    endpoint: s.minimax?.endpoint || 'https://api.minimax.chat/v1/text/chatcompletion_v2',
-    model: s.minimax?.model || 'MiniMax-Text-01',
-    temperature: s.minimax?.temperature ?? 1,
-    top_p: s.minimax?.top_p ?? 0.95,
-    max_tokens: s.minimax?.max_tokens ?? 8192,
+    apiKey: localConfig.apiKey || s.minimax?.apiKey || '',
+    groupId: localConfig.groupId || s.minimax?.groupId || '',
+    endpoint: localConfig.endpoint || s.minimax?.endpoint || 'https://api.minimax.chat/v1/text/chatcompletion_v2',
+    model: localConfig.model || s.minimax?.model || 'MiniMax-Text-01',
+    temperature: localConfig.temperature ?? s.minimax?.temperature ?? 1,
+    top_p: localConfig.top_p ?? s.minimax?.top_p ?? 0.95,
+    max_tokens: localConfig.max_tokens ?? s.minimax?.max_tokens ?? 8192,
   };
 }
 
 /**
  * 获取智谱 GLM 配置
+ * 优先级：本地存储（管理员页面配置）> secrets.js 默认值
  */
 function getGLMConfig() {
   const s = loadSecrets();
+  let localConfig = {};
+  try {
+    localConfig = wx.getStorageSync('ai_api_config') || {};
+  } catch (e) {}
   return {
-    apiKey: s.zhipu?.apiKey || '',
+    apiKey: localConfig.glmApiKey || s.zhipu?.apiKey || '',
     endpoint: 'https://open.bigmodel.cn/api/paas/v4/chat/completions',
-    model: 'glm-4.7-flash',
+    model: localConfig.glmModel || 'glm-4.7-flash',
+    imageModel: localConfig.imageModel || 'cogview-3-flash',
   };
 }
 

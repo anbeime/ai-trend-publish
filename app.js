@@ -36,7 +36,7 @@ App({
     this.initPrivacyAuthorize();
 
     // 监听小程序启动
-    console.log('AI热点自动发布系统启动')
+    console.log('点星自媒体助手启动')
   },
 
   /**

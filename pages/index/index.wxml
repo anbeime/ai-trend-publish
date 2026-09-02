@@ -1,12 +1,12 @@
-<!--pages/index/index.wxml - AI热点自动发布系统首页-->
+<!--pages/index/index.wxml - 点星自媒体助手首页-->
 <view class="page-container">
   <!-- 顶部区域 -->
   <view class="header-section">
     <view class="header-content">
       <view class="app-icon-text">AI</view>
       <view class="header-text">
-        <text class="app-title">AI热点自动发布系统</text>
-        <text class="app-subtitle">热点采集 智能改写 多平台发布</text>
+        <text class="app-title">点星自媒体助手</text>
+        <text class="app-subtitle">热点采集 AI创作 多平台发布</text>
       </view>
     </view>
     <view class="header-actions">
@@ -261,8 +261,8 @@
         <view class="drawer-item" bindtap="navigateToApiConfigFromDrawer">
           <view class="item-icon-box"><text class="item-icon-text">API</text></view>
           <view class="item-content">
-            <text class="item-title">API配置</text>
-            <text class="item-desc">查看API状态</text>
+            <text class="item-title">API/模型配置</text>
+            <text class="item-desc">配置网关、密钥和模型</text>
           </view>
         </view>
       </view>
